@@ -14,6 +14,13 @@ declare namespace Nabu {
     }
 }
 declare namespace Nabu {
+    interface IJK {
+        i: number;
+        j: number;
+        k: number;
+    }
+}
+declare namespace Nabu {
     function Pow2(n: number): number;
 }
 declare namespace Nabu {
