@@ -1,3 +1,67 @@
+// Code by Andrey Sitnik and Ivan Solovev https://github.com/ai/easings.net
+var Nabu;
+(function (Nabu) {
+    class Easing {
+        static easeOutCubic(x) {
+            return 1 - Math.pow(1 - x, 3);
+        }
+        static easeInOutSine(x) {
+            return -(Math.cos(Math.PI * x) - 1) / 2;
+        }
+        static easeOutElastic(x) {
+            const c4 = (2 * Math.PI) / 3;
+            return x === 0
+                ? 0
+                : x === 1
+                    ? 1
+                    : Math.pow(2, -10 * x) * Math.sin((x * 10 - 0.75) * c4) + 1;
+        }
+        static easeInOutBack(x) {
+            const c1 = 1.70158;
+            const c2 = c1 * 1.525;
+            return x < 0.5
+                ? (Math.pow(2 * x, 2) * ((c2 + 1) * 2 * x - c2)) / 2
+                : (Math.pow(2 * x - 2, 2) * ((c2 + 1) * (x * 2 - 2) + c2) + 2) / 2;
+        }
+        static smooth010Sec(fps) {
+            if (fps < 13) {
+                return 0;
+            }
+            return 1 - 1 / (0.08 * fps);
+        }
+        static smooth025Sec(fps) {
+            if (fps < 8) {
+                return 0;
+            }
+            return 1 - 1 / (0.13 * fps);
+        }
+        static smooth05Sec(fps) {
+            if (fps < 4) {
+                return 0;
+            }
+            return 1 - 1 / (0.25 * fps);
+        }
+        static smooth1Sec(fps) {
+            if (fps < 2.25) {
+                return 0;
+            }
+            return 1 - 1 / (0.45 * fps);
+        }
+        static smooth2Sec(fps) {
+            if (fps < 1.2) {
+                return 0;
+            }
+            return 1 - 1 / (0.9 * fps);
+        }
+        static smooth3Sec(fps) {
+            if (fps < 1) {
+                return 0;
+            }
+            return 1 - 1 / (1.35 * fps);
+        }
+    }
+    Nabu.Easing = Easing;
+})(Nabu || (Nabu = {}));
 var Nabu;
 (function (Nabu) {
     var Pow2Values = [];

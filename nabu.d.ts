@@ -1,5 +1,19 @@
 /// <reference path="lib/babylon.d.ts" />
 declare namespace Nabu {
+    class Easing {
+        static easeOutCubic(x: number): number;
+        static easeInOutSine(x: number): number;
+        static easeOutElastic(x: number): number;
+        static easeInOutBack(x: number): number;
+        static smooth010Sec(fps: number): number;
+        static smooth025Sec(fps: number): number;
+        static smooth05Sec(fps: number): number;
+        static smooth1Sec(fps: number): number;
+        static smooth2Sec(fps: number): number;
+        static smooth3Sec(fps: number): number;
+    }
+}
+declare namespace Nabu {
     function Pow2(n: number): number;
 }
 declare namespace Nabu {
