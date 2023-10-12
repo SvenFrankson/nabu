@@ -72,14 +72,14 @@ var Nabu;
         return Pow2Values[n];
     }
     Nabu.Pow2 = Pow2;
-    function RoundPow2Exponent(n) {
+    function FloorPow2Exponent(n) {
         let exponent = 0;
         while (Pow2Values[exponent] < n) {
             exponent++;
         }
         return exponent;
     }
-    Nabu.RoundPow2Exponent = RoundPow2Exponent;
+    Nabu.FloorPow2Exponent = FloorPow2Exponent;
     function CeilPow2Exponent(n) {
         let exponent = 0;
         while (Pow2Values[exponent] < n) {

@@ -9,7 +9,7 @@ namespace Nabu {
         return Pow2Values[n];
     }
 
-    export function RoundPow2Exponent(n: number): number {
+    export function FloorPow2Exponent(n: number): number {
         let exponent: number = 0;
         while (Pow2Values[exponent] < n) {
             exponent++;
