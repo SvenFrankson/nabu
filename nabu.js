@@ -72,6 +72,22 @@ var Nabu;
         return Pow2Values[n];
     }
     Nabu.Pow2 = Pow2;
+    function RoundPow2Exponent(n) {
+        let exponent = 0;
+        while (Pow2Values[exponent] < n) {
+            exponent++;
+        }
+        return exponent;
+    }
+    Nabu.RoundPow2Exponent = RoundPow2Exponent;
+    function CeilPow2Exponent(n) {
+        let exponent = 0;
+        while (Pow2Values[exponent] < n) {
+            exponent++;
+        }
+        return exponent + 1;
+    }
+    Nabu.CeilPow2Exponent = CeilPow2Exponent;
 })(Nabu || (Nabu = {}));
 var Nabu;
 (function (Nabu) {

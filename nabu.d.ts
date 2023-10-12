@@ -22,6 +22,8 @@ declare namespace Nabu {
 }
 declare namespace Nabu {
     function Pow2(n: number): number;
+    function RoundPow2Exponent(n: number): number;
+    function CeilPow2Exponent(n: number): number;
 }
 declare namespace Nabu {
     var PIString: string;
