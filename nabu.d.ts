@@ -1,4 +1,3 @@
-/// <reference path="lib/babylon.d.ts" />
 declare namespace Nabu {
     class Easing {
         static easeOutCubic(x: number): number;
@@ -26,6 +25,105 @@ declare namespace Nabu {
     function CeilPow2Exponent(n: number): number;
 }
 declare namespace Nabu {
+    class UniqueList<T> {
+        private _elements;
+        get length(): number;
+        get(i: number): T;
+        getLast(): T;
+        indexOf(e: T): number;
+        push(e: T): void;
+        remove(e: T): T;
+        contains(e: T): boolean;
+        forEach(callback: (e: T) => void): void;
+        sort(callback: (e1: T, e2: T) => number): void;
+    }
+}
+declare namespace Nabu {
+    class DebugDisplayColorInput extends HTMLElement {
+        static get observedAttributes(): string[];
+        private _label;
+        private _labelElement;
+        private _colorInput;
+        private _colorFloat;
+        connectedCallback(): void;
+        attributeChangedCallback(name: string, oldValue: string, newValue: string): void;
+        private _initialized;
+        initialize(): void;
+        private _onInput;
+        onInput: (hexColor: string) => void;
+        setColor(hexColor: string): void;
+    }
+}
+declare namespace Nabu {
+    class DebugDisplayFrameValue extends HTMLElement {
+        static get observedAttributes(): string[];
+        size: number;
+        frameCount: number;
+        private _minValue;
+        private _maxValue;
+        private _values;
+        private _label;
+        private _minElement;
+        private _maxElement;
+        private _labelElement;
+        private _valuesElement;
+        connectedCallback(): void;
+        attributeChangedCallback(name: string, oldValue: string, newValue: string): void;
+        private _initialized;
+        initialize(): void;
+        private _redraw;
+        addValue(v: number): void;
+    }
+}
+declare namespace Nabu {
+    class DebugDisplayTextValue extends HTMLElement {
+        static get observedAttributes(): string[];
+        private _label;
+        private _labelElement;
+        private _textElement;
+        connectedCallback(): void;
+        attributeChangedCallback(name: string, oldValue: string, newValue: string): void;
+        private _initialized;
+        initialize(): void;
+        setText(text: string): void;
+    }
+}
+declare namespace Nabu {
+    interface IVector3XYZValue {
+        x: number;
+        y: number;
+        z: number;
+    }
+    interface IVector3IJKValue {
+        i: number;
+        j: number;
+        k: number;
+    }
+    class DebugDisplayVector3Value extends HTMLElement {
+        static get observedAttributes(): string[];
+        private _label;
+        private _useIJK;
+        private _decimals;
+        private _x;
+        private _y;
+        private _z;
+        private _labelElement;
+        private _xElement;
+        private _xLabelElement;
+        private _yElement;
+        private _yLabelElement;
+        private _zElement;
+        private _zLabelElement;
+        connectedCallback(): void;
+        attributeChangedCallback(name: string, oldValue: string, newValue: string): void;
+        private _initialized;
+        initialize(): void;
+        setValue(vec3: IVector3XYZValue): void;
+        setValue(vec3: IVector3IJKValue): void;
+        setValue(i: number, j: number, k: number): void;
+    }
+}
+declare namespace Nabu {
     var PIString: string;
 }
 declare namespace Nabu {
@@ -44,27 +142,4 @@ declare namespace Nabu {
         getValue4D(seed: RandSeed, i: number, j: number, k: number, d: number): number;
     }
     var RAND: Rand;
-}
-declare namespace Nabu {
-    class UniqueList<T> {
-        private _elements;
-        get length(): number;
-        get(i: number): T;
-        getLast(): T;
-        indexOf(e: T): number;
-        push(e: T): void;
-        remove(e: T): T;
-        contains(e: T): boolean;
-        forEach(callback: (e: T) => void): void;
-        sort(callback: (e1: T, e2: T) => number): void;
-    }
-}
-declare namespace Nabu {
-    function IsFinite(v: BABYLON.Vector3): boolean;
-    function ProjectPerpendicularAtToRef(v: BABYLON.Vector3, at: BABYLON.Vector3, out: BABYLON.Vector3): BABYLON.Vector3;
-    function ProjectPerpendicularAt(v: BABYLON.Vector3, at: BABYLON.Vector3): BABYLON.Vector3;
-    function Angle(from: BABYLON.Vector3, to: BABYLON.Vector3): number;
-    function AngleFromToAround(from: BABYLON.Vector3, to: BABYLON.Vector3, around: BABYLON.Vector3): number;
-    function StepToRef(from: BABYLON.Vector3, to: BABYLON.Vector3, step: number, ref: BABYLON.Vector3): BABYLON.Vector3;
-    function Step(from: BABYLON.Vector3, to: BABYLON.Vector3, step: number): BABYLON.Vector3;
 }
