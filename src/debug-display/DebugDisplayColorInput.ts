@@ -17,7 +17,7 @@ namespace Nabu {
         public connectedCallback() {
             this.initialize();
             this.style.display = "block";
-            this.style.width = "400px";
+            this.style.width = "100%";
             this.style.marginLeft = "auto";
             this.style.marginBottom = "5px";
         }
