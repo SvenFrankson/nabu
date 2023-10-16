@@ -25,6 +25,36 @@ declare namespace Nabu {
     function CeilPow2Exponent(n: number): number;
 }
 declare namespace Nabu {
+    class OctreeNode<T> {
+        static NToIJK: {
+            i: number;
+            j: number;
+            k: number;
+        }[];
+        size: number;
+        degree: number;
+        parent: OctreeNode<T>;
+        children: any[];
+        i: number;
+        j: number;
+        k: number;
+        constructor(parent: OctreeNode<T>);
+        constructor(degree?: number);
+        forEach(callback: (v: T, i: number, j: number, k: number) => void): void;
+        forEachNode(callback: (node: OctreeNode<T>) => void): void;
+        collapse(): void;
+        private _getChild;
+        private _setChild;
+        private _setNthChild;
+        get(i: number, j: number, k: number): T;
+        set(v: T, i: number, j: number, k: number): void;
+        serializeToString(): string;
+        serialize(output?: string[]): string[];
+        static DeserializeFromString(strInput: string): OctreeNode<number>;
+        static Deserialize(input: string[]): OctreeNode<number>;
+    }
+}
+declare namespace Nabu {
     class UniqueList<T> {
         private _elements;
         get length(): number;
