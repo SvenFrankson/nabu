@@ -1,4 +1,8 @@
 declare namespace Nabu {
+    function Compress(data: Uint8Array): Uint8Array;
+    function Decompress(data: Uint8Array): Uint8Array;
+}
+declare namespace Nabu {
     class Easing {
         static easeOutCubic(x: number): number;
         static easeInOutSine(x: number): number;
