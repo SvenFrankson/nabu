@@ -500,6 +500,147 @@ var Nabu;
 })(Nabu || (Nabu = {}));
 var Nabu;
 (function (Nabu) {
+    class InputVector3 extends HTMLElement {
+        constructor() {
+            super(...arguments);
+            this._useIJK = false;
+            this._decimals = 3;
+            this._x = 0;
+            this._y = 0;
+            this._z = 0;
+            this._update = () => {
+                if (!this.isConnected) {
+                    clearInterval(this._updateInterval);
+                }
+                if (this.targetXYZ && (this.targetXYZ.x != this._x || this.targetXYZ.y != this._y || this.targetXYZ.z != this._z)) {
+                    this._x = this.targetXYZ.x;
+                    this._y = this.targetXYZ.y;
+                    this._z = this.targetXYZ.z;
+                    this.setValue(this.targetXYZ);
+                }
+            };
+            this._initialized = false;
+            this._onInputCallback = () => {
+                this._x = parseFloat(this._xElement.value);
+                this._y = parseFloat(this._yElement.value);
+                this._z = parseFloat(this._zElement.value);
+                if (this.targetXYZ) {
+                    this.targetXYZ.x = this._x;
+                    this.targetXYZ.y = this._y;
+                    this.targetXYZ.z = this._z;
+                }
+                if (this.onInputXYZCallback) {
+                    this.onInputXYZCallback({
+                        x: this._x,
+                        y: this._y,
+                        z: this._z
+                    });
+                }
+            };
+        }
+        static get observedAttributes() {
+            return [
+                "label",
+                "useIJK",
+                "decimals"
+            ];
+        }
+        connectedCallback() {
+            this.initialize();
+            this._updateInterval = setInterval(this._update, 100);
+        }
+        attributeChangedCallback(name, oldValue, newValue) {
+            if (this._initialized) {
+                if (name === "useIJK") {
+                    this._useIJK = newValue === "true" ? true : false;
+                    if (this._useIJK) {
+                        this._xLabelElement.textContent = "i";
+                        this._yLabelElement.textContent = "j";
+                        this._zLabelElement.textContent = "k";
+                    }
+                    else {
+                        this._xLabelElement.textContent = "x";
+                        this._yLabelElement.textContent = "y";
+                        this._zLabelElement.textContent = "z";
+                    }
+                }
+                if (name === "decimals") {
+                    let value = parseInt(newValue);
+                    if (isFinite(value)) {
+                        this._decimals = value;
+                    }
+                    this.setValue({
+                        x: this._x,
+                        y: this._y,
+                        z: this._z
+                    });
+                }
+            }
+        }
+        _setLabelProps(e) {
+            e.classList.add("input-vec3-label");
+            e.style.display = "inline-block";
+            e.style.textAlign = "center";
+            e.style.width = "18px";
+        }
+        _setValueProps(e) {
+            e.setAttribute("type", "number");
+            e.setAttribute("step", "0.001");
+            e.addEventListener("input", this._onInputCallback);
+            e.classList.add("input-vec3-value");
+            e.style.display = "inline-block";
+            e.style.width = "24%";
+        }
+        initialize() {
+            if (!this._initialized) {
+                this.style.display = "inline-block";
+                this._xLabelElement = document.createElement("span");
+                this._setLabelProps(this._xLabelElement);
+                this.appendChild(this._xLabelElement);
+                this._xElement = document.createElement("input");
+                this._setValueProps(this._xElement);
+                this.appendChild(this._xElement);
+                this._yLabelElement = document.createElement("span");
+                this._setLabelProps(this._yLabelElement);
+                this.appendChild(this._yLabelElement);
+                this._yElement = document.createElement("input");
+                this._setValueProps(this._yElement);
+                this.appendChild(this._yElement);
+                this._zLabelElement = document.createElement("span");
+                this._setLabelProps(this._zLabelElement);
+                this.appendChild(this._zLabelElement);
+                this._zElement = document.createElement("input");
+                this._setValueProps(this._zElement);
+                this.appendChild(this._zElement);
+                this._initialized = true;
+                for (let i = 0; i < Nabu.DebugDisplayVector3Value.observedAttributes.length; i++) {
+                    let name = Nabu.DebugDisplayVector3Value.observedAttributes[i];
+                    let value = this.getAttribute(name);
+                    this.attributeChangedCallback(name, value + "_forceupdate", value);
+                }
+            }
+        }
+        setValue(vec3, j, k) {
+            if (isFinite(j) && isFinite(k)) {
+                this._x = vec3;
+                this._y = j;
+                this._z = k;
+            }
+            else {
+                this._x = isFinite(vec3.x) ? vec3.x : vec3.i;
+                this._y = isFinite(vec3.y) ? vec3.y : vec3.j;
+                this._z = isFinite(vec3.z) ? vec3.z : vec3.k;
+            }
+            this._xElement.value = this._x.toFixed(this._decimals);
+            this._yElement.value = this._y.toFixed(this._decimals);
+            this._zElement.value = this._z.toFixed(this._decimals);
+        }
+    }
+    Nabu.InputVector3 = InputVector3;
+    customElements.define("input-vec3", InputVector3);
+})(Nabu || (Nabu = {}));
+var Nabu;
+(function (Nabu) {
     class DebugDisplayColorInput extends HTMLElement {
         constructor() {
             super(...arguments);

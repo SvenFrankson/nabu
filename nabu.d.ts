@@ -76,6 +76,46 @@ declare namespace Nabu {
     }
 }
 declare namespace Nabu {
+    interface IVector3XYZValue {
+        x: number;
+        y: number;
+        z: number;
+    }
+    interface IVector3IJKValue {
+        i: number;
+        j: number;
+        k: number;
+    }
+    class InputVector3 extends HTMLElement {
+        static get observedAttributes(): string[];
+        private _useIJK;
+        private _decimals;
+        private _x;
+        private _y;
+        private _z;
+        private _xElement;
+        private _xLabelElement;
+        private _yElement;
+        private _yLabelElement;
+        private _zElement;
+        private _zLabelElement;
+        private _updateInterval;
+        targetXYZ: IVector3XYZValue;
+        connectedCallback(): void;
+        private _update;
+        attributeChangedCallback(name: string, oldValue: string, newValue: string): void;
+        private _setLabelProps;
+        private _setValueProps;
+        private _initialized;
+        initialize(): void;
+        setValue(vec3: IVector3XYZValue): void;
+        setValue(vec3: IVector3IJKValue): void;
+        setValue(i: number, j: number, k: number): void;
+        onInputXYZCallback: (xyz: IVector3XYZValue) => void;
+        private _onInputCallback;
+    }
+}
+declare namespace Nabu {
     class DebugDisplayColorInput extends HTMLElement {
         static get observedAttributes(): string[];
         private _label;
