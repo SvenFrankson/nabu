@@ -130,6 +130,78 @@ var Nabu;
         return exponent + 1;
     }
     Nabu.CeilPow2Exponent = CeilPow2Exponent;
+    function StepAngle(from, to, step) {
+        while (from < 0) {
+            from += 2 * Math.PI;
+        }
+        while (to < 0) {
+            to += 2 * Math.PI;
+        }
+        while (from >= 2 * Math.PI) {
+            from -= 2 * Math.PI;
+        }
+        while (to >= 2 * Math.PI) {
+            to -= 2 * Math.PI;
+        }
+        if (Math.abs(from - to) <= step) {
+            return to;
+        }
+        if (to < from) {
+            step *= -1;
+        }
+        if (Math.abs(from - to) > Math.PI) {
+            step *= -1;
+        }
+        return from + step;
+    }
+    Nabu.StepAngle = StepAngle;
+    function LerpAngle(from, to, t) {
+        while (from < 0) {
+            from += 2 * Math.PI;
+        }
+        while (to < 0) {
+            to += 2 * Math.PI;
+        }
+        while (from >= 2 * Math.PI) {
+            from -= 2 * Math.PI;
+        }
+        while (to >= 2 * Math.PI) {
+            to -= 2 * Math.PI;
+        }
+        if (Math.abs(from - to) > Math.PI) {
+            if (from > Math.PI) {
+                from -= 2 * Math.PI;
+            }
+            else {
+                to -= 2 * Math.PI;
+            }
+        }
+        return from * (1 - t) + to * t;
+    }
+    Nabu.LerpAngle = LerpAngle;
+    function AngularDistance(from, to) {
+        while (from < 0) {
+            from += 2 * Math.PI;
+        }
+        while (to < 0) {
+            to += 2 * Math.PI;
+        }
+        while (from >= 2 * Math.PI) {
+            from -= 2 * Math.PI;
+        }
+        while (to >= 2 * Math.PI) {
+            to -= 2 * Math.PI;
+        }
+        let d = Math.abs(from - to);
+        if (d > Math.PI) {
+            d *= -1;
+        }
+        if (to < from) {
+            d *= -1;
+        }
+        return d;
+    }
+    Nabu.AngularDistance = AngularDistance;
 })(Nabu || (Nabu = {}));
 var Nabu;
 (function (Nabu) {

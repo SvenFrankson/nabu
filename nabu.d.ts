@@ -27,6 +27,9 @@ declare namespace Nabu {
     function Pow2(n: number): number;
     function FloorPow2Exponent(n: number): number;
     function CeilPow2Exponent(n: number): number;
+    function StepAngle(from: number, to: number, step: number): number;
+    function LerpAngle(from: number, to: number, t: number): number;
+    function AngularDistance(from: number, to: number): number;
 }
 declare namespace Nabu {
     class OctreeNode<T> {
