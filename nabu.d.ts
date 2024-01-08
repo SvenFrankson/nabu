@@ -17,6 +17,9 @@ declare namespace Nabu {
     }
 }
 declare namespace Nabu {
+    function download(filename: string, text: string): void;
+}
+declare namespace Nabu {
     interface IJK {
         i: number;
         j: number;
