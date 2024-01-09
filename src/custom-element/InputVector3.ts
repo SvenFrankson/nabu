@@ -23,7 +23,7 @@ namespace Nabu {
         }
 
         private _useIJK: boolean = false;
-        private _decimals: number = 3;
+        private _decimals: number = 4;
         private _x: number = 0;
         private _y: number = 0;
         private _z: number = 0;
@@ -93,7 +93,7 @@ namespace Nabu {
 
         private _setValueProps(e: HTMLInputElement) {
             e.setAttribute("type", "number");
-            e.setAttribute("step", "0.001");
+            e.setAttribute("step", "0.0002");
             e.addEventListener("input", this._onInputCallback);
             e.classList.add("input-vec3-value");
             e.style.display = "inline-block";

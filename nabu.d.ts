@@ -79,6 +79,24 @@ declare namespace Nabu {
     }
 }
 declare namespace Nabu {
+    class InputNumber extends HTMLElement {
+        static get observedAttributes(): string[];
+        private _decimals;
+        private _n;
+        private _nElement;
+        private _updateInterval;
+        connectedCallback(): void;
+        private _update;
+        attributeChangedCallback(name: string, oldValue: string, newValue: string): void;
+        private _setValueProps;
+        private _initialized;
+        initialize(): void;
+        setValue(n: number): void;
+        onInputNCallback: (n: number) => void;
+        private _onInputCallback;
+    }
+}
+declare namespace Nabu {
     interface IVector3XYZValue {
         x: number;
         y: number;

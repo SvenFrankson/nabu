@@ -513,11 +513,84 @@ var Nabu;
 })(Nabu || (Nabu = {}));
 var Nabu;
 (function (Nabu) {
+    class InputNumber extends HTMLElement {
+        constructor() {
+            super(...arguments);
+            this._decimals = 3;
+            this._n = 0;
+            this._update = () => {
+                if (!this.isConnected) {
+                    clearInterval(this._updateInterval);
+                }
+            };
+            this._initialized = false;
+            this._onInputCallback = () => {
+                this._n = parseFloat(this._nElement.value);
+                if (this.onInputNCallback) {
+                    this.onInputNCallback(this._n);
+                }
+            };
+        }
+        static get observedAttributes() {
+            return [
+                "decimals"
+            ];
+        }
+        connectedCallback() {
+            this.initialize();
+            this._updateInterval = setInterval(this._update, 100);
+        }
+        attributeChangedCallback(name, oldValue, newValue) {
+            if (this._initialized) {
+                if (name === "decimals") {
+                    let value = parseInt(newValue);
+                    if (isFinite(value)) {
+                        this._decimals = value;
+                    }
+                    this.setValue(this._n);
+                }
+            }
+        }
+        _setValueProps(e) {
+            e.setAttribute("type", "number");
+            e.setAttribute("step", "0.05");
+            e.addEventListener("input", this._onInputCallback);
+            e.classList.add("input-vec3-value");
+            e.style.display = "inline-block";
+            e.style.width = "90%";
+        }
+        initialize() {
+            if (!this._initialized) {
+                this.style.display = "inline-block";
+                this.style.textAlign = "center";
+                this._nElement = document.createElement("input");
+                this._setValueProps(this._nElement);
+                this.appendChild(this._nElement);
+                this._initialized = true;
+                for (let i = 0; i < Nabu.DebugDisplayVector3Value.observedAttributes.length; i++) {
+                    let name = Nabu.DebugDisplayVector3Value.observedAttributes[i];
+                    let value = this.getAttribute(name);
+                    this.attributeChangedCallback(name, value + "_forceupdate", value);
+                }
+            }
+        }
+        setValue(n) {
+            if (isFinite(n)) {
+                this._n = n;
+            }
+            this._nElement.value = this._n.toFixed(this._decimals);
+        }
+    }
+    Nabu.InputNumber = InputNumber;
+    customElements.define("input-number", InputNumber);
+})(Nabu || (Nabu = {}));
+var Nabu;
+(function (Nabu) {
     class InputVector3 extends HTMLElement {
         constructor() {
             super(...arguments);
             this._useIJK = false;
-            this._decimals = 3;
+            this._decimals = 4;
             this._x = 0;
             this._y = 0;
             this._z = 0;
@@ -598,7 +671,7 @@ var Nabu;
         }
         _setValueProps(e) {
             e.setAttribute("type", "number");
-            e.setAttribute("step", "0.001");
+            e.setAttribute("step", "0.0002");
             e.addEventListener("input", this._onInputCallback);
             e.classList.add("input-vec3-value");
             e.style.display = "inline-block";
