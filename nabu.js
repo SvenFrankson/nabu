@@ -517,6 +517,7 @@ var Nabu;
         constructor() {
             super(...arguments);
             this._decimals = 3;
+            this._step = 0.005;
             this._n = 0;
             this._update = () => {
                 if (!this.isConnected) {
@@ -533,7 +534,8 @@ var Nabu;
         }
         static get observedAttributes() {
             return [
-                "decimals"
+                "decimals",
+                "step"
             ];
         }
         connectedCallback() {
@@ -547,13 +549,25 @@ var Nabu;
                     if (isFinite(value)) {
                         this._decimals = value;
                     }
-                    this.setValue(this._n);
+                    if (this._nElement) {
+                        this._setValueProps(this._nElement);
+                        this.setValue(this._n);
+                    }
+                }
+                if (name === "step") {
+                    let value = parseFloat(newValue);
+                    if (isFinite(value)) {
+                        this._step = value;
+                    }
+                    if (this._nElement) {
+                        this._setValueProps(this._nElement);
+                    }
                 }
             }
         }
         _setValueProps(e) {
             e.setAttribute("type", "number");
-            e.setAttribute("step", "0.05");
+            e.setAttribute("step", this._step.toFixed(this._decimals));
             e.addEventListener("input", this._onInputCallback);
             e.classList.add("input-vec3-value");
             e.style.display = "inline-block";

@@ -82,6 +82,7 @@ declare namespace Nabu {
     class InputNumber extends HTMLElement {
         static get observedAttributes(): string[];
         private _decimals;
+        private _step;
         private _n;
         private _nElement;
         private _updateInterval;

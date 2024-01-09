@@ -4,11 +4,13 @@ namespace Nabu {
         
         public static get observedAttributes() {
             return [
-                "decimals"
+                "decimals",
+                "step"
             ];
         }
 
         private _decimals: number = 3;
+        private _step: number = 0.005;
         private _n: number = 0;
         
         private _nElement: HTMLInputElement;
@@ -33,14 +35,26 @@ namespace Nabu {
                     if (isFinite(value)) {
                         this._decimals = value;
                     }
-                    this.setValue(this._n);
+                    if (this._nElement) {
+                        this._setValueProps(this._nElement);
+                        this.setValue(this._n);
+                    }
+                }
+                if (name === "step") {
+                    let value = parseFloat(newValue);
+                    if (isFinite(value)) {
+                        this._step = value;
+                    }
+                    if (this._nElement) {
+                        this._setValueProps(this._nElement);
+                    }
                 }
             }
         }
 
         private _setValueProps(e: HTMLInputElement) {
             e.setAttribute("type", "number");
-            e.setAttribute("step", "0.05");
+            e.setAttribute("step", this._step.toFixed(this._decimals));
             e.addEventListener("input", this._onInputCallback);
             e.classList.add("input-vec3-value");
             e.style.display = "inline-block";
