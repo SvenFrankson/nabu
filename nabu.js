@@ -44,6 +44,15 @@ var Nabu;
 var Nabu;
 (function (Nabu) {
     class Easing {
+        static easeInSquare(x) {
+            return x * x;
+        }
+        static easeOutSquare(x) {
+            return 1 - (1 - x) * (1 - x);
+        }
+        static easeInCubic(x) {
+            return x * x * x;
+        }
         static easeOutCubic(x) {
             return 1 - Math.pow(1 - x, 3);
         }
@@ -143,6 +152,16 @@ var Nabu;
         return exponent + 1;
     }
     Nabu.CeilPow2Exponent = CeilPow2Exponent;
+    function Step(from, to, step) {
+        if (Math.abs(from - to) <= step) {
+            return to;
+        }
+        if (to < from) {
+            step *= -1;
+        }
+        return from + step;
+    }
+    Nabu.Step = Step;
     function StepAngle(from, to, step) {
         while (from < 0) {
             from += 2 * Math.PI;

@@ -25,6 +25,16 @@ namespace Nabu {
         return exponent + 1;
     }
 
+    export function Step(from: number, to: number, step: number): number {
+        if (Math.abs(from - to) <= step) {
+            return to;
+        }
+        if (to < from) {
+            step *= - 1;
+        }
+        return from + step;
+    }
+
     export function StepAngle(from: number, to: number, step: number): number {
         while (from < 0) {
             from += 2 * Math.PI;

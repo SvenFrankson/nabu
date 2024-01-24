@@ -4,6 +4,9 @@ declare namespace Nabu {
 }
 declare namespace Nabu {
     class Easing {
+        static easeInSquare(x: number): number;
+        static easeOutSquare(x: number): number;
+        static easeInCubic(x: number): number;
         static easeOutCubic(x: number): number;
         static easeInOutSine(x: number): number;
         static easeOutElastic(x: number): number;
@@ -30,6 +33,7 @@ declare namespace Nabu {
     function Pow2(n: number): number;
     function FloorPow2Exponent(n: number): number;
     function CeilPow2Exponent(n: number): number;
+    function Step(from: number, to: number, step: number): number;
     function StepAngle(from: number, to: number, step: number): number;
     function LerpAngle(from: number, to: number, t: number): number;
     function AngularDistance(from: number, to: number): number;
