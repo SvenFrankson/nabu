@@ -3,7 +3,19 @@
 namespace Nabu {
 
     export class Easing {
-        
+
+        public static easeInSquare(x: number): number {
+            return x * x;
+        }
+
+        public static easeOutSquare(x: number): number {
+            return 1 - (1 - x) * (1 - x);
+        }
+
+        public static easeInCubic(x: number): number {
+            return x * x * x;
+        }
+
         public static easeOutCubic(x: number): number {
             return 1 - Math.pow(1 - x, 3);
         }
