@@ -30,6 +30,7 @@ declare namespace Nabu {
     }
 }
 declare namespace Nabu {
+    function MinMax(n: number, min: number, max: number): number;
     function Pow2(n: number): number;
     function FloorPow2Exponent(n: number): number;
     function CeilPow2Exponent(n: number): number;
@@ -66,6 +67,13 @@ declare namespace Nabu {
         serialize(output?: string[]): string[];
         static DeserializeFromString(strInput: string): OctreeNode<number>;
         static Deserialize(input: string[]): OctreeNode<number>;
+    }
+}
+declare namespace Nabu {
+    interface UVW {
+        u: number;
+        v: number;
+        w: number;
     }
 }
 declare namespace Nabu {

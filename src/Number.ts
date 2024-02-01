@@ -4,6 +4,10 @@ namespace Nabu {
     for (let i = 0; i < 20; i++) {
         Pow2Values[i] = Math.pow(2, i);
     }
+
+    export function MinMax(n: number, min: number, max: number): number {
+        return Math.min(Math.max(n, min), max);
+    }
     
     export function Pow2(n: number): number {
         return Pow2Values[n];
