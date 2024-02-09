@@ -1,6 +1,6 @@
-# mummu
+# Nabu
 
-Mummu is a collection of tools for Typescript applications.
+Nabu is a collection of tools for Typescript applications.
 
 ## Disclaimer
 
