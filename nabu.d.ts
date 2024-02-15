@@ -85,9 +85,11 @@ declare namespace Nabu {
         indexOf(e: T): number;
         push(e: T): void;
         remove(e: T): T;
+        removeAt(i: number): T;
         contains(e: T): boolean;
         forEach(callback: (e: T) => void): void;
         sort(callback: (e1: T, e2: T) => number): void;
+        cloneAsArray(): T[];
     }
 }
 declare namespace Nabu {

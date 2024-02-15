@@ -35,6 +35,13 @@ namespace Nabu {
             return undefined;
         }
 
+        public removeAt(i: number): T {
+            if (i >= 0 && i < this._elements.length) {
+                let e = this._elements.splice(i, 1);
+                return e[0];
+            }
+        }
+
         public contains(e: T): boolean {
             return this._elements.indexOf(e) != - 1;
         }
@@ -47,6 +54,10 @@ namespace Nabu {
 
         public sort(callback: (e1: T, e2: T) => number): void {
             this._elements = this._elements.sort(callback);
+        }
+
+        public cloneAsArray(): T[] {
+            return [...this._elements];
         }
     }
 }
