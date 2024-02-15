@@ -1,4 +1,7 @@
 declare namespace Nabu {
+    function Wait(frames?: number): Promise<void>;
+}
+declare namespace Nabu {
     function Compress(data: Uint8Array): Uint8Array;
     function Decompress(data: Uint8Array): Uint8Array;
 }
