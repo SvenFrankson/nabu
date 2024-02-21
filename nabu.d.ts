@@ -86,7 +86,7 @@ declare namespace Nabu {
         get(i: number): T;
         getLast(): T;
         indexOf(e: T): number;
-        push(e: T): void;
+        push(...elements: T[]): void;
         remove(e: T): T;
         removeAt(i: number): T;
         contains(e: T): boolean;

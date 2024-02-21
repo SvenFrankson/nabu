@@ -20,10 +20,12 @@ namespace Nabu {
             return this._elements.indexOf(e);
         }
 
-        public push(e: T) {
-            if (this._elements.indexOf(e) === -1) {
-                this._elements.push(e);
-            }
+        public push(...elements: T[]) {
+            elements.forEach((e: T) => {
+                if (this._elements.indexOf(e) === -1) {
+                    this._elements.push(e);
+                }
+            })
         }
 
         public remove(e: T): T {
