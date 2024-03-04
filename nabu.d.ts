@@ -259,3 +259,56 @@ declare namespace Nabu {
     }
     var RAND: Rand;
 }
+declare namespace Nabu {
+    class PanelElement extends HTMLElement {
+        x: number;
+        y: number;
+        w: number;
+        h: number;
+        computedTop: number;
+        computedLeft: number;
+        get top(): number;
+        set top(v: number);
+        get left(): number;
+        set left(v: number);
+    }
+}
+declare namespace Nabu {
+    class PanelPage extends HTMLElement implements IPage {
+        static get observedAttributes(): string[];
+        private _loaded;
+        private _shown;
+        private _animateShowInterval;
+        panels: PanelElement[];
+        xCount: number;
+        yCount: number;
+        animLineHeight: number;
+        animLineDir: number;
+        private _onLoad;
+        get onLoad(): () => void;
+        set onLoad(callback: () => void);
+        connectedCallback(): void;
+        attributeChangedCallback(name: string, oldValue: string, newValue: string): void;
+        show(duration?: number): Promise<void>;
+        hide(duration?: number): Promise<void>;
+        resize(): void;
+    }
+}
+declare namespace Nabu {
+    interface IPage {
+        show(duration?: number): Promise<void>;
+        hide(duration?: number): Promise<void>;
+    }
+    class Router {
+        pages: IPage[];
+        homePage: PanelPage;
+        challengePage: PanelPage;
+        wait(duration: number): Promise<void>;
+        findAllPages(): void;
+        initialize(): void;
+        show(page: IPage, dontCloseOthers?: boolean): Promise<void>;
+        private _currentHRef;
+        private _update;
+        private _onHRefChange;
+    }
+}
