@@ -61,7 +61,6 @@ namespace Nabu {
                 let v = parseInt(newValue);
                 if (v === -1 || v === 1) {
                     this.animLineDir = v;
-                    console.log("anim line dir " + this.animLineDir);
                 }
             }
         }

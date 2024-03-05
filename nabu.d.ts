@@ -301,14 +301,16 @@ declare namespace Nabu {
     }
     class Router {
         pages: IPage[];
-        homePage: PanelPage;
-        challengePage: PanelPage;
         wait(duration: number): Promise<void>;
         findAllPages(): void;
+        protected onFindAllPages(): void;
         initialize(): void;
         show(page: IPage, dontCloseOthers?: boolean): Promise<void>;
-        private _currentHRef;
+        hideAll(): Promise<void>;
+        protected _currentHRef: string;
         private _update;
+        protected onUpdate(): void;
         private _onHRefChange;
+        protected onHRefChange(page: string): void;
     }
 }

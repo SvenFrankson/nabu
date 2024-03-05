@@ -8,9 +8,6 @@ namespace Nabu {
     export class Router {
         public pages: IPage[] = [];
 
-        public homePage: PanelPage;
-        public challengePage: PanelPage;
-
         public async wait(duration: number): Promise<void> {
             return new Promise<void>((resolve) => {
                 setTimeout(resolve, duration * 1000);
@@ -25,14 +22,15 @@ namespace Nabu {
                     this.pages.push(mainMenu);
                 }
             });
+            this.onFindAllPages();
+        }
+
+        protected onFindAllPages(): void {
+
         }
 
         public initialize(): void {
             this.findAllPages();
-
-            // Set all pages here
-            this.homePage = document.getElementById("home-page") as PanelPage;
-            this.challengePage = document.getElementById("challenge-page") as PanelPage;
 
             setInterval(this._update, 30);
         }
@@ -41,30 +39,39 @@ namespace Nabu {
             this.findAllPages();
 
             if (!dontCloseOthers) {
-                for (let i = 0; i < this.pages.length; i++) {
-                    this.pages[i].hide(1);
-                }
+                this.hideAll();
             }
             await page.show(1);
         }
 
-        private _currentHRef: string;
+        public async hideAll(): Promise<void> {
+            for (let i = 0; i < this.pages.length; i++) {
+                this.pages[i].hide(1);
+            }
+        }
+
+        protected _currentHRef: string;
         private _update = () => {
             let href = window.location.href;
             if (href != this._currentHRef) {
                 this._currentHRef = href;
                 this._onHRefChange();
             }
+            this.onUpdate();
         };
+
+        protected onUpdate(): void {
+
+        }
 
         private _onHRefChange = async () => {
             let split = this._currentHRef.split("/");
             let page = split[split.length - 1];
-            if (page.endsWith("#challenge")) {
-                this.show(this.challengePage);
-            } else if (page.endsWith("#home") || true) {
-                this.show(this.homePage);
-            }
+            this.onHRefChange(page);
         };
+
+        protected onHRefChange(page: string): void {
+            
+        }
     }
 }
