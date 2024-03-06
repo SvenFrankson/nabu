@@ -1262,6 +1262,94 @@ var Nabu;
 })(Nabu || (Nabu = {}));
 var Nabu;
 (function (Nabu) {
+    class OptionPage extends HTMLElement {
+        constructor() {
+            super(...arguments);
+            this._loaded = false;
+            this._shown = false;
+        }
+        static get observedAttributes() {
+            return [];
+        }
+        get onLoad() {
+            return this._onLoad;
+        }
+        set onLoad(callback) {
+            this._onLoad = callback;
+            if (this._loaded) {
+                this._onLoad();
+            }
+        }
+        connectedCallback() {
+            this.style.display = "none";
+            this.style.opacity = "0";
+        }
+        attributeChangedCallback(name, oldValue, newValue) {
+        }
+        async show(duration = 1) {
+            return new Promise((resolve) => {
+                if (!this._shown) {
+                    this._shown = true;
+                    this.style.display = "block";
+                    let opacity0 = parseFloat(this.style.opacity);
+                    let opacity1 = 1;
+                    let t0 = performance.now();
+                    let step = () => {
+                        let t = performance.now();
+                        let dt = (t - t0) / 1000;
+                        if (dt >= duration) {
+                            this.style.opacity = "1";
+                            resolve();
+                        }
+                        else {
+                            let f = dt / duration;
+                            this.style.opacity = ((1 - f) * opacity0 + f * opacity1).toFixed(2);
+                            requestAnimationFrame(step);
+                        }
+                    };
+                    step();
+                }
+            });
+        }
+        async hide(duration = 1) {
+            if (duration === 0) {
+                this._shown = false;
+                this.style.display = "none";
+                this.style.opacity = "0";
+            }
+            else {
+                return new Promise((resolve) => {
+                    if (this._shown) {
+                        this._shown = false;
+                        this.style.display = "block";
+                        let opacity0 = parseFloat(this.style.opacity);
+                        let opacity1 = 0;
+                        let t0 = performance.now();
+                        let step = () => {
+                            let t = performance.now();
+                            let dt = (t - t0) / 1000;
+                            if (dt >= duration) {
+                                this.style.display = "none";
+                                this.style.opacity = "0";
+                                resolve();
+                            }
+                            else {
+                                let f = dt / duration;
+                                this.style.opacity = ((1 - f) * opacity0 + f * opacity1).toFixed(2);
+                                requestAnimationFrame(step);
+                            }
+                        };
+                        step();
+                    }
+                });
+            }
+        }
+    }
+    Nabu.OptionPage = OptionPage;
+    customElements.define("option-page", OptionPage);
+})(Nabu || (Nabu = {}));
+var Nabu;
+(function (Nabu) {
     class PanelElement extends HTMLElement {
         constructor() {
             super(...arguments);
@@ -1624,10 +1712,16 @@ var Nabu;
         }
         findAllPages() {
             this.pages = [];
-            let mainMenus = document.querySelectorAll("panel-page");
-            mainMenus.forEach((mainMenu) => {
-                if (mainMenu instanceof Nabu.PanelPage) {
-                    this.pages.push(mainMenu);
+            let panelPages = document.querySelectorAll("panel-page");
+            panelPages.forEach((panelPage) => {
+                if (panelPage instanceof Nabu.PanelPage) {
+                    this.pages.push(panelPage);
+                }
+            });
+            let optionsPages = document.querySelectorAll("option-page");
+            optionsPages.forEach((optionPage) => {
+                if (optionPage instanceof Nabu.OptionPage) {
+                    this.pages.push(optionPage);
                 }
             });
             this.onFindAllPages();

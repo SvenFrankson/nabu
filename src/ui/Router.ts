@@ -16,10 +16,16 @@ namespace Nabu {
 
         public findAllPages(): void {
             this.pages = [];
-            let mainMenus = document.querySelectorAll("panel-page");
-            mainMenus.forEach((mainMenu) => {
-                if (mainMenu instanceof PanelPage) {
-                    this.pages.push(mainMenu);
+            let panelPages = document.querySelectorAll("panel-page");
+            panelPages.forEach((panelPage) => {
+                if (panelPage instanceof PanelPage) {
+                    this.pages.push(panelPage);
+                }
+            });
+            let optionsPages = document.querySelectorAll("option-page");
+            optionsPages.forEach((optionPage) => {
+                if (optionPage instanceof OptionPage) {
+                    this.pages.push(optionPage);
                 }
             });
             this.onFindAllPages();
