@@ -11,6 +11,8 @@ namespace Nabu {
         public computedTop: number = 0;
         public computedLeft: number = 0;
 
+        public fullLine: boolean = false;
+
         public get top(): number {
             return parseFloat(this.style.top)
         }

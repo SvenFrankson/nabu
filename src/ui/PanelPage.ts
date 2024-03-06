@@ -179,10 +179,16 @@ namespace Nabu {
             for (let i = 0; i < elements.length; i++) {
                 let panel = elements[i] as PanelElement;
                 this.panels[i] = panel;
-                panel.w = parseInt(panel.getAttribute("w"));
                 panel.h = parseInt(panel.getAttribute("h"));
-                let area = panel.w * panel.h;
-                requestedTileCount += area;
+                if (panel.getAttribute("w") === "line") {
+                    panel.fullLine = true;
+                    requestedFullLines++;
+                }
+                else {
+                    panel.w = parseInt(panel.getAttribute("w"));
+                    let area = panel.w * panel.h;
+                    requestedTileCount += area;
+                }
             }
 
             let rect = this.getBoundingClientRect();
@@ -230,6 +236,9 @@ namespace Nabu {
                     let panel = this.panels[n] as PanelElement;
                     panel.x = -1;
                     panel.y = -1;
+                    if (panel.fullLine) {
+                        panel.w = this.xCount;
+                    }
 
                     for (let line = 0; line < this.yCount && panel.x === -1; line++) {
                         for (let col = 0; col < this.xCount && panel.x === -1; col++) {
@@ -276,15 +285,17 @@ namespace Nabu {
 
             for (let i = 0; i < this.panels.length; i++) {
                 let panel = this.panels[i];
-                panel.style.display = "block";
+                if (panel.fullLine) {
+                    panel.w = this.xCount;
+                }
                 panel.style.width = (panel.w * tileW - 2 * m).toFixed(0) + "px";
                 panel.style.height = (panel.h * tileH - 2 * m).toFixed(0) + "px";
                 panel.style.position = "absolute";
                 panel.computedLeft = panel.x * tileW + m;
+                panel.computedTop = panel.y * tileH + m + emptyLinesBottom * 0.5 * tileH;
                 if (panel.style.display != "none") {
                     panel.style.left = panel.computedLeft.toFixed(0) + "px";
                 }
-                panel.computedTop = panel.y * tileH + m + emptyLinesBottom * 0.5 * tileH;
                 panel.style.top = panel.computedTop.toFixed(0) + "px";
                 let label = panel.querySelector(".label") as HTMLElement;
                 if (label) {

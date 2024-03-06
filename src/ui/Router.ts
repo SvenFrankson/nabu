@@ -67,6 +67,8 @@ namespace Nabu {
         private _onHRefChange = async () => {
             let split = this._currentHRef.split("/");
             let page = split[split.length - 1];
+            let splitPage = page.split("#");
+            page = "#" + splitPage[splitPage.length - 1];
             this.onHRefChange(page);
         };
 

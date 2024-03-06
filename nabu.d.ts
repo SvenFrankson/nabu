@@ -267,6 +267,7 @@ declare namespace Nabu {
         h: number;
         computedTop: number;
         computedLeft: number;
+        fullLine: boolean;
         get top(): number;
         set top(v: number);
         get left(): number;
