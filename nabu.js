@@ -59,6 +59,57 @@ var Nabu;
     }
     Nabu.Decompress = Decompress;
 })(Nabu || (Nabu = {}));
+var Nabu;
+(function (Nabu) {
+    let ConfigurationElementType;
+    (function (ConfigurationElementType) {
+        ConfigurationElementType[ConfigurationElementType["Boolean"] = 0] = "Boolean";
+        ConfigurationElementType[ConfigurationElementType["Number"] = 1] = "Number";
+        ConfigurationElementType[ConfigurationElementType["Enum"] = 2] = "Enum";
+    })(ConfigurationElementType = Nabu.ConfigurationElementType || (Nabu.ConfigurationElementType = {}));
+    class ConfigurationElement {
+        constructor(property, type, value, onChange) {
+            this.property = property;
+            this.type = type;
+            this.value = value;
+            this.onChange = onChange;
+        }
+    }
+    Nabu.ConfigurationElement = ConfigurationElement;
+    class Configuration {
+        constructor(configName) {
+            this.configName = configName;
+            this.configurationElements = [];
+        }
+        initialize() {
+            this._buildElementsArray();
+            let data = JSON.parse(localStorage.getItem(this.configName));
+            this.deserialize(data);
+        }
+        saveToLocalStorage() {
+            let data = this.serialize();
+            localStorage.setItem(this.configName, JSON.stringify(data));
+        }
+        serialize() {
+            let data = {};
+            this.configurationElements.forEach(configurationElement => {
+                data[configurationElement.property] = configurationElement.value;
+            });
+            return data;
+        }
+        deserialize(data) {
+            if (data) {
+                this.configurationElements.forEach(configurationElement => {
+                    let v = data[configurationElement.property];
+                    if (v != undefined) {
+                        configurationElement.value = v;
+                    }
+                });
+            }
+        }
+    }
+    Nabu.Configuration = Configuration;
+})(Nabu || (Nabu = {}));
 // Code by Andrey Sitnik and Ivan Solovev https://github.com/ai/easings.net
 var Nabu;
 (function (Nabu) {

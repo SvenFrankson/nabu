@@ -6,6 +6,30 @@ declare namespace Nabu {
     function Decompress(data: Uint8Array): Uint8Array;
 }
 declare namespace Nabu {
+    enum ConfigurationElementType {
+        Boolean = 0,
+        Number = 1,
+        Enum = 2
+    }
+    class ConfigurationElement {
+        property: string;
+        type: ConfigurationElementType;
+        value: number;
+        onChange?: () => void;
+        constructor(property: string, type: ConfigurationElementType, value: number, onChange?: () => void);
+    }
+    abstract class Configuration {
+        configName: string;
+        configurationElements: ConfigurationElement[];
+        constructor(configName: string);
+        initialize(): void;
+        protected abstract _buildElementsArray(): void;
+        saveToLocalStorage(): void;
+        serialize(): any;
+        deserialize(data: any): void;
+    }
+}
+declare namespace Nabu {
     class Easing {
         static easeInSquare(x: number): number;
         static easeOutSquare(x: number): number;
