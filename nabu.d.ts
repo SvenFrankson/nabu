@@ -288,6 +288,11 @@ declare namespace Nabu {
         static get observedAttributes(): any[];
         private _loaded;
         private _shown;
+        configuration: Configuration;
+        private _title;
+        private _containerFrame;
+        private _container;
+        private _backButton;
         private _onLoad;
         get onLoad(): () => void;
         set onLoad(callback: () => void);
@@ -295,6 +300,7 @@ declare namespace Nabu {
         attributeChangedCallback(name: string, oldValue: string, newValue: string): void;
         show(duration?: number): Promise<void>;
         hide(duration?: number): Promise<void>;
+        setConfiguration(configuration: Configuration): void;
     }
 }
 declare namespace Nabu {

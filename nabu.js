@@ -1334,6 +1334,22 @@ var Nabu;
         connectedCallback() {
             this.style.display = "none";
             this.style.opacity = "0";
+            this._title = document.createElement("h1");
+            this._title.innerHTML = "OPTIONS";
+            this.appendChild(this._title);
+            this._containerFrame = document.createElement("div");
+            this._containerFrame.classList.add("container-frame");
+            this.appendChild(this._containerFrame);
+            this._container = document.createElement("div");
+            this._container.classList.add("container");
+            this._containerFrame.appendChild(this._container);
+            let a = document.createElement("a");
+            a.href = "#home";
+            this.appendChild(a);
+            this._backButton = document.createElement("button");
+            this._backButton.classList.add("back-button");
+            this._backButton.innerText = "Back";
+            a.appendChild(this._backButton);
         }
         attributeChangedCallback(name, oldValue, newValue) {
         }
@@ -1393,6 +1409,15 @@ var Nabu;
                         step();
                     }
                 });
+            }
+        }
+        setConfiguration(configuration) {
+            for (let i = 0; i < configuration.configurationElements.length; i++) {
+                let configElement = configuration.configurationElements[i];
+                let label = document.createElement("div");
+                label.innerHTML = configElement.property + " " + i.toFixed(0);
+                label.style.fontSize = "min(3svh, 3vw)";
+                this._container.appendChild(label);
             }
         }
     }
