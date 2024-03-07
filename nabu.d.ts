@@ -11,12 +11,19 @@ declare namespace Nabu {
         Number = 1,
         Enum = 2
     }
+    interface IConfigurationElementValueProp {
+        min?: number;
+        max?: number;
+        step?: number;
+        toString?: (v: number) => string;
+    }
     class ConfigurationElement {
         property: string;
         type: ConfigurationElementType;
         value: number;
+        prop?: IConfigurationElementValueProp;
         onChange?: () => void;
-        constructor(property: string, type: ConfigurationElementType, value: number, onChange?: () => void);
+        constructor(property: string, type: ConfigurationElementType, value: number, prop?: IConfigurationElementValueProp, onChange?: () => void);
     }
     abstract class Configuration {
         configName: string;

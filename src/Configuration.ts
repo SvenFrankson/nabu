@@ -6,12 +6,20 @@ namespace Nabu {
         Enum
     }
 
+    export interface IConfigurationElementValueProp {
+        min?: number;
+        max?: number;
+        step?: number;
+        toString?: (v: number) => string;
+    }
+
     export class ConfigurationElement {
 
         constructor(
             public property: string,
             public type: ConfigurationElementType,
             public value: number,
+            public prop?: IConfigurationElementValueProp,
             public onChange?: () => void
         ) {
 

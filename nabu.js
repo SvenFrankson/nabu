@@ -68,10 +68,11 @@ var Nabu;
         ConfigurationElementType[ConfigurationElementType["Enum"] = 2] = "Enum";
     })(ConfigurationElementType = Nabu.ConfigurationElementType || (Nabu.ConfigurationElementType = {}));
     class ConfigurationElement {
-        constructor(property, type, value, onChange) {
+        constructor(property, type, value, prop, onChange) {
             this.property = property;
             this.type = type;
             this.value = value;
+            this.prop = prop;
             this.onChange = onChange;
         }
     }
@@ -1414,10 +1415,81 @@ var Nabu;
         setConfiguration(configuration) {
             for (let i = 0; i < configuration.configurationElements.length; i++) {
                 let configElement = configuration.configurationElements[i];
+                let line = document.createElement("div");
+                line.classList.add("line");
+                this._container.appendChild(line);
                 let label = document.createElement("div");
+                label.classList.add("label");
                 label.innerHTML = configElement.property + " " + i.toFixed(0);
-                label.style.fontSize = "min(3svh, 3vw)";
-                this._container.appendChild(label);
+                label.style.display = "inline-block";
+                label.style.marginLeft = "5%";
+                label.style.width = "45%";
+                line.appendChild(label);
+                let valueBlock = document.createElement("div");
+                valueBlock.classList.add("value-block");
+                valueBlock.style.display = "inline-block";
+                valueBlock.style.marginLeft = "5%";
+                valueBlock.style.width = "45%";
+                line.appendChild(valueBlock);
+                if (configElement.type === Nabu.ConfigurationElementType.Boolean) {
+                    let checkbox = document.createElement("div");
+                    checkbox.classList.add("option-button");
+                    checkbox.classList.add("boolean-checkbox");
+                    valueBlock.appendChild(checkbox);
+                    checkbox.onclick = () => {
+                        if (checkbox.getAttribute("value") === "1") {
+                            checkbox.setAttribute("value", "0");
+                        }
+                        else {
+                            checkbox.setAttribute("value", "1");
+                        }
+                    };
+                }
+                else if (configElement.type === Nabu.ConfigurationElementType.Number || configElement.type === Nabu.ConfigurationElementType.Enum) {
+                    let minus = document.createElement("div");
+                    minus.classList.add("option-button");
+                    if (configElement.type === Nabu.ConfigurationElementType.Number) {
+                        minus.classList.add("minus");
+                    }
+                    else {
+                        minus.classList.add("prev");
+                    }
+                    valueBlock.appendChild(minus);
+                    minus.onclick = () => {
+                        if (minus.getAttribute("value") === "1") {
+                            minus.setAttribute("value", "0");
+                        }
+                        else {
+                            minus.setAttribute("value", "1");
+                        }
+                    };
+                    let numValue = document.createElement("div");
+                    numValue.classList.add("value");
+                    if (configElement.prop.toString) {
+                        numValue.innerHTML = configElement.prop.toString(configElement.value);
+                    }
+                    else {
+                        numValue.innerHTML = configElement.value.toString();
+                    }
+                    valueBlock.appendChild(numValue);
+                    let plus = document.createElement("div");
+                    plus.classList.add("option-button");
+                    if (configElement.type === Nabu.ConfigurationElementType.Number) {
+                        plus.classList.add("plus");
+                    }
+                    else {
+                        plus.classList.add("next");
+                    }
+                    valueBlock.appendChild(plus);
+                    plus.onclick = () => {
+                        if (plus.getAttribute("value") === "1") {
+                            plus.setAttribute("value", "0");
+                        }
+                        else {
+                            plus.setAttribute("value", "1");
+                        }
+                    };
+                }
             }
         }
     }
