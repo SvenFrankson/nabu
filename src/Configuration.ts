@@ -22,7 +22,21 @@ namespace Nabu {
             public prop?: IConfigurationElementValueProp,
             public onChange?: () => void
         ) {
-
+            if (!this.prop) {
+                this.prop = {}
+            }
+            if (isNaN(this.prop.min)) {
+                this.prop.min = 0;
+            }
+            if (isNaN(this.prop.max)) {
+                this.prop.max = 1000;
+            }
+            if (isNaN(this.prop.step)) {
+                this.prop.step = 1;
+            }
+            if (!this.prop.toString) {
+                this.prop.toString = (v: number) => { return v.toString(); };
+            }
         }
     }
 

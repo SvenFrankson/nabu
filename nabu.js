@@ -74,6 +74,21 @@ var Nabu;
             this.value = value;
             this.prop = prop;
             this.onChange = onChange;
+            if (!this.prop) {
+                this.prop = {};
+            }
+            if (isNaN(this.prop.min)) {
+                this.prop.min = 0;
+            }
+            if (isNaN(this.prop.max)) {
+                this.prop.max = 1000;
+            }
+            if (isNaN(this.prop.step)) {
+                this.prop.step = 1;
+            }
+            if (!this.prop.toString) {
+                this.prop.toString = (v) => { return v.toString(); };
+            }
         }
     }
     Nabu.ConfigurationElement = ConfigurationElement;
@@ -1413,6 +1428,7 @@ var Nabu;
             }
         }
         setConfiguration(configuration) {
+            this.configuration = configuration;
             for (let i = 0; i < configuration.configurationElements.length; i++) {
                 let configElement = configuration.configurationElements[i];
                 let line = document.createElement("div");
@@ -1436,13 +1452,11 @@ var Nabu;
                     checkbox.classList.add("option-button");
                     checkbox.classList.add("boolean-checkbox");
                     valueBlock.appendChild(checkbox);
+                    checkbox.setAttribute("value", configElement.value === 1 ? "1" : "0");
                     checkbox.onclick = () => {
-                        if (checkbox.getAttribute("value") === "1") {
-                            checkbox.setAttribute("value", "0");
-                        }
-                        else {
-                            checkbox.setAttribute("value", "1");
-                        }
+                        configElement.value = configElement.value === 1 ? 0 : 1;
+                        checkbox.setAttribute("value", configElement.value === 1 ? "1" : "0");
+                        this.configuration.saveToLocalStorage();
                     };
                 }
                 else if (configElement.type === Nabu.ConfigurationElementType.Number || configElement.type === Nabu.ConfigurationElementType.Enum) {
@@ -1456,21 +1470,15 @@ var Nabu;
                     }
                     valueBlock.appendChild(minus);
                     minus.onclick = () => {
-                        if (minus.getAttribute("value") === "1") {
-                            minus.setAttribute("value", "0");
-                        }
-                        else {
-                            minus.setAttribute("value", "1");
+                        if (configElement.value > configElement.prop.min) {
+                            configElement.value = Math.max(configElement.prop.min, configElement.value - configElement.prop.step);
+                            numValue.innerHTML = configElement.prop.toString(configElement.value);
+                            this.configuration.saveToLocalStorage();
                         }
                     };
                     let numValue = document.createElement("div");
                     numValue.classList.add("value");
-                    if (configElement.prop.toString) {
-                        numValue.innerHTML = configElement.prop.toString(configElement.value);
-                    }
-                    else {
-                        numValue.innerHTML = configElement.value.toString();
-                    }
+                    numValue.innerHTML = configElement.prop.toString(configElement.value);
                     valueBlock.appendChild(numValue);
                     let plus = document.createElement("div");
                     plus.classList.add("option-button");
@@ -1482,11 +1490,10 @@ var Nabu;
                     }
                     valueBlock.appendChild(plus);
                     plus.onclick = () => {
-                        if (plus.getAttribute("value") === "1") {
-                            plus.setAttribute("value", "0");
-                        }
-                        else {
-                            plus.setAttribute("value", "1");
+                        if (configElement.value < configElement.prop.max) {
+                            configElement.value = Math.min(configElement.prop.max, configElement.value + configElement.prop.step);
+                            numValue.innerHTML = configElement.prop.toString(configElement.value);
+                            this.configuration.saveToLocalStorage();
                         }
                     };
                 }
