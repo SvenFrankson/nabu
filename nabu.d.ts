@@ -12,6 +12,7 @@ declare namespace Nabu {
         Enum = 2
     }
     interface IConfigurationElementValueProp {
+        displayName?: string;
         min?: number;
         max?: number;
         step?: number;
@@ -22,8 +23,8 @@ declare namespace Nabu {
         type: ConfigurationElementType;
         value: number;
         prop?: IConfigurationElementValueProp;
-        onChange?: () => void;
-        constructor(property: string, type: ConfigurationElementType, value: number, prop?: IConfigurationElementValueProp, onChange?: () => void);
+        onChange?: (v: number) => void;
+        constructor(property: string, type: ConfigurationElementType, value: number, prop?: IConfigurationElementValueProp, onChange?: (v: number) => void);
     }
     abstract class Configuration {
         configName: string;
@@ -31,6 +32,7 @@ declare namespace Nabu {
         constructor(configName: string);
         initialize(): void;
         protected abstract _buildElementsArray(): void;
+        getValue(property: string): number;
         saveToLocalStorage(): void;
         serialize(): any;
         deserialize(data: any): void;

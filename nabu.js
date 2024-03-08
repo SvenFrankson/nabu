@@ -77,6 +77,9 @@ var Nabu;
             if (!this.prop) {
                 this.prop = {};
             }
+            if (!this.prop.displayName) {
+                this.prop.displayName = property;
+            }
             if (isNaN(this.prop.min)) {
                 this.prop.min = 0;
             }
@@ -101,6 +104,13 @@ var Nabu;
             this._buildElementsArray();
             let data = JSON.parse(localStorage.getItem(this.configName));
             this.deserialize(data);
+        }
+        getValue(property) {
+            let element = this.configurationElements.find(e => { return e.property === property; });
+            if (element) {
+                return element.value;
+            }
+            return undefined;
         }
         saveToLocalStorage() {
             let data = this.serialize();
@@ -1436,15 +1446,21 @@ var Nabu;
                 this._container.appendChild(line);
                 let label = document.createElement("div");
                 label.classList.add("label");
-                label.innerHTML = configElement.property + " " + i.toFixed(0);
+                label.innerHTML = configElement.prop.displayName;
                 label.style.display = "inline-block";
-                label.style.marginLeft = "5%";
+                label.style.marginLeft = "1%";
+                label.style.marginRight = "1%";
+                label.style.paddingLeft = "1.5%";
+                label.style.paddingRight = "1.5%";
                 label.style.width = "45%";
                 line.appendChild(label);
                 let valueBlock = document.createElement("div");
                 valueBlock.classList.add("value-block");
                 valueBlock.style.display = "inline-block";
-                valueBlock.style.marginLeft = "5%";
+                valueBlock.style.marginLeft = "1%";
+                valueBlock.style.marginRight = "1%";
+                valueBlock.style.paddingLeft = "1.5%";
+                valueBlock.style.paddingRight = "1.5%";
                 valueBlock.style.width = "45%";
                 line.appendChild(valueBlock);
                 if (configElement.type === Nabu.ConfigurationElementType.Boolean) {
@@ -1457,6 +1473,9 @@ var Nabu;
                         configElement.value = configElement.value === 1 ? 0 : 1;
                         checkbox.setAttribute("value", configElement.value === 1 ? "1" : "0");
                         this.configuration.saveToLocalStorage();
+                        if (configElement.onChange) {
+                            configElement.onChange(configElement.value);
+                        }
                     };
                 }
                 else if (configElement.type === Nabu.ConfigurationElementType.Number || configElement.type === Nabu.ConfigurationElementType.Enum) {
@@ -1474,6 +1493,9 @@ var Nabu;
                             configElement.value = Math.max(configElement.prop.min, configElement.value - configElement.prop.step);
                             numValue.innerHTML = configElement.prop.toString(configElement.value);
                             this.configuration.saveToLocalStorage();
+                            if (configElement.onChange) {
+                                configElement.onChange(configElement.value);
+                            }
                         }
                     };
                     let numValue = document.createElement("div");
@@ -1494,6 +1516,9 @@ var Nabu;
                             configElement.value = Math.min(configElement.prop.max, configElement.value + configElement.prop.step);
                             numValue.innerHTML = configElement.prop.toString(configElement.value);
                             this.configuration.saveToLocalStorage();
+                            if (configElement.onChange) {
+                                configElement.onChange(configElement.value);
+                            }
                         }
                     };
                 }

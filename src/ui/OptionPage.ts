@@ -125,16 +125,22 @@ namespace Nabu {
 
                 let label = document.createElement("div");
                 label.classList.add("label");
-                label.innerHTML = configElement.property + " " + i.toFixed(0);
+                label.innerHTML = configElement.prop.displayName;
                 label.style.display = "inline-block";
-                label.style.marginLeft = "5%";
+                label.style.marginLeft = "1%";
+                label.style.marginRight = "1%";
+                label.style.paddingLeft = "1.5%";
+                label.style.paddingRight = "1.5%";
                 label.style.width = "45%";
                 line.appendChild(label);
 
                 let valueBlock = document.createElement("div");
                 valueBlock.classList.add("value-block");
                 valueBlock.style.display = "inline-block";
-                valueBlock.style.marginLeft = "5%";
+                valueBlock.style.marginLeft = "1%";
+                valueBlock.style.marginRight = "1%";
+                valueBlock.style.paddingLeft = "1.5%";
+                valueBlock.style.paddingRight = "1.5%";
                 valueBlock.style.width = "45%";
                 line.appendChild(valueBlock);
 
@@ -148,6 +154,9 @@ namespace Nabu {
                         configElement.value = configElement.value === 1 ? 0 : 1;
                         checkbox.setAttribute("value", configElement.value === 1 ? "1" : "0");
                         this.configuration.saveToLocalStorage();
+                        if (configElement.onChange) {
+                            configElement.onChange(configElement.value);
+                        }
                     }
                 }
                 else if (configElement.type === ConfigurationElementType.Number || configElement.type === ConfigurationElementType.Enum){
@@ -165,6 +174,9 @@ namespace Nabu {
                             configElement.value = Math.max(configElement.prop.min, configElement.value - configElement.prop.step);
                             numValue.innerHTML = configElement.prop.toString(configElement.value);
                             this.configuration.saveToLocalStorage();
+                            if (configElement.onChange) {
+                                configElement.onChange(configElement.value);
+                            }
                         }
                     }
 
@@ -187,6 +199,9 @@ namespace Nabu {
                             configElement.value = Math.min(configElement.prop.max, configElement.value + configElement.prop.step);
                             numValue.innerHTML = configElement.prop.toString(configElement.value);
                             this.configuration.saveToLocalStorage();
+                            if (configElement.onChange) {
+                                configElement.onChange(configElement.value);
+                            }
                         }
                     }
                 }

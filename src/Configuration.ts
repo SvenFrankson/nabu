@@ -7,6 +7,7 @@ namespace Nabu {
     }
 
     export interface IConfigurationElementValueProp {
+        displayName?: string;
         min?: number;
         max?: number;
         step?: number;
@@ -20,10 +21,13 @@ namespace Nabu {
             public type: ConfigurationElementType,
             public value: number,
             public prop?: IConfigurationElementValueProp,
-            public onChange?: () => void
+            public onChange?: (v: number) => void
         ) {
             if (!this.prop) {
                 this.prop = {}
+            }
+            if (!this.prop.displayName) {
+                this.prop.displayName = property;
             }
             if (isNaN(this.prop.min)) {
                 this.prop.min = 0;
@@ -55,6 +59,14 @@ namespace Nabu {
         }
 
         protected abstract _buildElementsArray(): void;
+
+        public getValue(property: string): number {
+            let element = this.configurationElements.find(e => { return e.property === property; });
+            if (element) {
+                return element.value;
+            }
+            return undefined;
+        }
 
         public saveToLocalStorage(): void {
             let data = this.serialize();
