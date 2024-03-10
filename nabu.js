@@ -16,6 +16,14 @@ var Nabu;
         });
     }
     Nabu.Wait = Wait;
+    async function NextFrame() {
+        return new Promise(resolve => {
+            requestAnimationFrame(() => {
+                resolve();
+            });
+        });
+    }
+    Nabu.NextFrame = NextFrame;
 })(Nabu || (Nabu = {}));
 var Nabu;
 (function (Nabu) {
@@ -334,6 +342,17 @@ var Nabu;
         return d;
     }
     Nabu.AngularDistance = AngularDistance;
+    function TERP(t, a, b, c, d) {
+        return 0.5 * (c - a + (2.0 * a - 5.0 * b + 4.0 * c - d + (3.0 * (b - c) + d - a) * t) * t) * t + b;
+    }
+    function BicubicInterpolate(x, y, v00, v10, v20, v30, v01, v11, v21, v31, v02, v12, v22, v32, v03, v13, v23, v33) {
+        let i0 = TERP(x, v00, v10, v20, v30);
+        let i1 = TERP(x, v01, v11, v21, v31);
+        let i2 = TERP(x, v02, v12, v22, v32);
+        let i3 = TERP(x, v03, v13, v23, v33);
+        return TERP(y, i0, i1, i2, i3);
+    }
+    Nabu.BicubicInterpolate = BicubicInterpolate;
 })(Nabu || (Nabu = {}));
 var Nabu;
 (function (Nabu) {
