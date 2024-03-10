@@ -113,4 +113,36 @@ namespace Nabu {
         }
         return d;
     }
+
+    function TERP(t: number, a: number, b: number, c: number, d: number): number {
+        return 0.5 * (c - a + (2.0*a - 5.0*b + 4.0*c - d + (3.0*(b - c) + d - a)*t)*t)*t + b;
+    }
+
+    export function BicubicInterpolate(
+        x: number,
+        y: number,
+        v00: number,
+        v10: number,
+        v20: number,
+        v30: number,
+        v01: number,
+        v11: number,
+        v21: number,
+        v31: number,
+        v02: number,
+        v12: number,
+        v22: number,
+        v32: number,
+        v03: number,
+        v13: number,
+        v23: number,
+        v33: number
+    ) {
+        let i0 = TERP(x, v00, v10, v20, v30);
+        let i1 = TERP(x, v01, v11, v21, v31);
+        let i2 = TERP(x, v02, v12, v22, v32);
+        let i3 = TERP(x, v03, v13, v23, v33);
+        
+        return TERP(y, i0, i1, i2, i3);
+    }
 }
