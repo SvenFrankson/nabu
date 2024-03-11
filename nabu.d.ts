@@ -295,6 +295,73 @@ declare namespace Nabu {
     var RAND: Rand;
 }
 declare namespace Nabu {
+    class MasterSeed {
+        static BaseSeed: Uint8ClampedArray;
+        static GetFor(name: string): Uint8ClampedArray;
+    }
+}
+declare namespace Nabu {
+    class SeedMap {
+        name: string;
+        size: number;
+        _data: Uint8ClampedArray;
+        constructor(name: string, size: number);
+        getData(i: number, j: number): number;
+        setData(i: number, j: number, v: number): void;
+        randomFill(): void;
+        fillFromBaseSeedMap(baseSeedMap: Uint8ClampedArray, n: number, IMap: number, JMap: number): void;
+        fillFromPNG(url: string): Promise<void>;
+        downloadAsPNG(): void;
+    }
+}
+declare namespace Nabu {
+    class SeededMap {
+        N: number;
+        size: number;
+        debugBaseSeedMap: Uint8ClampedArray;
+        seedMaps: SeedMap[][];
+        primes: number[];
+        constructor(N: number, size: number);
+        static CreateFromMasterSeed(masterSeed: Uint8ClampedArray, N: number, size: number): SeededMap;
+        static CreateWithRandomFill(N: number, size: number): SeededMap;
+        getValue(i: number, j: number, d: number): number;
+        downloadAsPNG(size: number, d?: number): void;
+        downloadDebugBaseSeedAsPNG(): void;
+    }
+}
+declare namespace Nabu {
+    class TerrainMap {
+        private _terrainMapGenerator;
+        iMap: number;
+        jMap: number;
+        data: Uint8ClampedArray;
+        lastUsageTime: number;
+        constructor(_terrainMapGenerator: TerrainMapGenerator, iMap: number, jMap: number);
+        get(i: number, j: number): number;
+    }
+    class TerrainMapGenerator {
+        seededMap: SeededMap;
+        period: number;
+        static MAP_SIZE: number;
+        static MEDIUM_MAP_PIXEL_SIZE: number;
+        static LARGE_MAP_PIXEL_SIZE: number;
+        maxFrameTimeMS: number;
+        maxCachedMaps: number;
+        detailedMaps: TerrainMap[];
+        mediumMaps: TerrainMap[];
+        largeMaps: TerrainMap[];
+        constructor(seededMap: SeededMap, period: number);
+        getMap(IMap: number, JMap: number): Promise<TerrainMap>;
+        updateDetailedCache(): void;
+        getMediumMap(IMap: number, JMap: number): Promise<TerrainMap>;
+        updateMediumedCache(): void;
+        getLargeMap(IMap: number, JMap: number): Promise<TerrainMap>;
+        updateLargedCache(): void;
+        generateMapData(IMap: number, JMap: number, pixelSize?: number): Promise<Uint8ClampedArray>;
+        downloadAsPNG(IMap: number, JMap: number, size?: number, range?: number): Promise<void>;
+    }
+}
+declare namespace Nabu {
     class OptionPage extends HTMLElement implements IPage {
         static get observedAttributes(): any[];
         private _loaded;
