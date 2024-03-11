@@ -260,6 +260,17 @@ var Nabu;
         return exponent + 1;
     }
     Nabu.CeilPow2Exponent = CeilPow2Exponent;
+    function RoundPow2(n) {
+        let floor = Nabu.Pow2(Nabu.FloorPow2Exponent(n));
+        let ceil = Nabu.Pow2(Nabu.CeilPow2Exponent(n));
+        if (Math.abs(floor - n) <= Math.abs(ceil - n)) {
+            return floor;
+        }
+        else {
+            return ceil;
+        }
+    }
+    Nabu.RoundPow2 = RoundPow2;
     function Step(from, to, step) {
         if (Math.abs(from - to) <= step) {
             return to;
@@ -1613,21 +1624,24 @@ var Nabu;
     }
     Nabu.TerrainMap = TerrainMap;
     class TerrainMapGenerator {
-        constructor(seededMap, period) {
+        constructor(seededMap, periods) {
             this.seededMap = seededMap;
-            this.period = period;
             this.maxFrameTimeMS = 15;
             this.maxCachedMaps = 20;
             this.detailedMaps = [];
             this.mediumMaps = [];
             this.largeMaps = [];
-            let floor = Nabu.Pow2(Nabu.FloorPow2Exponent(this.period));
-            let ceil = Nabu.Pow2(Nabu.CeilPow2Exponent(this.period));
-            if (Math.abs(floor - this.period) <= Math.abs(ceil - this.period)) {
-                this.period = floor;
+            this.periods = [];
+            if (typeof (periods) === "number") {
+                this.periods = [Nabu.RoundPow2(periods)];
             }
             else {
-                this.period = ceil;
+                for (let i = 0; i < periods.length; i++) {
+                    this.periods[i] = Nabu.RoundPow2(periods[i]);
+                }
+            }
+            while (this.periods.length < TerrainMapGenerator.PERIODS_COUNT) {
+                this.periods.push(Nabu.RoundPow2(this.periods[this.periods.length - 1] * 0.5));
             }
         }
         async getMap(IMap, JMap) {
@@ -1700,10 +1714,9 @@ var Nabu;
                     values[i] = 0;
                 }
                 // Bicubic version
-                let maxDegree = 7;
                 let f = 0.5;
-                let l = this.period / pixelSize;
-                for (let degree = 0; degree < maxDegree; degree++) {
+                for (let degree = 0; degree < TerrainMapGenerator.PERIODS_COUNT; degree++) {
+                    let l = this.periods[degree];
                     if (l > TerrainMapGenerator.MAP_SIZE) {
                         let count = l / TerrainMapGenerator.MAP_SIZE;
                         let I0 = Math.floor(IMap / count);
@@ -1859,6 +1872,7 @@ var Nabu;
             document.body.removeChild(a);
         }
     }
+    TerrainMapGenerator.PERIODS_COUNT = 7;
     TerrainMapGenerator.MAP_SIZE = 1024;
     TerrainMapGenerator.MEDIUM_MAP_PIXEL_SIZE = 8;
     TerrainMapGenerator.LARGE_MAP_PIXEL_SIZE = 256;

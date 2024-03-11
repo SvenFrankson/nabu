@@ -29,6 +29,16 @@ namespace Nabu {
         return exponent + 1;
     }
 
+    export function RoundPow2(n: number): number {
+        let floor = Nabu.Pow2(Nabu.FloorPow2Exponent(n));
+        let ceil = Nabu.Pow2(Nabu.CeilPow2Exponent(n));
+        if (Math.abs(floor - n) <= Math.abs(ceil - n)) {
+            return floor;
+        } else {
+            return ceil;
+        }
+    }
+
     export function Step(from: number, to: number, step: number): number {
         if (Math.abs(from - to) <= step) {
             return to;

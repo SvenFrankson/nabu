@@ -71,6 +71,7 @@ declare namespace Nabu {
     function Pow2(n: number): number;
     function FloorPow2Exponent(n: number): number;
     function CeilPow2Exponent(n: number): number;
+    function RoundPow2(n: number): number;
     function Step(from: number, to: number, step: number): number;
     function StepAngle(from: number, to: number, step: number): number;
     function LerpAngle(from: number, to: number, t: number): number;
@@ -341,7 +342,7 @@ declare namespace Nabu {
     }
     class TerrainMapGenerator {
         seededMap: SeededMap;
-        period: number;
+        static PERIODS_COUNT: number;
         static MAP_SIZE: number;
         static MEDIUM_MAP_PIXEL_SIZE: number;
         static LARGE_MAP_PIXEL_SIZE: number;
@@ -350,7 +351,8 @@ declare namespace Nabu {
         detailedMaps: TerrainMap[];
         mediumMaps: TerrainMap[];
         largeMaps: TerrainMap[];
-        constructor(seededMap: SeededMap, period: number);
+        periods: number[];
+        constructor(seededMap: SeededMap, periods: number | number[]);
         getMap(IMap: number, JMap: number): Promise<TerrainMap>;
         updateDetailedCache(): void;
         getMediumMap(IMap: number, JMap: number): Promise<TerrainMap>;
