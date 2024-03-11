@@ -26,6 +26,7 @@ declare namespace Nabu {
         prop?: IConfigurationElementValueProp;
         onChange?: (v: number) => void;
         constructor(property: string, type: ConfigurationElementType, value: number, prop?: IConfigurationElementValueProp, onChange?: (v: number) => void);
+        forceInit(): void;
     }
     abstract class Configuration {
         configName: string;
@@ -33,6 +34,7 @@ declare namespace Nabu {
         constructor(configName: string);
         initialize(): void;
         protected abstract _buildElementsArray(): void;
+        getElement(property: string): ConfigurationElement;
         getValue(property: string): number;
         saveToLocalStorage(): void;
         serialize(): any;

@@ -101,6 +101,11 @@ var Nabu;
                 this.prop.toString = (v) => { return v.toString(); };
             }
         }
+        forceInit() {
+            if (this.onChange && isFinite(this.value)) {
+                this.onChange(this.value);
+            }
+        }
     }
     Nabu.ConfigurationElement = ConfigurationElement;
     class Configuration {
@@ -113,8 +118,11 @@ var Nabu;
             let data = JSON.parse(localStorage.getItem(this.configName));
             this.deserialize(data);
         }
+        getElement(property) {
+            return this.configurationElements.find(e => { return e.property === property; });
+        }
         getValue(property) {
-            let element = this.configurationElements.find(e => { return e.property === property; });
+            let element = this.getElement(property);
             if (element) {
                 return element.value;
             }

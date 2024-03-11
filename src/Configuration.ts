@@ -42,6 +42,12 @@ namespace Nabu {
                 this.prop.toString = (v: number) => { return v.toString(); };
             }
         }
+
+        public forceInit(): void {
+            if (this.onChange && isFinite(this.value)) {
+                this.onChange(this.value);
+            } 
+        }
     }
 
     export abstract class Configuration {
@@ -60,8 +66,12 @@ namespace Nabu {
 
         protected abstract _buildElementsArray(): void;
 
+        public getElement(property: string): ConfigurationElement {
+            return this.configurationElements.find(e => { return e.property === property; });
+        }
+
         public getValue(property: string): number {
-            let element = this.configurationElements.find(e => { return e.property === property; });
+            let element = this.getElement(property);
             if (element) {
                 return element.value;
             }
