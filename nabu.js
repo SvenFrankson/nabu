@@ -1695,8 +1695,10 @@ var Nabu;
         }
         async generateMapData(IMap, JMap, pixelSize = 1) {
             return new Promise(async (resolve) => {
-                let map = new Uint8ClampedArray(TerrainMapGenerator.MAP_SIZE * TerrainMapGenerator.MAP_SIZE);
-                map.fill(0);
+                let values = [];
+                for (let i = 0; i < TerrainMapGenerator.MAP_SIZE * TerrainMapGenerator.MAP_SIZE; i++) {
+                    values[i] = 0;
+                }
                 // Bicubic version
                 let maxDegree = 7;
                 let f = 0.5;
@@ -1732,7 +1734,7 @@ var Nabu;
                                 di = diMin * (1 - di) + diMax * di;
                                 let dj = jj / TerrainMapGenerator.MAP_SIZE;
                                 dj = djMin * (1 - dj) + djMax * dj;
-                                map[ii + jj * TerrainMapGenerator.MAP_SIZE] += Nabu.BicubicInterpolate(di, dj, v00, v10, v20, v30, v01, v11, v21, v31, v02, v12, v22, v32, v03, v13, v23, v33) * f;
+                                values[ii + jj * TerrainMapGenerator.MAP_SIZE] += Nabu.BicubicInterpolate(di, dj, v00, v10, v20, v30, v01, v11, v21, v31, v02, v12, v22, v32, v03, v13, v23, v33) * f;
                             }
                         };
                         let t0 = performance.now();
@@ -1775,7 +1777,7 @@ var Nabu;
                                     for (let jj = 0; jj < l; jj++) {
                                         let di = ii / l;
                                         let dj = jj / l;
-                                        map[i * l + ii + (j * l + jj) * TerrainMapGenerator.MAP_SIZE] += Nabu.BicubicInterpolate(di, dj, v00, v10, v20, v30, v01, v11, v21, v31, v02, v12, v22, v32, v03, v13, v23, v33) * f;
+                                        values[i * l + ii + (j * l + jj) * TerrainMapGenerator.MAP_SIZE] += Nabu.BicubicInterpolate(di, dj, v00, v10, v20, v30, v01, v11, v21, v31, v02, v12, v22, v32, v03, v13, v23, v33) * f;
                                     }
                                 }
                                 if (i < n - 1) {
@@ -1816,7 +1818,7 @@ var Nabu;
                     f = f / 2;
                     await Nabu.NextFrame();
                 }
-                resolve(map);
+                resolve(new Uint8ClampedArray(values));
             });
         }
         async downloadAsPNG(IMap, JMap, size = 1, range = 0) {
