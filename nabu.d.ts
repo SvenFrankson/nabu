@@ -338,6 +338,8 @@ declare namespace Nabu {
         iMap: number;
         jMap: number;
         data: Uint8ClampedArray;
+        min: number;
+        max: number;
         lastUsageTime: number;
         constructor(_terrainMapGenerator: TerrainMapGenerator, iMap: number, jMap: number);
         get(i: number, j: number): number;
@@ -361,7 +363,7 @@ declare namespace Nabu {
         updateMediumedCache(): void;
         getLargeMap(IMap: number, JMap: number): Promise<TerrainMap>;
         updateLargedCache(): void;
-        generateMapData(IMap: number, JMap: number, pixelSize?: number): Promise<Uint8ClampedArray>;
+        generateMapData(map: TerrainMap, pixelSize?: number): Promise<void>;
         downloadAsPNG(IMap: number, JMap: number, size?: number, range?: number): Promise<void>;
     }
 }

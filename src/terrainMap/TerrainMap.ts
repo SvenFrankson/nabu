@@ -1,6 +1,8 @@
 namespace Nabu {
     export class TerrainMap {
         public data: Uint8ClampedArray;
+        public min: number = 0;
+        public max: number = 0;
         public lastUsageTime: number;
 
         constructor(private _terrainMapGenerator: TerrainMapGenerator, public iMap: number, public jMap: number) {
@@ -47,7 +49,7 @@ namespace Nabu {
             });
             if (!map) {
                 map = new TerrainMap(this, IMap, JMap);
-                map.data = await this.generateMapData(IMap, JMap);
+                await this.generateMapData(map);
                 this.detailedMaps.push(map);
                 this.updateDetailedCache();
             }
@@ -70,7 +72,7 @@ namespace Nabu {
             });
             if (!map) {
                 map = new TerrainMap(this, IMap, JMap);
-                map.data = await this.generateMapData(IMap, JMap, TerrainMapGenerator.MEDIUM_MAP_PIXEL_SIZE);
+                await this.generateMapData(map, TerrainMapGenerator.MEDIUM_MAP_PIXEL_SIZE);
                 this.mediumMaps.push(map);
                 this.updateMediumedCache();
             }
@@ -93,7 +95,7 @@ namespace Nabu {
             });
             if (!map) {
                 map = new TerrainMap(this, IMap, JMap);
-                map.data = await this.generateMapData(IMap, JMap, TerrainMapGenerator.LARGE_MAP_PIXEL_SIZE);
+                await this.generateMapData(map, TerrainMapGenerator.LARGE_MAP_PIXEL_SIZE);
                 this.largeMaps.push(map);
                 this.updateLargedCache();
             }
@@ -110,8 +112,10 @@ namespace Nabu {
             }
         }
 
-        public async generateMapData(IMap: number, JMap: number, pixelSize: number = 1): Promise<Uint8ClampedArray> {
-            return new Promise<Uint8ClampedArray>(async (resolve) => {
+        public async generateMapData(map: TerrainMap, pixelSize: number = 1): Promise<void> {
+            let IMap = map.iMap;
+            let JMap = map.jMap;
+            return new Promise<void>(async (resolve) => {
                 let values: number[] = [];
                 for (let i = 0; i < TerrainMapGenerator.MAP_SIZE * TerrainMapGenerator.MAP_SIZE; i++) {
                     values[i] = 0;
@@ -120,7 +124,7 @@ namespace Nabu {
                 // Bicubic version
                 let f = 0.5;
                 for (let degree = 0; degree < TerrainMapGenerator.PERIODS_COUNT; degree++) {
-                    let l = this.periods[degree];
+                    let l = this.periods[degree] / pixelSize;
                     if (l > TerrainMapGenerator.MAP_SIZE) {
                         let count = l / TerrainMapGenerator.MAP_SIZE;
                         let I0 = Math.floor(IMap / count);
@@ -242,7 +246,15 @@ namespace Nabu {
                     await Nabu.NextFrame();
                 }
 
-                resolve(new Uint8ClampedArray(values));
+                map.min = 255;
+                map.max = 0;
+                for (let i = 0; i < values.length; i++) {
+                    let v = values[i];
+                    map.min = Math.min(map.min, v);
+                    map.max = Math.max(map.max, v);
+                }
+                map.data = new Uint8ClampedArray(values);
+                resolve();
             });
         }
 

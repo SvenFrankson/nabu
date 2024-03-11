@@ -1624,6 +1624,8 @@ var Nabu;
             this._terrainMapGenerator = _terrainMapGenerator;
             this.iMap = iMap;
             this.jMap = jMap;
+            this.min = 0;
+            this.max = 0;
             this.lastUsageTime = performance.now();
         }
         get(i, j) {
@@ -1658,7 +1660,7 @@ var Nabu;
             });
             if (!map) {
                 map = new TerrainMap(this, IMap, JMap);
-                map.data = await this.generateMapData(IMap, JMap);
+                await this.generateMapData(map);
                 this.detailedMaps.push(map);
                 this.updateDetailedCache();
             }
@@ -1679,7 +1681,7 @@ var Nabu;
             });
             if (!map) {
                 map = new TerrainMap(this, IMap, JMap);
-                map.data = await this.generateMapData(IMap, JMap, TerrainMapGenerator.MEDIUM_MAP_PIXEL_SIZE);
+                await this.generateMapData(map, TerrainMapGenerator.MEDIUM_MAP_PIXEL_SIZE);
                 this.mediumMaps.push(map);
                 this.updateMediumedCache();
             }
@@ -1700,7 +1702,7 @@ var Nabu;
             });
             if (!map) {
                 map = new TerrainMap(this, IMap, JMap);
-                map.data = await this.generateMapData(IMap, JMap, TerrainMapGenerator.LARGE_MAP_PIXEL_SIZE);
+                await this.generateMapData(map, TerrainMapGenerator.LARGE_MAP_PIXEL_SIZE);
                 this.largeMaps.push(map);
                 this.updateLargedCache();
             }
@@ -1715,7 +1717,9 @@ var Nabu;
                 this.largeMaps.splice(0, 1);
             }
         }
-        async generateMapData(IMap, JMap, pixelSize = 1) {
+        async generateMapData(map, pixelSize = 1) {
+            let IMap = map.iMap;
+            let JMap = map.jMap;
             return new Promise(async (resolve) => {
                 let values = [];
                 for (let i = 0; i < TerrainMapGenerator.MAP_SIZE * TerrainMapGenerator.MAP_SIZE; i++) {
@@ -1724,7 +1728,7 @@ var Nabu;
                 // Bicubic version
                 let f = 0.5;
                 for (let degree = 0; degree < TerrainMapGenerator.PERIODS_COUNT; degree++) {
-                    let l = this.periods[degree];
+                    let l = this.periods[degree] / pixelSize;
                     if (l > TerrainMapGenerator.MAP_SIZE) {
                         let count = l / TerrainMapGenerator.MAP_SIZE;
                         let I0 = Math.floor(IMap / count);
@@ -1839,7 +1843,15 @@ var Nabu;
                     f = f / 2;
                     await Nabu.NextFrame();
                 }
-                resolve(new Uint8ClampedArray(values));
+                map.min = 255;
+                map.max = 0;
+                for (let i = 0; i < values.length; i++) {
+                    let v = values[i];
+                    map.min = Math.min(map.min, v);
+                    map.max = Math.max(map.max, v);
+                }
+                map.data = new Uint8ClampedArray(values);
+                resolve();
             });
         }
         async downloadAsPNG(IMap, JMap, size = 1, range = 0) {
