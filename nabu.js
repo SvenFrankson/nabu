@@ -681,6 +681,49 @@ var Nabu;
 })(Nabu || (Nabu = {}));
 var Nabu;
 (function (Nabu) {
+    class Vector2 {
+        constructor(x = 0, y = 0) {
+            this.x = x;
+            this.y = y;
+        }
+        static DistanceSquared(v1, v2) {
+            return (v2.x - v1.x) * (v2.x - v1.x) + (v2.y - v1.y) * (v2.y - v1.y);
+        }
+        static Distance(v1, v2) {
+            return Math.sqrt(Vector2.DistanceSquared(v1, v2));
+        }
+        static AverageToRef(ref, ...vectors) {
+            let l = vectors.length;
+            if (l >= 1) {
+                ref.x = 0;
+                ref.y = 0;
+                for (let i = 0; i < vectors.length; i++) {
+                    ref.addInPlace(vectors[i]);
+                }
+                ref.scaleInPlace(1 / l);
+            }
+            return ref;
+        }
+        static Average(...vectors) {
+            let v = new Vector2();
+            Vector2.AverageToRef(v, ...vectors);
+            return v;
+        }
+        addInPlace(other) {
+            this.x += other.x;
+            this.y += other.y;
+            return this;
+        }
+        scaleInPlace(s) {
+            this.x *= s;
+            this.y *= s;
+            return this;
+        }
+    }
+    Nabu.Vector2 = Vector2;
+})(Nabu || (Nabu = {}));
+var Nabu;
+(function (Nabu) {
     class InputNumber extends HTMLElement {
         constructor() {
             super(...arguments);
@@ -1897,6 +1940,159 @@ var Nabu;
     TerrainMapGenerator.MEDIUM_MAP_PIXEL_SIZE = 8;
     TerrainMapGenerator.LARGE_MAP_PIXEL_SIZE = 256;
     Nabu.TerrainMapGenerator = TerrainMapGenerator;
+})(Nabu || (Nabu = {}));
+var Nabu;
+(function (Nabu) {
+    class VoronoiCell {
+        constructor(diagram, i, j) {
+            this.diagram = diagram;
+            this.i = i;
+            this.j = j;
+            this.edges = new Nabu.UniqueList();
+            this.center = new Nabu.Vector2();
+        }
+        getPolygon() {
+            if (this.polygon) {
+                return this.polygon;
+            }
+            // create connections
+            let cell00 = this.diagram.getCell(this.i - 1, this.j - 1);
+            let cell10 = this.diagram.getCell(this.i + 0, this.j - 1);
+            let cell20 = this.diagram.getCell(this.i + 1, this.j - 1);
+            let cell01 = this.diagram.getCell(this.i - 1, this.j + 0);
+            let cell11 = this;
+            let cell21 = this.diagram.getCell(this.i + 1, this.j + 0);
+            let cell02 = this.diagram.getCell(this.i - 1, this.j + 1);
+            let cell12 = this.diagram.getCell(this.i + 0, this.j + 1);
+            let cell22 = this.diagram.getCell(this.i + 1, this.j + 1);
+            this.connect(cell10);
+            this.connect(cell01);
+            this.connect(cell21);
+            this.connect(cell12);
+            if (Nabu.Vector2.DistanceSquared(cell00.center, cell11.center) < Nabu.Vector2.DistanceSquared(cell10.center, cell01.center)) {
+                cell00.connect(cell11);
+            }
+            else {
+                cell10.connect(cell01);
+            }
+            if (Nabu.Vector2.DistanceSquared(cell10.center, cell21.center) < Nabu.Vector2.DistanceSquared(cell20.center, cell11.center)) {
+                cell10.connect(cell21);
+            }
+            else {
+                cell20.connect(cell11);
+            }
+            if (Nabu.Vector2.DistanceSquared(cell01.center, cell12.center) < Nabu.Vector2.DistanceSquared(cell11.center, cell02.center)) {
+                cell01.connect(cell12);
+            }
+            else {
+                cell11.connect(cell02);
+            }
+            if (Nabu.Vector2.DistanceSquared(cell11.center, cell22.center) < Nabu.Vector2.DistanceSquared(cell21.center, cell12.center)) {
+                cell11.connect(cell22);
+            }
+            else {
+                cell21.connect(cell12);
+            }
+            this.polygon = [];
+            if (this.isConnectedTo(cell20)) {
+                this.polygon.push(Nabu.Vector2.Average(cell11.center, cell10.center, cell20.center));
+                this.polygon.push(Nabu.Vector2.Average(cell11.center, cell20.center, cell21.center));
+            }
+            else {
+                this.polygon.push(Nabu.Vector2.Average(cell11.center, cell10.center, cell21.center));
+            }
+            if (this.isConnectedTo(cell22)) {
+                this.polygon.push(Nabu.Vector2.Average(cell11.center, cell21.center, cell22.center));
+                this.polygon.push(Nabu.Vector2.Average(cell11.center, cell22.center, cell12.center));
+            }
+            else {
+                this.polygon.push(Nabu.Vector2.Average(cell11.center, cell21.center, cell12.center));
+            }
+            if (this.isConnectedTo(cell02)) {
+                this.polygon.push(Nabu.Vector2.Average(cell11.center, cell12.center, cell02.center));
+                this.polygon.push(Nabu.Vector2.Average(cell11.center, cell02.center, cell01.center));
+            }
+            else {
+                this.polygon.push(Nabu.Vector2.Average(cell11.center, cell12.center, cell01.center));
+            }
+            if (this.isConnectedTo(cell00)) {
+                this.polygon.push(Nabu.Vector2.Average(cell11.center, cell01.center, cell00.center));
+                this.polygon.push(Nabu.Vector2.Average(cell11.center, cell00.center, cell10.center));
+            }
+            else {
+                this.polygon.push(Nabu.Vector2.Average(cell11.center, cell01.center, cell10.center));
+            }
+            return this.polygon;
+        }
+        connect(other) {
+            this.edges.push(other);
+            other.edges.push(this);
+        }
+        isConnectedTo(other) {
+            return this.edges.contains(other);
+        }
+    }
+    Nabu.VoronoiCell = VoronoiCell;
+    class VoronoiDiagram {
+        constructor(cellSize, cellSpread = 0.5) {
+            this.cellSize = cellSize;
+            this.cellSpread = cellSpread;
+        }
+        getCell(i, j) {
+            if (!this.cells) {
+                this.cells = [];
+            }
+            if (!this.cells[i]) {
+                this.cells[i] = [];
+            }
+            if (!this.cells[i][j]) {
+                let cell = new VoronoiCell(this, i, j);
+                cell.center.x = (i + 0.5) * this.cellSize + (Math.random() - 0.5) * this.cellSize * this.cellSpread;
+                cell.center.y = (j + 0.5) * this.cellSize + (Math.random() - 0.5) * this.cellSize * this.cellSpread;
+                this.cells[i][j] = cell;
+            }
+            return this.cells[i][j];
+        }
+        async downloadAsPNG(size) {
+            let canvas = document.createElement("canvas");
+            canvas.width = size;
+            canvas.height = size;
+            let context = canvas.getContext("2d");
+            let count = Math.floor(size / this.cellSize);
+            for (let i = 0; i < count; i++) {
+                for (let j = 0; j < count; j++) {
+                    let cell = this.getCell(i, j);
+                    let polygon = cell.getPolygon();
+                    context.fillStyle = VoronoiDiagram.colors[Math.floor(Math.random() * VoronoiDiagram.colors.length)];
+                    context.beginPath();
+                    context.moveTo(polygon[0].x, polygon[0].y);
+                    for (let i = 1; i < polygon.length; i++) {
+                        context.lineTo(polygon[i].x, polygon[i].y);
+                    }
+                    context.closePath();
+                    context.fill();
+                }
+            }
+            var a = document.createElement("a");
+            a.setAttribute("href", canvas.toDataURL());
+            a.setAttribute("download", "voronoi_diagram.png");
+            a.style.display = "none";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+    }
+    VoronoiDiagram.colors = [
+        "#000000",
+        "#ff0000",
+        "#00ff00",
+        "#0000ff",
+        "#ffff00",
+        "#00ffff",
+        "#ff00ff",
+        "#ffffff"
+    ];
+    Nabu.VoronoiDiagram = VoronoiDiagram;
 })(Nabu || (Nabu = {}));
 var Nabu;
 (function (Nabu) {

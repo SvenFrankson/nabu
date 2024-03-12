@@ -134,6 +134,19 @@ declare namespace Nabu {
     }
 }
 declare namespace Nabu {
+    class Vector2 {
+        x: number;
+        y: number;
+        static DistanceSquared(v1: Vector2, v2: Vector2): number;
+        static Distance(v1: Vector2, v2: Vector2): number;
+        static AverageToRef(ref: Vector2, ...vectors: Vector2[]): Vector2;
+        static Average(...vectors: Vector2[]): Vector2;
+        constructor(x?: number, y?: number);
+        addInPlace(other: Vector2): Vector2;
+        scaleInPlace(s: number): Vector2;
+    }
+}
+declare namespace Nabu {
     class InputNumber extends HTMLElement {
         static get observedAttributes(): string[];
         private _decimals;
@@ -365,6 +378,29 @@ declare namespace Nabu {
         updateLargedCache(): void;
         generateMapData(map: TerrainMap, pixelSize?: number): Promise<void>;
         downloadAsPNG(IMap: number, JMap: number, size?: number, range?: number): Promise<void>;
+    }
+}
+declare namespace Nabu {
+    class VoronoiCell {
+        diagram: VoronoiDiagram;
+        i: number;
+        j: number;
+        center: Vector2;
+        polygon: Vector2[];
+        edges: UniqueList<VoronoiCell>;
+        constructor(diagram: VoronoiDiagram, i: number, j: number);
+        getPolygon(): Vector2[];
+        connect(other: VoronoiCell): void;
+        isConnectedTo(other: VoronoiCell): boolean;
+    }
+    class VoronoiDiagram {
+        cellSize: number;
+        cellSpread: number;
+        static colors: string[];
+        cells: VoronoiCell[][];
+        constructor(cellSize: number, cellSpread?: number);
+        getCell(i: number, j: number): VoronoiCell;
+        downloadAsPNG(size: number): Promise<void>;
     }
 }
 declare namespace Nabu {
