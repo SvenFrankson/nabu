@@ -4,10 +4,36 @@ namespace Nabu {
 
         public center: Vector2;
         public polygon: Vector2[];
+        public value: number = 0;
         public edges: UniqueList<VoronoiCell> = new UniqueList<VoronoiCell>();
 
         constructor(public diagram: VoronoiDiagram, public i: number, public j: number) {
             this.center = new Vector2();
+            this.value = Math.floor(Math.random() * 8);
+        }
+
+        public getColor(): string {
+            let c = "#"
+            if (this.value & 1) {
+                c += "ff";
+            }
+            else {
+                c += "00";
+            }
+            if (this.value & 2) {
+                c += "ff";
+            }
+            else {
+                c += "00";
+            }
+            if (this.value & 4) {
+                c += "ff";
+            }
+            else {
+                c += "00";
+            }
+
+            return c;
         }
 
         public getPolygon(): Vector2[] {
@@ -117,7 +143,16 @@ namespace Nabu {
         public cells: VoronoiCell[][];
     
         constructor(public cellSize: number, public cellSpread: number = 0.5) {
-            
+            VoronoiDiagram.colors = [];
+            for (let r = 0; r <= 1; r += 1) {
+                for (let g = 0; g <= 1; g += 1) {
+                    for (let b = 0; b <= 1; b += 1) {
+                        for (let a = 1; a <= 1; a += 1) {
+                            VoronoiDiagram.colors.push("#" + Math.floor(r * 255).toString(16).padStart(2, "0") + Math.floor(g * 255).toString(16).padStart(2, "0") + Math.floor(b * 255).toString(16).padStart(2, "0") + Math.floor(a * 255).toString(16).padStart(2, "0"));
+                        }
+                    }
+                }
+            }
         }
 
         public getCell(i: number, j: number) {
@@ -136,6 +171,44 @@ namespace Nabu {
             return this.cells[i][j];
         }
 
+        public getValues(size: number, iMap: number = 0, jMap: number = 0): Uint8ClampedArray {
+            let values = new Uint8ClampedArray(size * size);
+
+            let canvas = document.createElement("canvas");
+            canvas.width = size;
+            canvas.height = size;
+            let context = canvas.getContext("2d");
+
+            let count = Math.floor(size / this.cellSize);
+            for (let i = 0; i <= count; i++) {
+                for (let j = 0; j <= count; j++) {
+                    let cell = this.getCell(i + iMap * count, j + jMap * count);
+                    let polygon = cell.getPolygon();
+                    context.fillStyle = cell.getColor();
+                    context.strokeStyle = context.fillStyle;
+                    context.beginPath();
+                    context.moveTo(polygon[0].x, polygon[0].y);
+                    for (let i = 1; i < polygon.length; i++) {
+                        context.lineTo(polygon[i].x, polygon[i].y);
+                    }
+                    context.closePath();
+                    context.stroke();
+                    context.fill();
+                }
+            }
+
+            let data = context.getImageData(0, 0, size, size);
+            for (let i = 0; i < size * size; i++) {
+                let r = Math.round(data.data[4 * i + 0] / 255);
+                let g = Math.round(data.data[4 * i + 1] / 255);
+                let b = Math.round(data.data[4 * i + 2] / 255);
+                let v = r * 1 + g * 2 + b * 4;
+                values[i] = v;
+            }
+
+            return values;
+        }
+
         public async downloadAsPNG(size: number): Promise<void> {
             let canvas = document.createElement("canvas");
             canvas.width = size;
@@ -147,16 +220,24 @@ namespace Nabu {
                 for (let j = 0; j < count; j++) {
                     let cell = this.getCell(i, j);
                     let polygon = cell.getPolygon();
-                    context.fillStyle = VoronoiDiagram.colors[Math.floor(Math.random() * VoronoiDiagram.colors.length)];
+                    context.fillStyle = cell.getColor();
+                    context.strokeStyle = context.fillStyle;
                     context.beginPath();
                     context.moveTo(polygon[0].x, polygon[0].y);
                     for (let i = 1; i < polygon.length; i++) {
                         context.lineTo(polygon[i].x, polygon[i].y);
                     }
                     context.closePath();
+                    context.stroke();
                     context.fill();
                 }
             }
+
+            let data = context.getImageData(0, 0, size, size);
+            for (let i = 0; i < data.data.length; i++) {
+                data.data[i] = Math.round(data.data[i] / 256) * 256;
+            }
+            context.putImageData(new ImageData(data.data, size ,size), 0, 0);
 
             var a = document.createElement("a");
             a.setAttribute("href", canvas.toDataURL());
@@ -166,6 +247,54 @@ namespace Nabu {
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
+        }
+
+        public async downloadAsSirenPNG(size: number): Promise<void> {
+            let image = document.createElement("img");
+            image.src = "./datas/siren.png";
+            image.onload = () => {
+                let canvasSiren = document.createElement("canvas");
+                canvasSiren.width = size;
+                canvasSiren.height = size;
+                let ctx = canvasSiren.getContext("2d");
+                ctx.drawImage(image, 0, 0);
+                let sirenData = ctx.getImageData(0, 0, size, size).data;
+
+                let canvas = document.createElement("canvas");
+                canvas.width = size;
+                canvas.height = size;
+                let context = canvas.getContext("2d");
+    
+                let count = Math.floor(size / this.cellSize);
+                for (let i = 0; i < count; i++) {
+                    for (let j = 0; j < count; j++) {
+                        let cell = this.getCell(i, j);
+                        let polygon = cell.getPolygon();
+                        let r = sirenData[4 * (Math.floor(cell.center.x) + size * Math.floor(cell.center.y))];
+                        let g = sirenData[4 * (Math.floor(cell.center.x) + size * Math.floor(cell.center.y)) + 1];
+                        let b = sirenData[4 * (Math.floor(cell.center.x) + size * Math.floor(cell.center.y)) + 2];
+                        let color = "#" + r.toString(16).padStart(2, "0") + g.toString(16).padStart(2, "0") + b.toString(16).padStart(2, "0");
+                        //context.fillStyle = VoronoiDiagram.colors[Math.floor(Math.random() * VoronoiDiagram.colors.length)];
+                        context.fillStyle = color;
+                        context.beginPath();
+                        context.moveTo(polygon[0].x, polygon[0].y);
+                        for (let i = 1; i < polygon.length; i++) {
+                            context.lineTo(polygon[i].x, polygon[i].y);
+                        }
+                        context.closePath();
+                        context.fill();
+                    }
+                }
+    
+                var a = document.createElement("a");
+                a.setAttribute("href", canvas.toDataURL());
+                a.setAttribute("download", "voronoi_diagram.png");
+    
+                a.style.display = "none";
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            }
         }
     }
 }

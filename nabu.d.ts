@@ -311,6 +311,34 @@ declare namespace Nabu {
     var RAND: Rand;
 }
 declare namespace Nabu {
+    class CellMap {
+        private _cellMapGenerator;
+        iMap: number;
+        jMap: number;
+        data: Uint8ClampedArray;
+        min: number;
+        max: number;
+        lastUsageTime: number;
+        constructor(_cellMapGenerator: CellMapGenerator, iMap: number, jMap: number);
+        get(i: number, j: number): number;
+    }
+    class CellMapGenerator {
+        seededMap: SeededMap;
+        cellSize: number;
+        pixelSize: number;
+        static MAP_SIZE: number;
+        voronoiDiagram: VoronoiDiagram;
+        maxFrameTimeMS: number;
+        maxCachedMaps: number;
+        cellMaps: CellMap[];
+        constructor(seededMap: SeededMap, cellSize: number, pixelSize?: number);
+        getMap(IMap: number, JMap: number): CellMap;
+        getValue(iGlobal: number, jGlobal: number): number;
+        updateDetailedCache(): void;
+        generateMapData(map: CellMap): void;
+    }
+}
+declare namespace Nabu {
     class MasterSeed {
         static BaseSeed: Uint8ClampedArray;
         static GetFor(name: string): Uint8ClampedArray;
@@ -387,8 +415,10 @@ declare namespace Nabu {
         j: number;
         center: Vector2;
         polygon: Vector2[];
+        value: number;
         edges: UniqueList<VoronoiCell>;
         constructor(diagram: VoronoiDiagram, i: number, j: number);
+        getColor(): string;
         getPolygon(): Vector2[];
         connect(other: VoronoiCell): void;
         isConnectedTo(other: VoronoiCell): boolean;
@@ -400,7 +430,9 @@ declare namespace Nabu {
         cells: VoronoiCell[][];
         constructor(cellSize: number, cellSpread?: number);
         getCell(i: number, j: number): VoronoiCell;
+        getValues(size: number, iMap?: number, jMap?: number): Uint8ClampedArray;
         downloadAsPNG(size: number): Promise<void>;
+        downloadAsSirenPNG(size: number): Promise<void>;
     }
 }
 declare namespace Nabu {
