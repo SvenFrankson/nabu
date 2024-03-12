@@ -9,7 +9,7 @@ namespace Nabu {
 
         constructor(public diagram: VoronoiDiagram, public i: number, public j: number) {
             this.center = new Vector2();
-            this.value = Math.floor(Math.random() * 8);
+            this.value = Math.floor(Math.random() * 3);
         }
 
         public getColor(): string {

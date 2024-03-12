@@ -322,6 +322,15 @@ declare namespace Nabu {
         constructor(_cellMapGenerator: CellMapGenerator, iMap: number, jMap: number);
         get(i: number, j: number): number;
     }
+    class BiomeWeight {
+        v1: number;
+        w1: number;
+        v2: number;
+        w2: number;
+        v3: number;
+        w3: number;
+        constructor(valueA: number, weightA: number, valueB?: number, weightB?: number, valueC?: number, weightC?: number);
+    }
     class CellMapGenerator {
         seededMap: SeededMap;
         cellSize: number;
@@ -334,6 +343,15 @@ declare namespace Nabu {
         constructor(seededMap: SeededMap, cellSize: number, pixelSize?: number);
         getMap(IMap: number, JMap: number): CellMap;
         getValue(iGlobal: number, jGlobal: number): number;
+        private kernel;
+        getBiomeWeights(iGlobal: number, jGlobal: number): {
+            v1: number;
+            w1: number;
+            v2?: number;
+            w2?: number;
+            v3?: number;
+            w3?: number;
+        };
         updateDetailedCache(): void;
         generateMapData(map: CellMap): void;
     }
