@@ -1731,9 +1731,9 @@ var Nabu;
             let IMap = map.iMap;
             let JMap = map.jMap;
             map.points = [];
-            let n = 4 + 5 * Math.random();
+            let n = 10 + 15 * Math.random();
             for (let i = 0; i < n; i++) {
-                let point = new Point(map, Math.floor((0.6 * Math.random() + 0.2) * PointsMapGenerator.MAP_SIZE), Math.floor((0.6 * Math.random() + 0.2) * PointsMapGenerator.MAP_SIZE), Math.floor(Math.random() * 2));
+                let point = new Point(map, Math.floor(Math.random() * PointsMapGenerator.MAP_SIZE), Math.floor(Math.random() * PointsMapGenerator.MAP_SIZE), Math.floor(Math.random() * 2));
                 map.points.push(point);
             }
         }
