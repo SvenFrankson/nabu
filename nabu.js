@@ -1728,8 +1728,6 @@ var Nabu;
             }
         }
         generateMapData(map) {
-            let IMap = map.iMap;
-            let JMap = map.jMap;
             map.points = [];
             let n = 10 + 15 * Math.random();
             for (let i = 0; i < n; i++) {
