@@ -384,12 +384,11 @@ declare namespace Nabu {
     }
     class PointsMapGenerator {
         seededMap: SeededMap;
-        tileSize: number;
         static MAP_SIZE: number;
         maxFrameTimeMS: number;
         maxCachedMaps: number;
         pointsMaps: PointsMap[];
-        constructor(seededMap: SeededMap, tileSize: number);
+        constructor(seededMap: SeededMap);
         getPointsToRef(iGlobalMin: number, iGlobalMax: number, jGlobalMin: number, jGlobalMax: number, ref: Point[]): void;
         getMap(IMap: number, JMap: number): PointsMap;
         updateDetailedCache(): void;

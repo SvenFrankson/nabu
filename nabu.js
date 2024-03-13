@@ -1661,8 +1661,8 @@ var Nabu;
             this.i = i;
             this.j = j;
             this.value = value;
-            this.iGlobal = this.map.iMap * this.map.pointsMapGenerator.tileSize + this.i;
-            this.jGlobal = this.map.jMap * this.map.pointsMapGenerator.tileSize + this.j;
+            this.iGlobal = this.map.iMap * PointsMapGenerator.MAP_SIZE + this.i;
+            this.jGlobal = this.map.jMap * PointsMapGenerator.MAP_SIZE + this.j;
         }
     }
     Nabu.Point = Point;
@@ -1679,19 +1679,18 @@ var Nabu;
     }
     Nabu.PointsMap = PointsMap;
     class PointsMapGenerator {
-        constructor(seededMap, tileSize) {
+        constructor(seededMap) {
             this.seededMap = seededMap;
-            this.tileSize = tileSize;
             this.maxFrameTimeMS = 15;
             this.maxCachedMaps = 20;
             this.pointsMaps = [];
         }
         getPointsToRef(iGlobalMin, iGlobalMax, jGlobalMin, jGlobalMax, ref) {
             let index = 0;
-            let IMapMin = Math.floor(iGlobalMin / this.tileSize);
-            let IMapMax = Math.floor(iGlobalMax / this.tileSize);
-            let JMapMin = Math.floor(jGlobalMin / this.tileSize);
-            let JMapMax = Math.floor(jGlobalMax / this.tileSize);
+            let IMapMin = Math.floor(iGlobalMin / PointsMapGenerator.MAP_SIZE);
+            let IMapMax = Math.ceil(iGlobalMax / PointsMapGenerator.MAP_SIZE);
+            let JMapMin = Math.floor(jGlobalMin / PointsMapGenerator.MAP_SIZE);
+            let JMapMax = Math.ceil(jGlobalMax / PointsMapGenerator.MAP_SIZE);
             for (let iMap = IMapMin; iMap <= IMapMax; iMap++) {
                 for (let jMap = JMapMin; jMap <= JMapMax; jMap++) {
                     let map = this.getMap(iMap, jMap);
@@ -1734,7 +1733,7 @@ var Nabu;
             map.points = [];
             let n = 4 + 5 * Math.random();
             for (let i = 0; i < n; i++) {
-                let point = new Point(map, Math.floor(Math.random() * PointsMapGenerator.MAP_SIZE), Math.floor(Math.random() * PointsMapGenerator.MAP_SIZE), Math.floor(Math.random() * 2));
+                let point = new Point(map, Math.floor((0.6 * Math.random() + 0.2) * PointsMapGenerator.MAP_SIZE), Math.floor((0.6 * Math.random() + 0.2) * PointsMapGenerator.MAP_SIZE), Math.floor(Math.random() * 2));
                 map.points.push(point);
             }
         }

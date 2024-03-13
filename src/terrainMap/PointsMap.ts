@@ -11,8 +11,8 @@ namespace Nabu {
             public j: number = 0,
             public value: number = 0
         ) {
-            this.iGlobal = this.map.iMap * this.map.pointsMapGenerator.tileSize + this.i;
-            this.jGlobal = this.map.jMap * this.map.pointsMapGenerator.tileSize + this.j;
+            this.iGlobal = this.map.iMap * PointsMapGenerator.MAP_SIZE + this.i;
+            this.jGlobal = this.map.jMap * PointsMapGenerator.MAP_SIZE + this.j;
         }
     }
 
@@ -34,17 +34,17 @@ namespace Nabu {
         public maxCachedMaps: number = 20;
         public pointsMaps: PointsMap[] = [];
 
-        constructor(public seededMap: SeededMap, public tileSize: number) {
+        constructor(public seededMap: SeededMap) {
             
         }
 
         public getPointsToRef(iGlobalMin: number, iGlobalMax: number, jGlobalMin: number, jGlobalMax: number, ref: Point[]): void {
             let index = 0;
 
-            let IMapMin = Math.floor(iGlobalMin / this.tileSize);
-            let IMapMax = Math.floor(iGlobalMax / this.tileSize);
-            let JMapMin = Math.floor(jGlobalMin / this.tileSize);
-            let JMapMax = Math.floor(jGlobalMax / this.tileSize);
+            let IMapMin = Math.floor(iGlobalMin / PointsMapGenerator.MAP_SIZE);
+            let IMapMax = Math.ceil(iGlobalMax / PointsMapGenerator.MAP_SIZE);
+            let JMapMin = Math.floor(jGlobalMin / PointsMapGenerator.MAP_SIZE);
+            let JMapMax = Math.ceil(jGlobalMax / PointsMapGenerator.MAP_SIZE);
 
             for (let iMap = IMapMin; iMap <= IMapMax; iMap++) {
                 for (let jMap = JMapMin; jMap <= JMapMax; jMap++) {
@@ -94,8 +94,8 @@ namespace Nabu {
             for (let i = 0; i < n; i++) {
                 let point = new Point(
                     map,
-                    Math.floor(Math.random() * PointsMapGenerator.MAP_SIZE),
-                    Math.floor(Math.random() * PointsMapGenerator.MAP_SIZE),
+                    Math.floor((0.6 * Math.random() + 0.2) * PointsMapGenerator.MAP_SIZE),
+                    Math.floor((0.6 * Math.random() + 0.2) * PointsMapGenerator.MAP_SIZE),
                     Math.floor(Math.random() * 2),
                 )
                 map.points.push(point);
