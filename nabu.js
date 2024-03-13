@@ -1485,6 +1485,15 @@ var Nabu;
                         this.w3 = weightA;
                     }
                 }
+                /*
+                this.w1 = Easing.easeInOutSine(this.w1);
+                this.w2 = Easing.easeInOutSine(this.w2);
+                this.w3 = Easing.easeInOutSine(this.w3);
+                let l = this.w1 + this.w2 + this.w3;
+                this.w1 /= l;
+                this.w2 /= l;
+                this.w3 /= l;
+                */
             }
             else if (weightB) {
                 if (weightA >= weightB) {
@@ -1499,10 +1508,17 @@ var Nabu;
                     this.v2 = valueA;
                     this.w2 = weightA;
                 }
+                /*
+                this.w1 = Easing.easeInOutSine(this.w1);
+                this.w2 = Easing.easeInOutSine(this.w2);
+                let l = this.w1 + this.w2;
+                this.w1 /= l;
+                this.w2 /= l;
+                */
             }
             else {
                 this.v1 = valueA;
-                this.w1 = weightA;
+                this.w1 = 1;
             }
         }
     }
@@ -1574,30 +1590,30 @@ var Nabu;
             }
             if (a === b) {
                 let wA = 1 - dj;
-                let wC = 1 - Math.sqrt((1 - di) * (1 - di) + (1 - dj) * (1 - dj));
-                let wD = 1 - Math.sqrt(di * di + (1 - dj) * (1 - dj));
-                let l = Math.sqrt(wA * wA + wC * wC + wD * wD);
+                let wC = 1 - Nabu.MinMax(Math.sqrt((1 - di) * (1 - di) + (1 - dj) * (1 - dj)), 0, 1);
+                let wD = 1 - Nabu.MinMax(Math.sqrt(di * di + (1 - dj) * (1 - dj)), 0, 1);
+                let l = wA + wC + wD;
                 return new BiomeWeight(a, wA / l, c, wC / l, d, wD / l);
             }
             if (b === c) {
                 let wB = di;
-                let wA = 1 - Math.sqrt(di * di + dj * dj);
-                let wD = 1 - Math.sqrt(di * di + (1 - dj) * (1 - dj));
-                let l = Math.sqrt(wA * wA + wB * wB + wD * wD);
+                let wA = 1 - Nabu.MinMax(Math.sqrt(di * di + dj * dj), 0, 1);
+                let wD = 1 - Nabu.MinMax(Math.sqrt(di * di + (1 - dj) * (1 - dj)), 0, 1);
+                let l = wA + wB + wD;
                 return new BiomeWeight(b, wB / l, a, wA / l, d, wD / l);
             }
             if (c === d) {
                 let wC = dj;
-                let wA = 1 - Math.sqrt(di * di + dj * dj);
-                let wB = 1 - Math.sqrt((1 - di) * (1 - di) + dj * dj);
-                let l = Math.sqrt(wC * wC + wA * wA + wB * wB);
+                let wA = 1 - Nabu.MinMax(Math.sqrt(di * di + dj * dj), 0, 1);
+                let wB = 1 - Nabu.MinMax(Math.sqrt((1 - di) * (1 - di) + dj * dj), 0, 1);
+                let l = wA + wC + wB;
                 return new BiomeWeight(c, wC / l, b, wB / l, a, wA / l);
             }
             if (a === d) {
-                let wA = 1 - dj;
-                let wB = 1 - Math.sqrt((1 - di) * (1 - di) + dj * dj);
-                let wC = 1 - Math.sqrt((1 - di) * (1 - di) + (1 - dj) * (1 - dj));
-                let l = Math.sqrt(wC * wC + wA * wA + wB * wB);
+                let wA = 1 - di;
+                let wB = 1 - Nabu.MinMax(Math.sqrt((1 - di) * (1 - di) + dj * dj), 0, 1);
+                let wC = 1 - Nabu.MinMax(Math.sqrt((1 - di) * (1 - di) + (1 - dj) * (1 - dj)), 0, 1);
+                let l = wA + wB + wC;
                 return new BiomeWeight(c, wC / l, b, wB / l, a, wA / l);
             }
             return { v1: 0, w1: 1 };
@@ -1636,6 +1652,95 @@ var Nabu;
         133, 157, 215, 57, 147, 70, 148, 138, 234, 47, 195, 90, 30, 29, 106, 13, 68, 123, 161, 179, 162, 46, 159, 84, 129, 168, 254, 210, 18, 74, 223, 97, 240, 234, 46, 49, 46, 164, 217, 27, 152, 157,
     ]);
     Nabu.MasterSeed = MasterSeed;
+})(Nabu || (Nabu = {}));
+var Nabu;
+(function (Nabu) {
+    class Point {
+        constructor(map, i = 0, j = 0, value = 0) {
+            this.map = map;
+            this.i = i;
+            this.j = j;
+            this.value = value;
+            this.iGlobal = this.map.iMap * this.map.pointsMapGenerator.tileSize + this.i;
+            this.jGlobal = this.map.jMap * this.map.pointsMapGenerator.tileSize + this.j;
+        }
+    }
+    Nabu.Point = Point;
+    class PointsMap {
+        constructor(pointsMapGenerator, iMap, jMap) {
+            this.pointsMapGenerator = pointsMapGenerator;
+            this.iMap = iMap;
+            this.jMap = jMap;
+            this.points = [];
+            this.min = 0;
+            this.max = 0;
+            this.lastUsageTime = performance.now();
+        }
+    }
+    Nabu.PointsMap = PointsMap;
+    class PointsMapGenerator {
+        constructor(seededMap, tileSize) {
+            this.seededMap = seededMap;
+            this.tileSize = tileSize;
+            this.maxFrameTimeMS = 15;
+            this.maxCachedMaps = 20;
+            this.pointsMaps = [];
+        }
+        getPointsToRef(iGlobalMin, iGlobalMax, jGlobalMin, jGlobalMax, ref) {
+            let index = 0;
+            let IMapMin = Math.floor(iGlobalMin / this.tileSize);
+            let IMapMax = Math.floor(iGlobalMax / this.tileSize);
+            let JMapMin = Math.floor(jGlobalMin / this.tileSize);
+            let JMapMax = Math.floor(jGlobalMax / this.tileSize);
+            for (let iMap = IMapMin; iMap <= IMapMax; iMap++) {
+                for (let jMap = JMapMin; jMap <= JMapMax; jMap++) {
+                    let map = this.getMap(iMap, jMap);
+                    map.points.forEach(point => {
+                        if (point.iGlobal >= iGlobalMin && point.iGlobal <= iGlobalMax) {
+                            if (point.jGlobal >= jGlobalMin && point.jGlobal <= jGlobalMax) {
+                                ref[index] = point;
+                                index++;
+                            }
+                        }
+                    });
+                }
+            }
+            ref[index] = undefined;
+        }
+        getMap(IMap, JMap) {
+            let map = this.pointsMaps.find((map) => {
+                return map.iMap === IMap && map.jMap === JMap;
+            });
+            if (!map) {
+                map = new PointsMap(this, IMap, JMap);
+                this.generateMapData(map);
+                this.pointsMaps.push(map);
+                this.updateDetailedCache();
+            }
+            map.lastUsageTime = performance.now();
+            return map;
+        }
+        updateDetailedCache() {
+            while (this.pointsMaps.length > this.maxCachedMaps) {
+                this.pointsMaps = this.pointsMaps.sort((a, b) => {
+                    return a.lastUsageTime - b.lastUsageTime;
+                });
+                this.pointsMaps.splice(0, 1);
+            }
+        }
+        generateMapData(map) {
+            let IMap = map.iMap;
+            let JMap = map.jMap;
+            map.points = [];
+            let n = 4 + 5 * Math.random();
+            for (let i = 0; i < n; i++) {
+                let point = new Point(map, Math.floor(Math.random() * PointsMapGenerator.MAP_SIZE), Math.floor(Math.random() * PointsMapGenerator.MAP_SIZE), Math.floor(Math.random() * 2));
+                map.points.push(point);
+            }
+        }
+    }
+    PointsMapGenerator.MAP_SIZE = 256;
+    Nabu.PointsMapGenerator = PointsMapGenerator;
 })(Nabu || (Nabu = {}));
 var Nabu;
 (function (Nabu) {

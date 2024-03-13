@@ -74,7 +74,15 @@ namespace Nabu {
                         this.w3 = weightA;
                     }
                 }
-
+                /*
+                this.w1 = Easing.easeInOutSine(this.w1);
+                this.w2 = Easing.easeInOutSine(this.w2);
+                this.w3 = Easing.easeInOutSine(this.w3);
+                let l = this.w1 + this.w2 + this.w3;
+                this.w1 /= l;
+                this.w2 /= l;
+                this.w3 /= l;
+                */
             }
             else if (weightB) {
                 if (weightA >= weightB) {
@@ -89,10 +97,17 @@ namespace Nabu {
                     this.v2 = valueA;
                     this.w2 = weightA;
                 }
+                /*
+                this.w1 = Easing.easeInOutSine(this.w1);
+                this.w2 = Easing.easeInOutSine(this.w2);
+                let l = this.w1 + this.w2;
+                this.w1 /= l;
+                this.w2 /= l;
+                */
             }
             else {
                 this.v1 = valueA;
-                this.w1 = weightA;
+                this.w1 = 1;
             }
         }
     }
@@ -171,30 +186,30 @@ namespace Nabu {
 
             if (a === b) {
                 let wA = 1 - dj;
-                let wC = 1 - Math.sqrt((1 - di) * (1 - di) + (1 - dj) * (1 - dj));
-                let wD = 1 - Math.sqrt(di * di + (1 - dj) * (1 - dj));
-                let l = Math.sqrt(wA * wA + wC * wC + wD * wD)
+                let wC = 1 - Nabu.MinMax(Math.sqrt((1 - di) * (1 - di) + (1 - dj) * (1 - dj)), 0, 1);
+                let wD = 1 - Nabu.MinMax(Math.sqrt(di * di + (1 - dj) * (1 - dj)), 0, 1);
+                let l = wA + wC + wD;
                 return new BiomeWeight(a, wA / l, c, wC / l, d, wD / l);
             }
             if (b === c) {
                 let wB = di;
-                let wA = 1 - Math.sqrt(di * di + dj * dj);
-                let wD = 1 - Math.sqrt(di * di + (1 - dj) * (1 - dj));
-                let l = Math.sqrt(wA * wA + wB * wB + wD * wD)
+                let wA = 1 - Nabu.MinMax(Math.sqrt(di * di + dj * dj), 0, 1);
+                let wD = 1 - Nabu.MinMax(Math.sqrt(di * di + (1 - dj) * (1 - dj)), 0, 1);
+                let l = wA + wB + wD;
                 return new BiomeWeight(b, wB / l, a, wA / l, d, wD / l);
             }
             if (c === d) {
                 let wC = dj;
-                let wA = 1 - Math.sqrt(di * di + dj * dj);
-                let wB = 1 - Math.sqrt((1 - di) * (1 - di) + dj * dj);
-                let l = Math.sqrt(wC * wC + wA * wA + wB * wB)
+                let wA = 1 - Nabu.MinMax(Math.sqrt(di * di + dj * dj), 0, 1);
+                let wB = 1 - Nabu.MinMax(Math.sqrt((1 - di) * (1 - di) + dj * dj), 0, 1);
+                let l = wA + wC + wB;
                 return new BiomeWeight(c, wC / l, b, wB / l, a, wA / l);
             }
             if (a === d) {
-                let wA = 1 - dj;
-                let wB = 1 - Math.sqrt((1 - di) * (1 - di) + dj * dj);
-                let wC = 1 - Math.sqrt((1 - di) * (1 - di) + (1 - dj) * (1 - dj));
-                let l = Math.sqrt(wC * wC + wA * wA + wB * wB)
+                let wA = 1 - di;
+                let wB = 1 - Nabu.MinMax(Math.sqrt((1 - di) * (1 - di) + dj * dj), 0, 1);
+                let wC = 1 - Nabu.MinMax(Math.sqrt((1 - di) * (1 - di) + (1 - dj) * (1 - dj)), 0, 1);
+                let l = wA + wB + wC;
                 return new BiomeWeight(c, wC / l, b, wB / l, a, wA / l);
             }
 

@@ -363,6 +363,40 @@ declare namespace Nabu {
     }
 }
 declare namespace Nabu {
+    class Point {
+        map: PointsMap;
+        i: number;
+        j: number;
+        value: number;
+        iGlobal: number;
+        jGlobal: number;
+        constructor(map: PointsMap, i?: number, j?: number, value?: number);
+    }
+    class PointsMap {
+        pointsMapGenerator: PointsMapGenerator;
+        iMap: number;
+        jMap: number;
+        points: Point[];
+        min: number;
+        max: number;
+        lastUsageTime: number;
+        constructor(pointsMapGenerator: PointsMapGenerator, iMap: number, jMap: number);
+    }
+    class PointsMapGenerator {
+        seededMap: SeededMap;
+        tileSize: number;
+        static MAP_SIZE: number;
+        maxFrameTimeMS: number;
+        maxCachedMaps: number;
+        pointsMaps: PointsMap[];
+        constructor(seededMap: SeededMap, tileSize: number);
+        getPointsToRef(iGlobalMin: number, iGlobalMax: number, jGlobalMin: number, jGlobalMax: number, ref: Point[]): void;
+        getMap(IMap: number, JMap: number): PointsMap;
+        updateDetailedCache(): void;
+        generateMapData(map: PointsMap): void;
+    }
+}
+declare namespace Nabu {
     class SeedMap {
         name: string;
         size: number;
