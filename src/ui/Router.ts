@@ -28,6 +28,12 @@ namespace Nabu {
                     this.pages.push(optionPage);
                 }
             });
+            let defaultPages = document.querySelectorAll("default-page");
+            defaultPages.forEach((defaultPage) => {
+                if (defaultPage instanceof DefaultPage) {
+                    this.pages.push(defaultPage);
+                }
+            });
             this.onFindAllPages();
         }
 

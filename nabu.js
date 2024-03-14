@@ -2516,6 +2516,116 @@ var Nabu;
 })(Nabu || (Nabu = {}));
 var Nabu;
 (function (Nabu) {
+    class DefaultPage extends HTMLElement {
+        constructor() {
+            super(...arguments);
+            this._loaded = false;
+            this._shown = false;
+        }
+        static get observedAttributes() {
+            return [
+                "file"
+            ];
+        }
+        get onLoad() {
+            return this._onLoad;
+        }
+        set onLoad(callback) {
+            this._onLoad = callback;
+            if (this._loaded) {
+                this._onLoad();
+            }
+        }
+        connectedCallback() {
+            let file = this.getAttribute("file");
+            if (file) {
+                this.attributeChangedCallback("file", "", file);
+            }
+        }
+        attributeChangedCallback(name, oldValue, newValue) {
+            if (name === "file") {
+                if (this.isConnected) {
+                    const xhttp = new XMLHttpRequest();
+                    xhttp.onload = () => {
+                        this.innerHTML = xhttp.responseText;
+                        this.style.position = "fixed";
+                        this.style.zIndex = "10";
+                        this._shown = false;
+                        this.hide(0);
+                        this._loaded = true;
+                        if (this._onLoad) {
+                            this._onLoad();
+                        }
+                    };
+                    xhttp.open("GET", newValue);
+                    xhttp.send();
+                }
+            }
+        }
+        async show(duration = 1) {
+            return new Promise((resolve) => {
+                if (!this._shown) {
+                    this._shown = true;
+                    this.style.display = "block";
+                    let opacity0 = parseFloat(this.style.opacity);
+                    let opacity1 = 1;
+                    let t0 = performance.now();
+                    let step = () => {
+                        let t = performance.now();
+                        let dt = (t - t0) / 1000;
+                        if (dt >= duration) {
+                            this.style.opacity = "1";
+                            resolve();
+                        }
+                        else {
+                            let f = dt / duration;
+                            this.style.opacity = ((1 - f) * opacity0 + f * opacity1).toFixed(2);
+                            requestAnimationFrame(step);
+                        }
+                    };
+                    step();
+                }
+            });
+        }
+        async hide(duration = 1) {
+            if (duration === 0) {
+                this._shown = false;
+                this.style.display = "none";
+                this.style.opacity = "0";
+            }
+            else {
+                return new Promise((resolve) => {
+                    if (this._shown) {
+                        this._shown = false;
+                        this.style.display = "block";
+                        let opacity0 = parseFloat(this.style.opacity);
+                        let opacity1 = 0;
+                        let t0 = performance.now();
+                        let step = () => {
+                            let t = performance.now();
+                            let dt = (t - t0) / 1000;
+                            if (dt >= duration) {
+                                this.style.display = "none";
+                                this.style.opacity = "0";
+                                resolve();
+                            }
+                            else {
+                                let f = dt / duration;
+                                this.style.opacity = ((1 - f) * opacity0 + f * opacity1).toFixed(2);
+                                requestAnimationFrame(step);
+                            }
+                        };
+                        step();
+                    }
+                });
+            }
+        }
+    }
+    Nabu.DefaultPage = DefaultPage;
+    customElements.define("default-page", DefaultPage);
+})(Nabu || (Nabu = {}));
+var Nabu;
+(function (Nabu) {
     class OptionPage extends HTMLElement {
         constructor() {
             super(...arguments);
@@ -3079,6 +3189,12 @@ var Nabu;
             optionsPages.forEach((optionPage) => {
                 if (optionPage instanceof Nabu.OptionPage) {
                     this.pages.push(optionPage);
+                }
+            });
+            let defaultPages = document.querySelectorAll("default-page");
+            defaultPages.forEach((defaultPage) => {
+                if (defaultPage instanceof Nabu.DefaultPage) {
+                    this.pages.push(defaultPage);
                 }
             });
             this.onFindAllPages();

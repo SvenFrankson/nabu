@@ -487,6 +487,20 @@ declare namespace Nabu {
     }
 }
 declare namespace Nabu {
+    class DefaultPage extends HTMLElement implements IPage {
+        static get observedAttributes(): string[];
+        private _loaded;
+        private _shown;
+        private _onLoad;
+        get onLoad(): () => void;
+        set onLoad(callback: () => void);
+        connectedCallback(): void;
+        attributeChangedCallback(name: string, oldValue: string, newValue: string): void;
+        show(duration?: number): Promise<void>;
+        hide(duration?: number): Promise<void>;
+    }
+}
+declare namespace Nabu {
     class OptionPage extends HTMLElement implements IPage {
         static get observedAttributes(): any[];
         private _loaded;
