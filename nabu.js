@@ -2626,6 +2626,59 @@ var Nabu;
 })(Nabu || (Nabu = {}));
 var Nabu;
 (function (Nabu) {
+    class NabuCheckBox extends HTMLElement {
+        constructor() {
+            super(...arguments);
+            this.onChange = () => { };
+        }
+        static get observedAttributes() {
+            return [
+                "value"
+            ];
+        }
+        connectedCallback() {
+            this.onclick = () => {
+                this.value = this.value === 1 ? 0 : 1;
+            };
+        }
+        attributeChangedCallback(name, oldValue, newValue) {
+            if (name === "value") {
+                if (oldValue != newValue) {
+                    this.setValue(parseInt(newValue));
+                }
+            }
+        }
+        get valueBool() {
+            return this._value === 1 ? true : false;
+        }
+        get value() {
+            return this._value;
+        }
+        set value(v) {
+            this.setValue(v);
+        }
+        setValue(v) {
+            let numV;
+            if (typeof (v) === "boolean") {
+                numV = v ? 1 : 0;
+            }
+            else {
+                numV = v <= 0 ? 0 : 1;
+            }
+            if (numV != this._value) {
+                this._value = numV;
+                this.setAttribute("value", this._value.toFixed(0));
+                if (this.onChange) {
+                    this.onChange();
+                }
+            }
+        }
+    }
+    Nabu.NabuCheckBox = NabuCheckBox;
+    customElements.define("nabu-checkbox", NabuCheckBox);
+})(Nabu || (Nabu = {}));
+var Nabu;
+(function (Nabu) {
     class OptionPage extends HTMLElement {
         constructor() {
             super(...arguments);
@@ -2751,17 +2804,14 @@ var Nabu;
                 valueBlock.style.width = "45%";
                 line.appendChild(valueBlock);
                 if (configElement.type === Nabu.ConfigurationElementType.Boolean) {
-                    let checkbox = document.createElement("div");
+                    let checkbox = document.createElement("nabu-checkbox");
                     checkbox.classList.add("option-button");
-                    checkbox.classList.add("boolean-checkbox");
                     valueBlock.appendChild(checkbox);
-                    checkbox.setAttribute("value", configElement.value === 1 ? "1" : "0");
-                    checkbox.onclick = () => {
-                        configElement.value = configElement.value === 1 ? 0 : 1;
-                        checkbox.setAttribute("value", configElement.value === 1 ? "1" : "0");
+                    checkbox.value = configElement.value;
+                    checkbox.onChange = () => {
                         this.configuration.saveToLocalStorage();
                         if (configElement.onChange) {
-                            configElement.onChange(configElement.value);
+                            configElement.onChange(checkbox.value);
                         }
                     };
                 }

@@ -145,17 +145,14 @@ namespace Nabu {
                 line.appendChild(valueBlock);
 
                 if (configElement.type === ConfigurationElementType.Boolean) {
-                    let checkbox = document.createElement("div");
+                    let checkbox = document.createElement("nabu-checkbox") as Nabu.NabuCheckBox;
                     checkbox.classList.add("option-button");
-                    checkbox.classList.add("boolean-checkbox");
                     valueBlock.appendChild(checkbox);
-                    checkbox.setAttribute("value", configElement.value === 1 ? "1" : "0");
-                    checkbox.onclick = () => {
-                        configElement.value = configElement.value === 1 ? 0 : 1;
-                        checkbox.setAttribute("value", configElement.value === 1 ? "1" : "0");
+                    checkbox.value = configElement.value;
+                    checkbox.onChange = () => {
                         this.configuration.saveToLocalStorage();
                         if (configElement.onChange) {
-                            configElement.onChange(configElement.value);
+                            configElement.onChange(checkbox.value);
                         }
                     }
                 }

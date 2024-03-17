@@ -501,6 +501,19 @@ declare namespace Nabu {
     }
 }
 declare namespace Nabu {
+    class NabuCheckBox extends HTMLElement {
+        private _value;
+        static get observedAttributes(): string[];
+        connectedCallback(): void;
+        onChange: () => void;
+        attributeChangedCallback(name: string, oldValue: string, newValue: string): void;
+        get valueBool(): boolean;
+        get value(): number;
+        set value(v: number);
+        setValue(v: boolean | number): void;
+    }
+}
+declare namespace Nabu {
     class OptionPage extends HTMLElement implements IPage {
         static get observedAttributes(): any[];
         private _loaded;
