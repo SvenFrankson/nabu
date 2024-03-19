@@ -1682,7 +1682,7 @@ var Nabu;
         constructor(seededMap) {
             this.seededMap = seededMap;
             this.maxFrameTimeMS = 15;
-            this.maxCachedMaps = 20;
+            this.maxCachedMaps = 1000;
             this.pointsMaps = [];
         }
         getPointsToRef(iGlobalMin, iGlobalMax, jGlobalMin, jGlobalMax, ref) {
@@ -1729,7 +1729,7 @@ var Nabu;
         }
         generateMapData(map) {
             map.points = [];
-            let n = 10 + 15 * Math.random();
+            let n = 50;
             for (let i = 0; i < n; i++) {
                 let point = new Point(map, Math.floor(Math.random() * PointsMapGenerator.MAP_SIZE), Math.floor(Math.random() * PointsMapGenerator.MAP_SIZE), Math.floor(Math.random() * 2));
                 map.points.push(point);
@@ -2809,6 +2809,7 @@ var Nabu;
                     valueBlock.appendChild(checkbox);
                     checkbox.value = configElement.value;
                     checkbox.onChange = () => {
+                        configElement.value = checkbox.value;
                         this.configuration.saveToLocalStorage();
                         if (configElement.onChange) {
                             configElement.onChange(checkbox.value);

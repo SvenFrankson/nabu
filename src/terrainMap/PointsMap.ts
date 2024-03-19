@@ -31,7 +31,7 @@ namespace Nabu {
         public static MAP_SIZE: number = 256;
 
         public maxFrameTimeMS: number = 15;
-        public maxCachedMaps: number = 20;
+        public maxCachedMaps: number = 1000;
         public pointsMaps: PointsMap[] = [];
 
         constructor(public seededMap: SeededMap) {
@@ -88,7 +88,7 @@ namespace Nabu {
 
         public generateMapData(map: PointsMap): void {
             map.points = [];
-            let n = 10 + 15 * Math.random();
+            let n = 50;
             for (let i = 0; i < n; i++) {
                 let point = new Point(
                     map,

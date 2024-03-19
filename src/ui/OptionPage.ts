@@ -150,6 +150,7 @@ namespace Nabu {
                     valueBlock.appendChild(checkbox);
                     checkbox.value = configElement.value;
                     checkbox.onChange = () => {
+                        configElement.value = checkbox.value;
                         this.configuration.saveToLocalStorage();
                         if (configElement.onChange) {
                             configElement.onChange(checkbox.value);
