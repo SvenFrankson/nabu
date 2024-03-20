@@ -69,6 +69,38 @@ declare namespace Nabu {
     }
 }
 declare namespace Nabu {
+    class InputManager {
+        canvas: HTMLCanvasElement;
+        configuration: Configuration;
+        isPointerLocked: boolean;
+        isPointerDown: boolean;
+        padButtonsMap: Map<number, number>;
+        padButtonsDown: Nabu.UniqueList<number>;
+        keyboardInputMap: Map<string, number>;
+        keyInputDown: Nabu.UniqueList<number>;
+        keyDownListeners: ((k: number) => any)[];
+        mappedKeyDownListeners: Map<number, (() => any)[]>;
+        keyUpListeners: ((k: number) => any)[];
+        mappedKeyUpListeners: Map<number, (() => any)[]>;
+        constructor(canvas: HTMLCanvasElement, configuration: Configuration);
+        initialize(): void;
+        update(): void;
+        private doKeyInputDown;
+        private doKeyInputUp;
+        mapInput(input: string, key: number): void;
+        unMapInput(input: string): void;
+        addKeyDownListener(callback: (k: number) => any): void;
+        addMappedKeyDownListener(k: number, callback: () => any): void;
+        removeKeyDownListener(callback: (k: number) => any): void;
+        removeMappedKeyDownListener(k: number, callback: () => any): void;
+        addKeyUpListener(callback: (k: number) => any): void;
+        addMappedKeyUpListener(k: number, callback: () => any): void;
+        removeKeyUpListener(callback: (k: number) => any): void;
+        removeMappedKeyUpListener(k: number, callback: () => any): void;
+        isKeyInputDown(keyInput: number): boolean;
+    }
+}
+declare namespace Nabu {
     function MinMax(n: number, min: number, max: number): number;
     function Pow2(n: number): number;
     function FloorPow2Exponent(n: number): number;
