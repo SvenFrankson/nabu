@@ -86,8 +86,9 @@ declare namespace Nabu {
         mappedKeyDownListeners: Map<number, (() => any)[]>;
         keyUpListeners: ((k: number) => any)[];
         mappedKeyUpListeners: Map<number, (() => any)[]>;
+        deactivateAllKeyInputs: boolean;
         constructor(canvas: HTMLCanvasElement, configuration: Configuration);
-        initialize(configuration?: Configuration): void;
+        initialize(): void;
         initializeInputs(configuration: Configuration): void;
         update(): void;
         private doKeyInputDown;

@@ -332,8 +332,9 @@ var Nabu;
             this.mappedKeyDownListeners = new Map();
             this.keyUpListeners = [];
             this.mappedKeyUpListeners = new Map();
+            this.deactivateAllKeyInputs = false;
         }
-        initialize(configuration) {
+        initialize() {
             this.canvas.addEventListener("pointerdown", (ev) => {
                 this.isPointerDown = true;
                 if (this.configuration.getValue("canLockPointer") === 1) {
@@ -406,6 +407,9 @@ var Nabu;
             }
         }
         doKeyInputDown(keyInput) {
+            if (this.deactivateAllKeyInputs) {
+                return;
+            }
             this.keyInputDown.push(keyInput);
             for (let i = 0; i < this.keyDownListeners.length; i++) {
                 this.keyDownListeners[i](keyInput);
@@ -418,6 +422,9 @@ var Nabu;
             }
         }
         doKeyInputUp(keyInput) {
+            if (this.deactivateAllKeyInputs) {
+                return;
+            }
             this.keyInputDown.remove(keyInput);
             for (let i = 0; i < this.keyUpListeners.length; i++) {
                 this.keyUpListeners[i](keyInput);

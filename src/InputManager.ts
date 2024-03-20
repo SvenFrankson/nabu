@@ -14,10 +14,11 @@ namespace Nabu {
         public mappedKeyDownListeners: Map<number, (() => any)[]> = new Map<number, (() => any)[]>();
         public keyUpListeners: ((k: number) => any)[] = [];
         public mappedKeyUpListeners: Map<number, (() => any)[]> = new Map<number, (() => any)[]>();
+        public deactivateAllKeyInputs: boolean = false;
 
         constructor(public canvas: HTMLCanvasElement, public configuration: Configuration) {}
 
-        public initialize(configuration?: Configuration): void {
+        public initialize(): void {
             this.canvas.addEventListener("pointerdown", (ev: PointerEvent) => {
                 this.isPointerDown = true;
                 if (this.configuration.getValue("canLockPointer") === 1) {
@@ -93,6 +94,9 @@ namespace Nabu {
         }
 
         private doKeyInputDown(keyInput: number): void {
+            if (this.deactivateAllKeyInputs) {
+                return;
+            }
             this.keyInputDown.push(keyInput);
             for (let i = 0; i < this.keyDownListeners.length; i++) {
                 this.keyDownListeners[i](keyInput);
@@ -106,6 +110,9 @@ namespace Nabu {
         }
 
         private doKeyInputUp(keyInput: number): void {
+            if (this.deactivateAllKeyInputs) {
+                return;
+            }
             this.keyInputDown.remove(keyInput);
             for (let i = 0; i < this.keyUpListeners.length; i++) {
                 this.keyUpListeners[i](keyInput);
