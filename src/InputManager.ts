@@ -5,7 +5,7 @@ namespace Nabu {
         public isPointerDown: boolean = false;
 
         public padButtonsMap: Map<number, number> = new Map<number, number>();
-        public padButtonsDown: Nabu.UniqueList<number> = new Nabu.UniqueList<number>();
+        public padButtonsDown: Nabu.UniqueList<number> = new Nabu.UniqueList<number>(); // If the physical button is pressed, its index is in this list.
 
         public keyboardInputMap: Map<string, number> = new Map<string, number>();
 
@@ -17,7 +17,7 @@ namespace Nabu {
 
         constructor(public canvas: HTMLCanvasElement, public configuration: Configuration) {}
 
-        public initialize(): void {
+        public initialize(configuration?: Configuration): void {
             this.canvas.addEventListener("pointerdown", (ev: PointerEvent) => {
                 this.isPointerDown = true;
                 if (this.configuration.getValue("canLockPointer") === 1) {
@@ -52,6 +52,16 @@ namespace Nabu {
                     this.doKeyInputUp(keyInput);
                 }
             });
+        }
+
+        public initializeInputs(configuration: Configuration): void {
+            if (configuration) {
+                configuration.configurationElements.forEach(confElement => {
+                    if (confElement.type === ConfigurationElementType.Input) {
+                        confElement.forceInit();
+                    }
+                })
+            }
         }
 
         public update(): void {

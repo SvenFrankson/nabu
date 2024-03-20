@@ -74,6 +74,7 @@ var Nabu;
         ConfigurationElementType[ConfigurationElementType["Boolean"] = 0] = "Boolean";
         ConfigurationElementType[ConfigurationElementType["Number"] = 1] = "Number";
         ConfigurationElementType[ConfigurationElementType["Enum"] = 2] = "Enum";
+        ConfigurationElementType[ConfigurationElementType["Input"] = 3] = "Input";
     })(ConfigurationElementType = Nabu.ConfigurationElementType || (Nabu.ConfigurationElementType = {}));
     class ConfigurationElement {
         constructor(property, type, value, prop, onChange) {
@@ -101,12 +102,89 @@ var Nabu;
                 this.prop.toString = (v) => { return v.toString(); };
             }
         }
+        static InputToInt(input) {
+            return ConfigurationElement.Inputs.indexOf(input);
+        }
+        static SimpleInput(inputManager, name, keyInput, defaultValueString) {
+            return new ConfigurationElement(name, ConfigurationElementType.Input, ConfigurationElement.InputToInt(defaultValueString), {}, (newValue, oldValue) => {
+                if (isFinite(oldValue)) {
+                    inputManager.unMapInput(ConfigurationElement.Inputs[oldValue]);
+                }
+                inputManager.mapInput(ConfigurationElement.Inputs[newValue], keyInput);
+            });
+        }
         forceInit() {
             if (this.onChange && isFinite(this.value)) {
                 this.onChange(this.value);
             }
         }
     }
+    ConfigurationElement.Inputs = [
+        "ArrowLeft",
+        "ArrowUp",
+        "ArrowRight",
+        "ArrowDown",
+        "Space",
+        "ShiftLeft",
+        "ControlLeft",
+        "AltLeft",
+        "ShiftRight",
+        "ControlRight",
+        "AltRight",
+        "Digit1",
+        "Digit2",
+        "Digit3",
+        "Digit4",
+        "Digit5",
+        "Digit6",
+        "Digit7",
+        "Digit8",
+        "Digit9",
+        "Digit0",
+        "KeyA",
+        "KeyZ",
+        "KeyE",
+        "KeyR",
+        "KeyT",
+        "KeyY",
+        "KeyU",
+        "KeyI",
+        "KeyO",
+        "KeyP",
+        "KeyQ",
+        "KeyS",
+        "KeyD",
+        "KeyF",
+        "KeyG",
+        "KeyH",
+        "KeyJ",
+        "KeyK",
+        "KeyL",
+        "KeyM",
+        "KeyW",
+        "KeyX",
+        "KeyC",
+        "KeyV",
+        "KeyB",
+        "KeyN",
+        "GamepadBtn0",
+        "GamepadBtn1",
+        "GamepadBtn2",
+        "GamepadBtn3",
+        "GamepadBtn4",
+        "GamepadBtn5",
+        "GamepadBtn6",
+        "GamepadBtn7",
+        "GamepadBtn8",
+        "GamepadBtn9",
+        "GamepadBtn10",
+        "GamepadBtn11",
+        "GamepadBtn12",
+        "GamepadBtn13",
+        "GamepadBtn14",
+        "GamepadBtn15",
+        "GamepadBtn16"
+    ];
     Nabu.ConfigurationElement = ConfigurationElement;
     class Configuration {
         constructor(configName) {
@@ -247,7 +325,7 @@ var Nabu;
             this.isPointerLocked = false;
             this.isPointerDown = false;
             this.padButtonsMap = new Map();
-            this.padButtonsDown = new Nabu.UniqueList();
+            this.padButtonsDown = new Nabu.UniqueList(); // If the physical button is pressed, its index is in this list.
             this.keyboardInputMap = new Map();
             this.keyInputDown = new Nabu.UniqueList();
             this.keyDownListeners = [];
@@ -255,7 +333,7 @@ var Nabu;
             this.keyUpListeners = [];
             this.mappedKeyUpListeners = new Map();
         }
-        initialize() {
+        initialize(configuration) {
             this.canvas.addEventListener("pointerdown", (ev) => {
                 this.isPointerDown = true;
                 if (this.configuration.getValue("canLockPointer") === 1) {
@@ -289,6 +367,15 @@ var Nabu;
                     this.doKeyInputUp(keyInput);
                 }
             });
+        }
+        initializeInputs(configuration) {
+            if (configuration) {
+                configuration.configurationElements.forEach(confElement => {
+                    if (confElement.type === Nabu.ConfigurationElementType.Input) {
+                        confElement.forceInit();
+                    }
+                });
+            }
         }
         update() {
             let gamepads = navigator.getGamepads();
@@ -3062,6 +3149,42 @@ var Nabu;
                             this.configuration.saveToLocalStorage();
                             if (configElement.onChange) {
                                 configElement.onChange(configElement.value);
+                            }
+                        }
+                    };
+                }
+                else if (configElement.type === Nabu.ConfigurationElementType.Input) {
+                    let minus = document.createElement("div");
+                    minus.classList.add("option-button");
+                    minus.classList.add("minus");
+                    valueBlock.appendChild(minus);
+                    minus.onclick = () => {
+                        if (configElement.value > configElement.prop.min) {
+                            let oldValue = configElement.value;
+                            configElement.value = Math.max(configElement.prop.min, configElement.value - configElement.prop.step);
+                            numValue.innerHTML = Nabu.ConfigurationElement.Inputs[configElement.value];
+                            this.configuration.saveToLocalStorage();
+                            if (configElement.onChange) {
+                                configElement.onChange(configElement.value, oldValue);
+                            }
+                        }
+                    };
+                    let numValue = document.createElement("div");
+                    numValue.classList.add("value");
+                    numValue.innerHTML = Nabu.ConfigurationElement.Inputs[configElement.value];
+                    valueBlock.appendChild(numValue);
+                    let plus = document.createElement("div");
+                    plus.classList.add("option-button");
+                    plus.classList.add("plus");
+                    valueBlock.appendChild(plus);
+                    plus.onclick = () => {
+                        if (configElement.value < configElement.prop.max) {
+                            let oldValue = configElement.value;
+                            configElement.value = Math.min(configElement.prop.max, configElement.value + configElement.prop.step);
+                            numValue.innerHTML = Nabu.ConfigurationElement.Inputs[configElement.value];
+                            this.configuration.saveToLocalStorage();
+                            if (configElement.onChange) {
+                                configElement.onChange(configElement.value, oldValue);
                             }
                         }
                     };

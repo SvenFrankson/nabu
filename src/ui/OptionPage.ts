@@ -203,6 +203,44 @@ namespace Nabu {
                         }
                     }
                 }
+                else if (configElement.type === ConfigurationElementType.Input){
+                    let minus = document.createElement("div");
+                    minus.classList.add("option-button");
+                    minus.classList.add("minus");
+                    valueBlock.appendChild(minus);
+                    minus.onclick = () => {
+                        if (configElement.value > configElement.prop.min) {
+                            let oldValue = configElement.value;
+                            configElement.value = Math.max(configElement.prop.min, configElement.value - configElement.prop.step);
+                            numValue.innerHTML = ConfigurationElement.Inputs[configElement.value];
+                            this.configuration.saveToLocalStorage();
+                            if (configElement.onChange) {
+                                configElement.onChange(configElement.value, oldValue);
+                            }
+                        }
+                    }
+
+                    let numValue = document.createElement("div");
+                    numValue.classList.add("value");
+                    numValue.innerHTML = ConfigurationElement.Inputs[configElement.value];
+                    valueBlock.appendChild(numValue);
+
+                    let plus = document.createElement("div");
+                    plus.classList.add("option-button");
+                    plus.classList.add("plus");
+                    valueBlock.appendChild(plus);
+                    plus.onclick = () => {
+                        if (configElement.value < configElement.prop.max) {
+                            let oldValue = configElement.value;
+                            configElement.value = Math.min(configElement.prop.max, configElement.value + configElement.prop.step);
+                            numValue.innerHTML = ConfigurationElement.Inputs[configElement.value];
+                            this.configuration.saveToLocalStorage();
+                            if (configElement.onChange) {
+                                configElement.onChange(configElement.value, oldValue);
+                            }
+                        }
+                    }
+                }
             }
         }
     }

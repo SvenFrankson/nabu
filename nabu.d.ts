@@ -10,7 +10,8 @@ declare namespace Nabu {
     enum ConfigurationElementType {
         Boolean = 0,
         Number = 1,
-        Enum = 2
+        Enum = 2,
+        Input = 3
     }
     interface IConfigurationElementValueProp {
         displayName?: string;
@@ -24,8 +25,11 @@ declare namespace Nabu {
         type: ConfigurationElementType;
         value: number;
         prop?: IConfigurationElementValueProp;
-        onChange?: (v: number) => void;
-        constructor(property: string, type: ConfigurationElementType, value: number, prop?: IConfigurationElementValueProp, onChange?: (v: number) => void);
+        onChange?: (newValue: number, oldValue?: number) => void;
+        static Inputs: string[];
+        static InputToInt(input: string): number;
+        constructor(property: string, type: ConfigurationElementType, value: number, prop?: IConfigurationElementValueProp, onChange?: (newValue: number, oldValue?: number) => void);
+        static SimpleInput(inputManager: InputManager, name: string, keyInput: number, defaultValueString: string): ConfigurationElement;
         forceInit(): void;
     }
     abstract class Configuration {
@@ -83,7 +87,8 @@ declare namespace Nabu {
         keyUpListeners: ((k: number) => any)[];
         mappedKeyUpListeners: Map<number, (() => any)[]>;
         constructor(canvas: HTMLCanvasElement, configuration: Configuration);
-        initialize(): void;
+        initialize(configuration?: Configuration): void;
+        initializeInputs(configuration: Configuration): void;
         update(): void;
         private doKeyInputDown;
         private doKeyInputUp;
