@@ -3252,10 +3252,33 @@ var Nabu;
                                 configElement.value = newValue;
                                 configElement.onChange(newValue, oldValue);
                             }
+                            exit();
+                        };
+                        let waitForGamepad = setInterval(() => {
+                            let gamepads = navigator.getGamepads();
+                            let gamepad = gamepads[0];
+                            if (gamepad) {
+                                for (let b = 0; b < gamepad.buttons.length; b++) {
+                                    let v = gamepad.buttons[b].pressed;
+                                    if (v) {
+                                        let oldValue = configElement.value;
+                                        let newValue = Nabu.ConfigurationElement.InputToInt("GamepadBtn" + b);
+                                        if (newValue > -1) {
+                                            configElement.value = newValue;
+                                            configElement.onChange(newValue, oldValue);
+                                        }
+                                        exit();
+                                    }
+                                }
+                            }
+                        }, 15);
+                        let exit = () => {
                             numValue.innerHTML = (Nabu.ConfigurationElement.Inputs[configElement.value]).replace("GamepadBtn", "Pad ").replace("Key", "Key ");
                             window.removeEventListener("keyup", keyup);
+                            window.clearInterval(waitForGamepad);
                         };
                         window.addEventListener("keyup", keyup);
+                        window.addEventListener("pointerdown", exit);
                     };
                 }
                 if (configElement.type === Nabu.ConfigurationElementType.Input) {
