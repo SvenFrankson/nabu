@@ -117,6 +117,9 @@ namespace Nabu {
         public setConfiguration(configuration: Configuration): void {
             this.configuration = configuration;
             let lastCategory: ConfigurationElementCategory;
+            let lastInputLabel: string;
+            let lastValueBlock: HTMLDivElement;
+
             for (let i = 0; i < configuration.configurationElements.length; i++) {
                 let configElement = configuration.configurationElements[i];
 
@@ -128,33 +131,37 @@ namespace Nabu {
                     lastCategory = configElement.category;
                 }
 
-                let line = document.createElement("div");
-                line.classList.add("line");
-                this._container.appendChild(line);
-
-                let label = document.createElement("div");
-                label.classList.add("label");
-                if (configElement.type === ConfigurationElementType.Input) {
-                    label.classList.add("input");
+                let labelString = configElement.prop.displayName.split(".")[0];
+                let valueBlock = lastValueBlock;
+                if (labelString != lastInputLabel) {
+                    let line = document.createElement("div");
+                    line.classList.add("line");
+                    this._container.appendChild(line);
+    
+                    let label = document.createElement("div");
+                    label.classList.add("label");
+                    if (configElement.type === ConfigurationElementType.Input) {
+                        label.classList.add("input");
+                    }
+                    label.innerHTML = labelString;
+                    label.style.display = "inline-block";
+                    label.style.marginLeft = "1%";
+                    label.style.marginRight = "1%";
+                    label.style.paddingLeft = "1.5%";
+                    label.style.paddingRight = "1.5%";
+                    label.style.width = "45%";
+                    line.appendChild(label);
+    
+                    valueBlock = document.createElement("div");
+                    valueBlock.classList.add("value-block");
+                    valueBlock.style.display = "inline-block";
+                    valueBlock.style.marginLeft = "1%";
+                    valueBlock.style.marginRight = "1%";
+                    valueBlock.style.paddingLeft = "1.5%";
+                    valueBlock.style.paddingRight = "1.5%";
+                    valueBlock.style.width = "45%";
+                    line.appendChild(valueBlock);
                 }
-                label.innerHTML = configElement.prop.displayName.split(".")[0];
-                label.style.display = "inline-block";
-                label.style.marginLeft = "1%";
-                label.style.marginRight = "1%";
-                label.style.paddingLeft = "1.5%";
-                label.style.paddingRight = "1.5%";
-                label.style.width = "45%";
-                line.appendChild(label);
-
-                let valueBlock = document.createElement("div");
-                valueBlock.classList.add("value-block");
-                valueBlock.style.display = "inline-block";
-                valueBlock.style.marginLeft = "1%";
-                valueBlock.style.marginRight = "1%";
-                valueBlock.style.paddingLeft = "1.5%";
-                valueBlock.style.paddingRight = "1.5%";
-                valueBlock.style.width = "45%";
-                line.appendChild(valueBlock);
 
                 if (configElement.type === ConfigurationElementType.Boolean) {
                     let checkbox = document.createElement("nabu-checkbox") as Nabu.NabuCheckBox;
@@ -216,42 +223,19 @@ namespace Nabu {
                     }
                 }
                 else if (configElement.type === ConfigurationElementType.Input){
-                    let minus = document.createElement("div");
-                    minus.classList.add("option-button");
-                    minus.classList.add("minus");
-                    valueBlock.appendChild(minus);
-                    minus.onclick = () => {
-                        if (configElement.value > configElement.prop.min) {
-                            let oldValue = configElement.value;
-                            configElement.value = Math.max(configElement.prop.min, configElement.value - configElement.prop.step);
-                            numValue.innerHTML = ConfigurationElement.Inputs[configElement.value];
-                            this.configuration.saveToLocalStorage();
-                            if (configElement.onChange) {
-                                configElement.onChange(configElement.value, oldValue);
-                            }
-                        }
-                    }
-
                     let numValue = document.createElement("div");
-                    numValue.classList.add("value");
-                    numValue.innerHTML = ConfigurationElement.Inputs[configElement.value];
+                    numValue.classList.add("input-value");
+                    numValue.innerHTML = (ConfigurationElement.Inputs[configElement.value]).replace("GamepadBtn", "Pad ").replace("Key", "Key ");
                     valueBlock.appendChild(numValue);
-
-                    let plus = document.createElement("div");
-                    plus.classList.add("option-button");
-                    plus.classList.add("plus");
-                    valueBlock.appendChild(plus);
-                    plus.onclick = () => {
-                        if (configElement.value < configElement.prop.max) {
-                            let oldValue = configElement.value;
-                            configElement.value = Math.min(configElement.prop.max, configElement.value + configElement.prop.step);
-                            numValue.innerHTML = ConfigurationElement.Inputs[configElement.value];
-                            this.configuration.saveToLocalStorage();
-                            if (configElement.onChange) {
-                                configElement.onChange(configElement.value, oldValue);
-                            }
-                        }
-                    }
+                }
+                
+                if (configElement.type === ConfigurationElementType.Input) {
+                    lastInputLabel = labelString;
+                    lastValueBlock = valueBlock;
+                }
+                else {
+                    lastInputLabel = "";
+                    lastValueBlock = undefined;
                 }
             }
         }
