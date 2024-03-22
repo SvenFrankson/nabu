@@ -108,7 +108,7 @@ var Nabu;
         static SimpleInput(inputManager, name, keyInput, defaultValueString) {
             return new ConfigurationElement(name, ConfigurationElementType.Input, ConfigurationElement.InputToInt(defaultValueString), {}, (newValue, oldValue) => {
                 if (isFinite(oldValue)) {
-                    inputManager.unMapInput(ConfigurationElement.Inputs[oldValue]);
+                    inputManager.unMapInput(ConfigurationElement.Inputs[oldValue], keyInput);
                 }
                 inputManager.mapInput(ConfigurationElement.Inputs[newValue], keyInput);
             });
@@ -357,22 +357,20 @@ var Nabu;
                 }
             });
             window.addEventListener("keydown", (e) => {
-                let keyInput = this.keyboardInputMap.get(e.code);
-                if (!isFinite(keyInput)) {
-                    keyInput = this.keyboardInputMap.get(e.key);
-                }
-                if (isFinite(keyInput)) {
-                    this.doKeyInputDown(keyInput);
-                }
+                let keyInputs = this.keyboardInputMap.get(e.code);
+                keyInputs.forEach(keyInput => {
+                    if (isFinite(keyInput)) {
+                        this.doKeyInputDown(keyInput);
+                    }
+                });
             });
             window.addEventListener("keyup", (e) => {
-                let keyInput = this.keyboardInputMap.get(e.code);
-                if (!isFinite(keyInput)) {
-                    keyInput = this.keyboardInputMap.get(e.key);
-                }
-                if (isFinite(keyInput)) {
-                    this.doKeyInputUp(keyInput);
-                }
+                let keyInputs = this.keyboardInputMap.get(e.code);
+                keyInputs.forEach(keyInput => {
+                    if (isFinite(keyInput)) {
+                        this.doKeyInputUp(keyInput);
+                    }
+                });
             });
         }
         initializeInputs(configuration) {
@@ -383,6 +381,7 @@ var Nabu;
                     }
                 });
             }
+            console.log(this.keyboardInputMap);
         }
         update() {
             let gamepads = navigator.getGamepads();
@@ -394,18 +393,26 @@ var Nabu;
                     if (v) {
                         if (!this.padButtonsDown.contains(b)) {
                             this.padButtonsDown.push(b);
-                            let key = this.padButtonsMap.get(b);
-                            if (key) {
-                                this.doKeyInputDown(key);
+                            let keys = this.padButtonsMap.get(b);
+                            if (keys) {
+                                keys.forEach(key => {
+                                    if (key) {
+                                        this.doKeyInputDown(key);
+                                    }
+                                });
                             }
                         }
                     }
                     else if (hasButtonsDown) {
                         if (this.padButtonsDown.contains(b)) {
                             this.padButtonsDown.remove(b);
-                            let key = this.padButtonsMap.get(b);
-                            if (key) {
-                                this.doKeyInputUp(key);
+                            let keys = this.padButtonsMap.get(b);
+                            if (keys) {
+                                keys.forEach(key => {
+                                    if (key) {
+                                        this.doKeyInputUp(key);
+                                    }
+                                });
                             }
                         }
                     }
@@ -443,21 +450,48 @@ var Nabu;
             }
         }
         mapInput(input, key) {
+            console.log("mapInput " + input + " " + key);
             if (input.startsWith("GamepadBtn")) {
                 let btnIndex = parseInt(input.replace("GamepadBtn", ""));
-                this.padButtonsMap.set(btnIndex, key);
+                let keyInputs = this.padButtonsMap.get(btnIndex);
+                if (!keyInputs) {
+                    keyInputs = [];
+                    this.padButtonsMap.set(btnIndex, keyInputs);
+                }
+                keyInputs.push(key);
             }
             else {
-                this.keyboardInputMap.set(input, key);
+                let keyInputs = this.keyboardInputMap.get(input);
+                if (!keyInputs) {
+                    keyInputs = [];
+                    this.keyboardInputMap.set(input, keyInputs);
+                }
+                keyInputs.push(key);
             }
         }
-        unMapInput(input) {
+        unMapInput(input, key) {
             if (input.startsWith("GamepadBtn")) {
+                console.log("unmapInput " + input + " " + key);
                 let btnIndex = parseInt(input.replace("GamepadBtn", ""));
-                this.padButtonsMap.delete(btnIndex);
+                let keyInputs = this.padButtonsMap.get(btnIndex);
+                let index = keyInputs.indexOf(key);
+                if (index > -1) {
+                    keyInputs.splice(index, 1);
+                }
+                if (keyInputs.length === 0) {
+                    this.padButtonsMap.delete(btnIndex);
+                }
             }
             else {
                 this.keyboardInputMap.delete(input);
+                let keyInputs = this.keyboardInputMap.get(input);
+                let index = keyInputs.indexOf(key);
+                if (index > -1) {
+                    keyInputs.splice(index, 1);
+                }
+                if (keyInputs.length === 0) {
+                    this.keyboardInputMap.delete(input);
+                }
             }
         }
         /*

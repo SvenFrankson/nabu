@@ -12,10 +12,10 @@ namespace Nabu {
         public isPointerLocked: boolean = false;
         public isPointerDown: boolean = false;
 
-        public padButtonsMap: Map<number, number> = new Map<number, number>();
+        public padButtonsMap: Map<number, number[]> = new Map<number, number[]>();
         public padButtonsDown: Nabu.UniqueList<number> = new Nabu.UniqueList<number>(); // If the physical button is pressed, its index is in this list.
 
-        public keyboardInputMap: Map<string, number> = new Map<string, number>();
+        public keyboardInputMap: Map<string, number[]> = new Map<string, number[]>();
 
         public keyInputDown: Nabu.UniqueList<number> = new Nabu.UniqueList<number>();
         public keyDownListeners: ((k: number) => any)[] = [];
@@ -44,21 +44,23 @@ namespace Nabu {
             });
 
             window.addEventListener("keydown", (e) => {
-                let keyInput = this.keyboardInputMap.get(e.code);
-                if (!isFinite(keyInput)) {
-                    keyInput = this.keyboardInputMap.get(e.key);
-                }
-                if (isFinite(keyInput)) {
-                    this.doKeyInputDown(keyInput);
+                let keyInputs = this.keyboardInputMap.get(e.code);
+                if (keyInputs) {
+                    keyInputs.forEach(keyInput => {
+                        if (isFinite(keyInput)) {
+                            this.doKeyInputDown(keyInput);
+                        }
+                    })
                 }
             });
             window.addEventListener("keyup", (e) => {
-                let keyInput = this.keyboardInputMap.get(e.code);
-                if (!isFinite(keyInput)) {
-                    keyInput = this.keyboardInputMap.get(e.key);
-                }
-                if (isFinite(keyInput)) {
-                    this.doKeyInputUp(keyInput);
+                let keyInputs = this.keyboardInputMap.get(e.code);
+                if (keyInputs) {
+                    keyInputs.forEach(keyInput => {
+                        if (isFinite(keyInput)) {
+                            this.doKeyInputUp(keyInput);
+                        }
+                    })
                 }
             });
         }
@@ -71,6 +73,7 @@ namespace Nabu {
                     }
                 })
             }
+            console.log(this.keyboardInputMap);
         }
 
         public update(): void {
@@ -83,17 +86,25 @@ namespace Nabu {
                     if (v) {
                         if (!this.padButtonsDown.contains(b)) {
                             this.padButtonsDown.push(b);
-                            let key: number = this.padButtonsMap.get(b);
-                            if (key) {
-                                this.doKeyInputDown(key);
+                            let keys: number[] = this.padButtonsMap.get(b);
+                            if (keys) {
+                                keys.forEach(key => {
+                                    if (key) {
+                                        this.doKeyInputDown(key);
+                                    }
+                                })
                             }
                         }
                     } else if (hasButtonsDown) {
                         if (this.padButtonsDown.contains(b)) {
                             this.padButtonsDown.remove(b);
-                            let key: number = this.padButtonsMap.get(b);
-                            if (key) {
-                                this.doKeyInputUp(key);
+                            let keys: number[] = this.padButtonsMap.get(b);
+                            if (keys) {
+                                keys.forEach(key => {
+                                    if (key) {
+                                        this.doKeyInputUp(key);
+                                    }
+                                })
                             }
                         }
                     }
@@ -134,20 +145,47 @@ namespace Nabu {
         }
 
         public mapInput(input: string, key: number): void {
+            console.log("mapInput " + input + " " + key);
             if (input.startsWith("GamepadBtn")) {
                 let btnIndex = parseInt(input.replace("GamepadBtn", ""));
-                this.padButtonsMap.set(btnIndex, key);
+                let keyInputs: number[] = this.padButtonsMap.get(btnIndex);
+                if (!keyInputs) {
+                    keyInputs = [];
+                    this.padButtonsMap.set(btnIndex, keyInputs);
+                }
+                keyInputs.push(key);
             } else {
-                this.keyboardInputMap.set(input, key);
+                let keyInputs: number[] = this.keyboardInputMap.get(input);
+                if (!keyInputs) {
+                    keyInputs = [];
+                    this.keyboardInputMap.set(input, keyInputs);
+                }
+                keyInputs.push(key);
             }
         }
 
-        public unMapInput(input: string): void {
+        public unMapInput(input: string, key: number): void {
             if (input.startsWith("GamepadBtn")) {
+                console.log("unmapInput " + input + " " + key);
                 let btnIndex = parseInt(input.replace("GamepadBtn", ""));
-                this.padButtonsMap.delete(btnIndex);
+                let keyInputs: number[] = this.padButtonsMap.get(btnIndex);
+                let index = keyInputs.indexOf(key);
+                if (index > -1) {
+                    keyInputs.splice(index, 1);
+                }
+                if (keyInputs.length === 0) {
+                    this.padButtonsMap.delete(btnIndex);
+                }
             } else {
                 this.keyboardInputMap.delete(input);
+                let keyInputs: number[] = this.keyboardInputMap.get(input);
+                let index = keyInputs.indexOf(key);
+                if (index > -1) {
+                    keyInputs.splice(index, 1);
+                }
+                if (keyInputs.length === 0) {
+                    this.keyboardInputMap.delete(input);
+                }
             }
         }
 

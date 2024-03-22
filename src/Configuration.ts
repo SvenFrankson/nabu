@@ -118,7 +118,7 @@ namespace Nabu {
         public static SimpleInput(inputManager: InputManager, name: string, keyInput: number, defaultValueString: string): ConfigurationElement {
             return new ConfigurationElement(name, ConfigurationElementType.Input, ConfigurationElement.InputToInt(defaultValueString), {}, (newValue: number, oldValue: number) => {
                 if (isFinite(oldValue)) {
-                    inputManager.unMapInput(ConfigurationElement.Inputs[oldValue]);
+                    inputManager.unMapInput(ConfigurationElement.Inputs[oldValue], keyInput);
                 }
                 inputManager.mapInput(ConfigurationElement.Inputs[newValue], keyInput);
             })

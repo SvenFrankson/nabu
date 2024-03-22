@@ -79,9 +79,9 @@ declare namespace Nabu {
         static DeadZoneAxis(axisValue: number, threshold?: number): number;
         isPointerLocked: boolean;
         isPointerDown: boolean;
-        padButtonsMap: Map<number, number>;
+        padButtonsMap: Map<number, number[]>;
         padButtonsDown: Nabu.UniqueList<number>;
-        keyboardInputMap: Map<string, number>;
+        keyboardInputMap: Map<string, number[]>;
         keyInputDown: Nabu.UniqueList<number>;
         keyDownListeners: ((k: number) => any)[];
         mappedKeyDownListeners: Map<number, (() => any)[]>;
@@ -95,7 +95,7 @@ declare namespace Nabu {
         private doKeyInputDown;
         private doKeyInputUp;
         mapInput(input: string, key: number): void;
-        unMapInput(input: string): void;
+        unMapInput(input: string, key: number): void;
         addKeyDownListener(callback: (k: number) => any): void;
         addMappedKeyDownListener(k: number, callback: () => any): void;
         removeKeyDownListener(callback: (k: number) => any): void;
