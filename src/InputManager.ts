@@ -1,6 +1,14 @@
 namespace Nabu {
     
     export class InputManager {
+
+        public static DeadZoneAxis(axisValue: number, threshold: number = 0.1): number {
+            if (Math.abs(axisValue) > threshold) {
+                return (axisValue - threshold * Math.sign(axisValue)) / (1 - threshold);
+            }
+            return 0;
+        }
+
         public isPointerLocked: boolean = false;
         public isPointerDown: boolean = false;
 

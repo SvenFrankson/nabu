@@ -334,6 +334,12 @@ var Nabu;
             this.mappedKeyUpListeners = new Map();
             this.deactivateAllKeyInputs = false;
         }
+        static DeadZoneAxis(axisValue, threshold = 0.1) {
+            if (Math.abs(axisValue) > threshold) {
+                return (axisValue - threshold * Math.sign(axisValue)) / (1 - threshold);
+            }
+            return 0;
+        }
         initialize() {
             this.canvas.addEventListener("pointerdown", (ev) => {
                 this.isPointerDown = true;

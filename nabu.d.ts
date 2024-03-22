@@ -76,6 +76,7 @@ declare namespace Nabu {
     class InputManager {
         canvas: HTMLCanvasElement;
         configuration: Configuration;
+        static DeadZoneAxis(axisValue: number, threshold?: number): number;
         isPointerLocked: boolean;
         isPointerDown: boolean;
         padButtonsMap: Map<number, number>;
