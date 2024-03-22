@@ -7,6 +7,13 @@ declare namespace Nabu {
     function Decompress(data: Uint8Array): Uint8Array;
 }
 declare namespace Nabu {
+    enum ConfigurationElementCategory {
+        Gameplay = 0,
+        Graphic = 1,
+        Command = 2,
+        Dev = 3
+    }
+    var ConfigurationElementCategoryName: string[];
     enum ConfigurationElementType {
         Boolean = 0,
         Number = 1,
@@ -24,11 +31,12 @@ declare namespace Nabu {
         property: string;
         type: ConfigurationElementType;
         value: number;
+        category: ConfigurationElementCategory;
         prop?: IConfigurationElementValueProp;
         onChange?: (newValue: number, oldValue?: number) => void;
         static Inputs: string[];
         static InputToInt(input: string): number;
-        constructor(property: string, type: ConfigurationElementType, value: number, prop?: IConfigurationElementValueProp, onChange?: (newValue: number, oldValue?: number) => void);
+        constructor(property: string, type: ConfigurationElementType, value: number, category: ConfigurationElementCategory, prop?: IConfigurationElementValueProp, onChange?: (newValue: number, oldValue?: number) => void);
         static SimpleInput(inputManager: InputManager, name: string, keyInput: number, defaultValueString: string): ConfigurationElement;
         forceInit(): void;
     }

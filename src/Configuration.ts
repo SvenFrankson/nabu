@@ -1,5 +1,19 @@
 namespace Nabu {
 
+    export enum ConfigurationElementCategory {
+        Gameplay,
+        Graphic,
+        Command,
+        Dev
+    }
+
+    export var ConfigurationElementCategoryName: string[] = [
+        "Gameplay",
+        "Graphic",
+        "Command",
+        "Dev"
+    ]
+
     export enum ConfigurationElementType {
         Boolean,
         Number,
@@ -92,6 +106,7 @@ namespace Nabu {
             public property: string,
             public type: ConfigurationElementType,
             public value: number,
+            public category: ConfigurationElementCategory,
             public prop?: IConfigurationElementValueProp,
             public onChange?: (newValue: number, oldValue?: number) => void
         ) {
@@ -116,7 +131,7 @@ namespace Nabu {
         }
 
         public static SimpleInput(inputManager: InputManager, name: string, keyInput: number, defaultValueString: string): ConfigurationElement {
-            return new ConfigurationElement(name, ConfigurationElementType.Input, ConfigurationElement.InputToInt(defaultValueString), {}, (newValue: number, oldValue: number) => {
+            return new ConfigurationElement(name, ConfigurationElementType.Input, ConfigurationElement.InputToInt(defaultValueString), ConfigurationElementCategory.Command, {}, (newValue: number, oldValue: number) => {
                 if (isFinite(oldValue)) {
                     inputManager.unMapInput(ConfigurationElement.Inputs[oldValue], keyInput);
                 }

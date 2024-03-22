@@ -116,8 +116,17 @@ namespace Nabu {
 
         public setConfiguration(configuration: Configuration): void {
             this.configuration = configuration;
+            let lastCategory: ConfigurationElementCategory;
             for (let i = 0; i < configuration.configurationElements.length; i++) {
                 let configElement = configuration.configurationElements[i];
+
+                if (configElement.category != lastCategory) {
+                    let h2 = document.createElement("h2");
+                    h2.classList.add("category");
+                    h2.innerHTML = ConfigurationElementCategoryName[configElement.category];
+                    this._container.appendChild(h2);
+                    lastCategory = configElement.category;
+                }
 
                 let line = document.createElement("div");
                 line.classList.add("line");
@@ -125,7 +134,10 @@ namespace Nabu {
 
                 let label = document.createElement("div");
                 label.classList.add("label");
-                label.innerHTML = configElement.prop.displayName;
+                if (configElement.type === ConfigurationElementType.Input) {
+                    label.classList.add("input");
+                }
+                label.innerHTML = configElement.prop.displayName.split(".")[0];
                 label.style.display = "inline-block";
                 label.style.marginLeft = "1%";
                 label.style.marginRight = "1%";

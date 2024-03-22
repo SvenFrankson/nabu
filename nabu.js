@@ -69,6 +69,19 @@ var Nabu;
 })(Nabu || (Nabu = {}));
 var Nabu;
 (function (Nabu) {
+    let ConfigurationElementCategory;
+    (function (ConfigurationElementCategory) {
+        ConfigurationElementCategory[ConfigurationElementCategory["Gameplay"] = 0] = "Gameplay";
+        ConfigurationElementCategory[ConfigurationElementCategory["Graphic"] = 1] = "Graphic";
+        ConfigurationElementCategory[ConfigurationElementCategory["Command"] = 2] = "Command";
+        ConfigurationElementCategory[ConfigurationElementCategory["Dev"] = 3] = "Dev";
+    })(ConfigurationElementCategory = Nabu.ConfigurationElementCategory || (Nabu.ConfigurationElementCategory = {}));
+    Nabu.ConfigurationElementCategoryName = [
+        "Gameplay",
+        "Graphic",
+        "Command",
+        "Dev"
+    ];
     let ConfigurationElementType;
     (function (ConfigurationElementType) {
         ConfigurationElementType[ConfigurationElementType["Boolean"] = 0] = "Boolean";
@@ -77,10 +90,11 @@ var Nabu;
         ConfigurationElementType[ConfigurationElementType["Input"] = 3] = "Input";
     })(ConfigurationElementType = Nabu.ConfigurationElementType || (Nabu.ConfigurationElementType = {}));
     class ConfigurationElement {
-        constructor(property, type, value, prop, onChange) {
+        constructor(property, type, value, category, prop, onChange) {
             this.property = property;
             this.type = type;
             this.value = value;
+            this.category = category;
             this.prop = prop;
             this.onChange = onChange;
             if (!this.prop) {
@@ -106,7 +120,7 @@ var Nabu;
             return ConfigurationElement.Inputs.indexOf(input);
         }
         static SimpleInput(inputManager, name, keyInput, defaultValueString) {
-            return new ConfigurationElement(name, ConfigurationElementType.Input, ConfigurationElement.InputToInt(defaultValueString), {}, (newValue, oldValue) => {
+            return new ConfigurationElement(name, ConfigurationElementType.Input, ConfigurationElement.InputToInt(defaultValueString), ConfigurationElementCategory.Command, {}, (newValue, oldValue) => {
                 if (isFinite(oldValue)) {
                     inputManager.unMapInput(ConfigurationElement.Inputs[oldValue], keyInput);
                 }
@@ -358,19 +372,23 @@ var Nabu;
             });
             window.addEventListener("keydown", (e) => {
                 let keyInputs = this.keyboardInputMap.get(e.code);
-                keyInputs.forEach(keyInput => {
-                    if (isFinite(keyInput)) {
-                        this.doKeyInputDown(keyInput);
-                    }
-                });
+                if (keyInputs) {
+                    keyInputs.forEach(keyInput => {
+                        if (isFinite(keyInput)) {
+                            this.doKeyInputDown(keyInput);
+                        }
+                    });
+                }
             });
             window.addEventListener("keyup", (e) => {
                 let keyInputs = this.keyboardInputMap.get(e.code);
-                keyInputs.forEach(keyInput => {
-                    if (isFinite(keyInput)) {
-                        this.doKeyInputUp(keyInput);
-                    }
-                });
+                if (keyInputs) {
+                    keyInputs.forEach(keyInput => {
+                        if (isFinite(keyInput)) {
+                            this.doKeyInputUp(keyInput);
+                        }
+                    });
+                }
             });
         }
         initializeInputs(configuration) {
@@ -3119,14 +3137,25 @@ var Nabu;
         }
         setConfiguration(configuration) {
             this.configuration = configuration;
+            let lastCategory;
             for (let i = 0; i < configuration.configurationElements.length; i++) {
                 let configElement = configuration.configurationElements[i];
+                if (configElement.category != lastCategory) {
+                    let h2 = document.createElement("h2");
+                    h2.classList.add("category");
+                    h2.innerHTML = Nabu.ConfigurationElementCategoryName[configElement.category];
+                    this._container.appendChild(h2);
+                    lastCategory = configElement.category;
+                }
                 let line = document.createElement("div");
                 line.classList.add("line");
                 this._container.appendChild(line);
                 let label = document.createElement("div");
                 label.classList.add("label");
-                label.innerHTML = configElement.prop.displayName;
+                if (configElement.type === Nabu.ConfigurationElementType.Input) {
+                    label.classList.add("input");
+                }
+                label.innerHTML = configElement.prop.displayName.split(".")[0];
                 label.style.display = "inline-block";
                 label.style.marginLeft = "1%";
                 label.style.marginRight = "1%";
