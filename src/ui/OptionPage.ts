@@ -227,6 +227,22 @@ namespace Nabu {
                     numValue.classList.add("input-value");
                     numValue.innerHTML = (ConfigurationElement.Inputs[configElement.value]).replace("GamepadBtn", "Pad ").replace("Key", "Key ");
                     valueBlock.appendChild(numValue);
+
+                    numValue.onclick = () => {
+                        numValue.innerHTML = "press...";
+
+                        let keyup = (ev: KeyboardEvent) => {
+                            let oldValue = configElement.value;
+                            let newValue = ConfigurationElement.InputToInt(ev.code);
+                            if (newValue > - 1) {
+                                configElement.value = newValue;
+                                configElement.onChange(newValue, oldValue);
+                            }
+                            numValue.innerHTML = (ConfigurationElement.Inputs[configElement.value]).replace("GamepadBtn", "Pad ").replace("Key", "Key ");
+                            window.removeEventListener("keyup", keyup);
+                        };
+                        window.addEventListener("keyup", keyup);
+                    }
                 }
                 
                 if (configElement.type === ConfigurationElementType.Input) {

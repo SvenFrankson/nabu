@@ -488,27 +488,30 @@ var Nabu;
             }
         }
         unMapInput(input, key) {
+            console.log("unmapInput " + input + " " + key);
             if (input.startsWith("GamepadBtn")) {
-                console.log("unmapInput " + input + " " + key);
                 let btnIndex = parseInt(input.replace("GamepadBtn", ""));
                 let keyInputs = this.padButtonsMap.get(btnIndex);
-                let index = keyInputs.indexOf(key);
-                if (index > -1) {
-                    keyInputs.splice(index, 1);
-                }
-                if (keyInputs.length === 0) {
-                    this.padButtonsMap.delete(btnIndex);
+                if (keyInputs) {
+                    let index = keyInputs.indexOf(key);
+                    if (index > -1) {
+                        keyInputs.splice(index, 1);
+                    }
+                    if (keyInputs.length === 0) {
+                        this.padButtonsMap.delete(btnIndex);
+                    }
                 }
             }
             else {
-                this.keyboardInputMap.delete(input);
                 let keyInputs = this.keyboardInputMap.get(input);
-                let index = keyInputs.indexOf(key);
-                if (index > -1) {
-                    keyInputs.splice(index, 1);
-                }
-                if (keyInputs.length === 0) {
-                    this.keyboardInputMap.delete(input);
+                if (keyInputs) {
+                    let index = keyInputs.indexOf(key);
+                    if (index > -1) {
+                        keyInputs.splice(index, 1);
+                    }
+                    if (keyInputs.length === 0) {
+                        this.keyboardInputMap.delete(input);
+                    }
                 }
             }
         }
@@ -3240,6 +3243,20 @@ var Nabu;
                     numValue.classList.add("input-value");
                     numValue.innerHTML = (Nabu.ConfigurationElement.Inputs[configElement.value]).replace("GamepadBtn", "Pad ").replace("Key", "Key ");
                     valueBlock.appendChild(numValue);
+                    numValue.onclick = () => {
+                        numValue.innerHTML = "press...";
+                        let keyup = (ev) => {
+                            let oldValue = configElement.value;
+                            let newValue = Nabu.ConfigurationElement.InputToInt(ev.code);
+                            if (newValue > -1) {
+                                configElement.value = newValue;
+                                configElement.onChange(newValue, oldValue);
+                            }
+                            numValue.innerHTML = (Nabu.ConfigurationElement.Inputs[configElement.value]).replace("GamepadBtn", "Pad ").replace("Key", "Key ");
+                            window.removeEventListener("keyup", keyup);
+                        };
+                        window.addEventListener("keyup", keyup);
+                    };
                 }
                 if (configElement.type === Nabu.ConfigurationElementType.Input) {
                     lastInputLabel = labelString;

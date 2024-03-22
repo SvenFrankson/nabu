@@ -165,26 +165,29 @@ namespace Nabu {
         }
 
         public unMapInput(input: string, key: number): void {
+            console.log("unmapInput " + input + " " + key);
             if (input.startsWith("GamepadBtn")) {
-                console.log("unmapInput " + input + " " + key);
                 let btnIndex = parseInt(input.replace("GamepadBtn", ""));
                 let keyInputs: number[] = this.padButtonsMap.get(btnIndex);
-                let index = keyInputs.indexOf(key);
-                if (index > -1) {
-                    keyInputs.splice(index, 1);
-                }
-                if (keyInputs.length === 0) {
-                    this.padButtonsMap.delete(btnIndex);
+                if (keyInputs) {
+                    let index = keyInputs.indexOf(key);
+                    if (index > -1) {
+                        keyInputs.splice(index, 1);
+                    }
+                    if (keyInputs.length === 0) {
+                        this.padButtonsMap.delete(btnIndex);
+                    }
                 }
             } else {
-                this.keyboardInputMap.delete(input);
                 let keyInputs: number[] = this.keyboardInputMap.get(input);
-                let index = keyInputs.indexOf(key);
-                if (index > -1) {
-                    keyInputs.splice(index, 1);
-                }
-                if (keyInputs.length === 0) {
-                    this.keyboardInputMap.delete(input);
+                if (keyInputs) {
+                    let index = keyInputs.indexOf(key);
+                    if (index > -1) {
+                        keyInputs.splice(index, 1);
+                    }
+                    if (keyInputs.length === 0) {
+                        this.keyboardInputMap.delete(input);
+                    }
                 }
             }
         }
