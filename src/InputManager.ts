@@ -73,7 +73,6 @@ namespace Nabu {
                     }
                 })
             }
-            console.log(this.keyboardInputMap);
         }
 
         public update(): void {
@@ -145,7 +144,6 @@ namespace Nabu {
         }
 
         public mapInput(input: string, key: number): void {
-            console.log("mapInput " + input + " " + key);
             if (input.startsWith("GamepadBtn")) {
                 let btnIndex = parseInt(input.replace("GamepadBtn", ""));
                 let keyInputs: number[] = this.padButtonsMap.get(btnIndex);
@@ -165,7 +163,6 @@ namespace Nabu {
         }
 
         public unMapInput(input: string, key: number): void {
-            console.log("unmapInput " + input + " " + key);
             if (input.startsWith("GamepadBtn")) {
                 let btnIndex = parseInt(input.replace("GamepadBtn", ""));
                 let keyInputs: number[] = this.padButtonsMap.get(btnIndex);

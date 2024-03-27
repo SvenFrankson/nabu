@@ -399,7 +399,6 @@ var Nabu;
                     }
                 });
             }
-            console.log(this.keyboardInputMap);
         }
         update() {
             let gamepads = navigator.getGamepads();
@@ -468,7 +467,6 @@ var Nabu;
             }
         }
         mapInput(input, key) {
-            console.log("mapInput " + input + " " + key);
             if (input.startsWith("GamepadBtn")) {
                 let btnIndex = parseInt(input.replace("GamepadBtn", ""));
                 let keyInputs = this.padButtonsMap.get(btnIndex);
@@ -488,7 +486,6 @@ var Nabu;
             }
         }
         unMapInput(input, key) {
-            console.log("unmapInput " + input + " " + key);
             if (input.startsWith("GamepadBtn")) {
                 let btnIndex = parseInt(input.replace("GamepadBtn", ""));
                 let keyInputs = this.padButtonsMap.get(btnIndex);
