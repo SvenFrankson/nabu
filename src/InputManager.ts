@@ -38,7 +38,10 @@ namespace Nabu {
                 this.isPointerDown = false;
             });
             document.addEventListener("pointerlockchange", () => {
-                if (!(document.pointerLockElement === this.canvas)) {
+                if ((document.pointerLockElement === this.canvas)) {
+                    this.isPointerLocked = true;
+                }
+                else {
                     this.isPointerLocked = false;
                 }
             });
