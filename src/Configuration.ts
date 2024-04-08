@@ -4,6 +4,7 @@ namespace Nabu {
         Gameplay,
         Graphic,
         Command,
+        Setting,
         Dev
     }
 
@@ -11,6 +12,7 @@ namespace Nabu {
         "Gameplay",
         "Graphic",
         "Command",
+        "Setting",
         "Dev"
     ]
 

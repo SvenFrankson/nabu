@@ -74,12 +74,14 @@ var Nabu;
         ConfigurationElementCategory[ConfigurationElementCategory["Gameplay"] = 0] = "Gameplay";
         ConfigurationElementCategory[ConfigurationElementCategory["Graphic"] = 1] = "Graphic";
         ConfigurationElementCategory[ConfigurationElementCategory["Command"] = 2] = "Command";
-        ConfigurationElementCategory[ConfigurationElementCategory["Dev"] = 3] = "Dev";
+        ConfigurationElementCategory[ConfigurationElementCategory["Setting"] = 3] = "Setting";
+        ConfigurationElementCategory[ConfigurationElementCategory["Dev"] = 4] = "Dev";
     })(ConfigurationElementCategory = Nabu.ConfigurationElementCategory || (Nabu.ConfigurationElementCategory = {}));
     Nabu.ConfigurationElementCategoryName = [
         "Gameplay",
         "Graphic",
         "Command",
+        "Setting",
         "Dev"
     ];
     let ConfigurationElementType;

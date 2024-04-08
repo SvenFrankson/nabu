@@ -11,7 +11,8 @@ declare namespace Nabu {
         Gameplay = 0,
         Graphic = 1,
         Command = 2,
-        Dev = 3
+        Setting = 3,
+        Dev = 4
     }
     var ConfigurationElementCategoryName: string[];
     enum ConfigurationElementType {
