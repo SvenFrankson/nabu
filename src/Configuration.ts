@@ -4,7 +4,7 @@ namespace Nabu {
         Gameplay,
         Graphic,
         Command,
-        Setting,
+        UI,
         Dev
     }
 
@@ -12,7 +12,7 @@ namespace Nabu {
         "Gameplay",
         "Graphic",
         "Command",
-        "Setting",
+        "UI",
         "Dev"
     ]
 
@@ -116,7 +116,7 @@ namespace Nabu {
                 this.prop = {}
             }
             if (!this.prop.displayName) {
-                this.prop.displayName = property;
+                this.prop.displayName = property.split(".")[0];
             }
             if (isNaN(this.prop.min)) {
                 this.prop.min = 0;

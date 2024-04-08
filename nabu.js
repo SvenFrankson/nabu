@@ -74,14 +74,14 @@ var Nabu;
         ConfigurationElementCategory[ConfigurationElementCategory["Gameplay"] = 0] = "Gameplay";
         ConfigurationElementCategory[ConfigurationElementCategory["Graphic"] = 1] = "Graphic";
         ConfigurationElementCategory[ConfigurationElementCategory["Command"] = 2] = "Command";
-        ConfigurationElementCategory[ConfigurationElementCategory["Setting"] = 3] = "Setting";
+        ConfigurationElementCategory[ConfigurationElementCategory["UI"] = 3] = "UI";
         ConfigurationElementCategory[ConfigurationElementCategory["Dev"] = 4] = "Dev";
     })(ConfigurationElementCategory = Nabu.ConfigurationElementCategory || (Nabu.ConfigurationElementCategory = {}));
     Nabu.ConfigurationElementCategoryName = [
         "Gameplay",
         "Graphic",
         "Command",
-        "Setting",
+        "UI",
         "Dev"
     ];
     let ConfigurationElementType;
@@ -103,7 +103,7 @@ var Nabu;
                 this.prop = {};
             }
             if (!this.prop.displayName) {
-                this.prop.displayName = property;
+                this.prop.displayName = property.split(".")[0];
             }
             if (isNaN(this.prop.min)) {
                 this.prop.min = 0;
@@ -3143,7 +3143,7 @@ var Nabu;
         setConfiguration(configuration) {
             this.configuration = configuration;
             let lastCategory;
-            let lastInputLabel;
+            let lastInputProperty;
             let lastValueBlock;
             for (let i = 0; i < configuration.configurationElements.length; i++) {
                 let configElement = configuration.configurationElements[i];
@@ -3154,9 +3154,9 @@ var Nabu;
                     this._container.appendChild(h2);
                     lastCategory = configElement.category;
                 }
-                let labelString = configElement.prop.displayName.split(".")[0];
+                let property = configElement.property.split(".")[0];
                 let valueBlock = lastValueBlock;
-                if (labelString != lastInputLabel) {
+                if (property != lastInputProperty) {
                     let line = document.createElement("div");
                     line.classList.add("line");
                     this._container.appendChild(line);
@@ -3165,7 +3165,7 @@ var Nabu;
                     if (configElement.type === Nabu.ConfigurationElementType.Input) {
                         label.classList.add("input");
                     }
-                    label.innerHTML = labelString;
+                    label.innerHTML = configElement.prop.displayName;
                     label.style.display = "inline-block";
                     label.style.marginLeft = "1%";
                     label.style.marginRight = "1%";
@@ -3284,11 +3284,11 @@ var Nabu;
                     };
                 }
                 if (configElement.type === Nabu.ConfigurationElementType.Input) {
-                    lastInputLabel = labelString;
+                    lastInputProperty = property;
                     lastValueBlock = valueBlock;
                 }
                 else {
-                    lastInputLabel = "";
+                    lastInputProperty = "";
                     lastValueBlock = undefined;
                 }
             }

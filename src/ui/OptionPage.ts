@@ -117,7 +117,7 @@ namespace Nabu {
         public setConfiguration(configuration: Configuration): void {
             this.configuration = configuration;
             let lastCategory: ConfigurationElementCategory;
-            let lastInputLabel: string;
+            let lastInputProperty: string;
             let lastValueBlock: HTMLDivElement;
 
             for (let i = 0; i < configuration.configurationElements.length; i++) {
@@ -131,9 +131,9 @@ namespace Nabu {
                     lastCategory = configElement.category;
                 }
 
-                let labelString = configElement.prop.displayName.split(".")[0];
+                let property = configElement.property.split(".")[0];
                 let valueBlock = lastValueBlock;
-                if (labelString != lastInputLabel) {
+                if (property != lastInputProperty) {
                     let line = document.createElement("div");
                     line.classList.add("line");
                     this._container.appendChild(line);
@@ -143,7 +143,7 @@ namespace Nabu {
                     if (configElement.type === ConfigurationElementType.Input) {
                         label.classList.add("input");
                     }
-                    label.innerHTML = labelString;
+                    label.innerHTML = configElement.prop.displayName;
                     label.style.display = "inline-block";
                     label.style.marginLeft = "1%";
                     label.style.marginRight = "1%";
@@ -272,11 +272,11 @@ namespace Nabu {
                 }
                 
                 if (configElement.type === ConfigurationElementType.Input) {
-                    lastInputLabel = labelString;
+                    lastInputProperty = property;
                     lastValueBlock = valueBlock;
                 }
                 else {
-                    lastInputLabel = "";
+                    lastInputProperty = "";
                     lastValueBlock = undefined;
                 }
             }
