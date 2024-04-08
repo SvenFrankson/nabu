@@ -119,6 +119,7 @@ namespace Nabu {
             let lastCategory: ConfigurationElementCategory;
             let lastInputProperty: string;
             let lastValueBlock: HTMLDivElement;
+            let categoryNames = configuration.overrideConfigurationElementCategoryName ? configuration.overrideConfigurationElementCategoryName : ConfigurationElementCategoryName;
 
             for (let i = 0; i < configuration.configurationElements.length; i++) {
                 let configElement = configuration.configurationElements[i];
@@ -126,7 +127,7 @@ namespace Nabu {
                 if (configElement.category != lastCategory) {
                     let h2 = document.createElement("h2");
                     h2.classList.add("category");
-                    h2.innerHTML = ConfigurationElementCategoryName[configElement.category];
+                    h2.innerHTML = categoryNames[configElement.category];
                     this._container.appendChild(h2);
                     lastCategory = configElement.category;
                 }

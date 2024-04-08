@@ -73,14 +73,14 @@ var Nabu;
     (function (ConfigurationElementCategory) {
         ConfigurationElementCategory[ConfigurationElementCategory["Gameplay"] = 0] = "Gameplay";
         ConfigurationElementCategory[ConfigurationElementCategory["Graphic"] = 1] = "Graphic";
-        ConfigurationElementCategory[ConfigurationElementCategory["Command"] = 2] = "Command";
+        ConfigurationElementCategory[ConfigurationElementCategory["Control"] = 2] = "Control";
         ConfigurationElementCategory[ConfigurationElementCategory["UI"] = 3] = "UI";
         ConfigurationElementCategory[ConfigurationElementCategory["Dev"] = 4] = "Dev";
     })(ConfigurationElementCategory = Nabu.ConfigurationElementCategory || (Nabu.ConfigurationElementCategory = {}));
     Nabu.ConfigurationElementCategoryName = [
         "Gameplay",
         "Graphic",
-        "Command",
+        "Control",
         "UI",
         "Dev"
     ];
@@ -122,7 +122,7 @@ var Nabu;
             return ConfigurationElement.Inputs.indexOf(input);
         }
         static SimpleInput(inputManager, name, keyInput, defaultValueString) {
-            return new ConfigurationElement(name, ConfigurationElementType.Input, ConfigurationElement.InputToInt(defaultValueString), ConfigurationElementCategory.Command, {}, (newValue, oldValue) => {
+            return new ConfigurationElement(name, ConfigurationElementType.Input, ConfigurationElement.InputToInt(defaultValueString), ConfigurationElementCategory.Control, {}, (newValue, oldValue) => {
                 if (isFinite(oldValue)) {
                     inputManager.unMapInput(ConfigurationElement.Inputs[oldValue], keyInput);
                 }
@@ -3145,12 +3145,13 @@ var Nabu;
             let lastCategory;
             let lastInputProperty;
             let lastValueBlock;
+            let categoryNames = configuration.overrideConfigurationElementCategoryName ? configuration.overrideConfigurationElementCategoryName : Nabu.ConfigurationElementCategoryName;
             for (let i = 0; i < configuration.configurationElements.length; i++) {
                 let configElement = configuration.configurationElements[i];
                 if (configElement.category != lastCategory) {
                     let h2 = document.createElement("h2");
                     h2.classList.add("category");
-                    h2.innerHTML = Nabu.ConfigurationElementCategoryName[configElement.category];
+                    h2.innerHTML = categoryNames[configElement.category];
                     this._container.appendChild(h2);
                     lastCategory = configElement.category;
                 }

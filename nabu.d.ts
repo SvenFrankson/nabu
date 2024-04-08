@@ -10,7 +10,7 @@ declare namespace Nabu {
     enum ConfigurationElementCategory {
         Gameplay = 0,
         Graphic = 1,
-        Command = 2,
+        Control = 2,
         UI = 3,
         Dev = 4
     }
@@ -44,6 +44,7 @@ declare namespace Nabu {
     abstract class Configuration {
         configName: string;
         configurationElements: ConfigurationElement[];
+        overrideConfigurationElementCategoryName: string[];
         constructor(configName: string);
         initialize(): void;
         protected abstract _buildElementsArray(): void;

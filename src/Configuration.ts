@@ -3,7 +3,7 @@ namespace Nabu {
     export enum ConfigurationElementCategory {
         Gameplay,
         Graphic,
-        Command,
+        Control,
         UI,
         Dev
     }
@@ -11,7 +11,7 @@ namespace Nabu {
     export var ConfigurationElementCategoryName: string[] = [
         "Gameplay",
         "Graphic",
-        "Command",
+        "Control",
         "UI",
         "Dev"
     ]
@@ -133,7 +133,7 @@ namespace Nabu {
         }
 
         public static SimpleInput(inputManager: InputManager, name: string, keyInput: number, defaultValueString: string): ConfigurationElement {
-            return new ConfigurationElement(name, ConfigurationElementType.Input, ConfigurationElement.InputToInt(defaultValueString), ConfigurationElementCategory.Command, {}, (newValue: number, oldValue: number) => {
+            return new ConfigurationElement(name, ConfigurationElementType.Input, ConfigurationElement.InputToInt(defaultValueString), ConfigurationElementCategory.Control, {}, (newValue: number, oldValue: number) => {
                 if (isFinite(oldValue)) {
                     inputManager.unMapInput(ConfigurationElement.Inputs[oldValue], keyInput);
                 }
@@ -151,6 +151,7 @@ namespace Nabu {
     export abstract class Configuration {
 
         public configurationElements: ConfigurationElement[] = [];
+        public overrideConfigurationElementCategoryName: string[];
 
         constructor(public configName: string) {
 
