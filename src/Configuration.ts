@@ -110,7 +110,7 @@ namespace Nabu {
             public value: number,
             public category: ConfigurationElementCategory,
             public prop?: IConfigurationElementValueProp,
-            public onChange?: (newValue: number, oldValue?: number) => void
+            public onChange?: (newValue: number, oldValue?: number, fromUI?: boolean) => void
         ) {
             if (!this.prop) {
                 this.prop = {}
@@ -175,6 +175,25 @@ namespace Nabu {
                 return element.value;
             }
             return undefined;
+        }
+
+        public onValueChange: (e: ConfigurationElement) => void;
+        public setValue(property: string, value: number, doForceInit?: boolean, skipSaveToLocalStorage?: boolean): void {
+            let element = this.getElement(property);
+            if (element) {
+                if (element.value != value) {
+                    element.value = value;
+                    if (doForceInit) {
+                        element.forceInit();
+                    }
+                    if (!skipSaveToLocalStorage) {
+                        this.saveToLocalStorage();
+                    }
+                    if (this.onValueChange) {
+                        this.onValueChange(element);
+                    }
+                }
+            }
         }
 
         public saveToLocalStorage(): void {

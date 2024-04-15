@@ -34,10 +34,10 @@ declare namespace Nabu {
         value: number;
         category: ConfigurationElementCategory;
         prop?: IConfigurationElementValueProp;
-        onChange?: (newValue: number, oldValue?: number) => void;
+        onChange?: (newValue: number, oldValue?: number, fromUI?: boolean) => void;
         static Inputs: string[];
         static InputToInt(input: string): number;
-        constructor(property: string, type: ConfigurationElementType, value: number, category: ConfigurationElementCategory, prop?: IConfigurationElementValueProp, onChange?: (newValue: number, oldValue?: number) => void);
+        constructor(property: string, type: ConfigurationElementType, value: number, category: ConfigurationElementCategory, prop?: IConfigurationElementValueProp, onChange?: (newValue: number, oldValue?: number, fromUI?: boolean) => void);
         static SimpleInput(inputManager: InputManager, name: string, keyInput: number, defaultValueString: string): ConfigurationElement;
         forceInit(): void;
     }
@@ -50,6 +50,8 @@ declare namespace Nabu {
         protected abstract _buildElementsArray(): void;
         getElement(property: string): ConfigurationElement;
         getValue(property: string): number;
+        onValueChange: (e: ConfigurationElement) => void;
+        setValue(property: string, value: number, doForceInit?: boolean, skipSaveToLocalStorage?: boolean): void;
         saveToLocalStorage(): void;
         serialize(): any;
         deserialize(data: any): void;
@@ -580,6 +582,7 @@ declare namespace Nabu {
         show(duration?: number): Promise<void>;
         hide(duration?: number): Promise<void>;
         setConfiguration(configuration: Configuration): void;
+        updatePage(): void;
     }
 }
 declare namespace Nabu {

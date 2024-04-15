@@ -116,13 +116,22 @@ namespace Nabu {
 
         public setConfiguration(configuration: Configuration): void {
             this.configuration = configuration;
+            this.configuration.onValueChange = () => {
+                this.updatePage();
+            }
+            this.updatePage();
+        }
+
+        public updatePage(): void {
+            this._container.innerHTML = "";
+
             let lastCategory: ConfigurationElementCategory;
             let lastInputProperty: string;
             let lastValueBlock: HTMLDivElement;
-            let categoryNames = configuration.overrideConfigurationElementCategoryName ? configuration.overrideConfigurationElementCategoryName : ConfigurationElementCategoryName;
+            let categoryNames = this.configuration.overrideConfigurationElementCategoryName ? this.configuration.overrideConfigurationElementCategoryName : ConfigurationElementCategoryName;
 
-            for (let i = 0; i < configuration.configurationElements.length; i++) {
-                let configElement = configuration.configurationElements[i];
+            for (let i = 0; i < this.configuration.configurationElements.length; i++) {
+                let configElement = this.configuration.configurationElements[i];
 
                 if (configElement.category != lastCategory) {
                     let h2 = document.createElement("h2");
@@ -170,10 +179,11 @@ namespace Nabu {
                     valueBlock.appendChild(checkbox);
                     checkbox.value = configElement.value;
                     checkbox.onChange = () => {
+                        let oldValue = configElement.value;
                         configElement.value = checkbox.value;
                         this.configuration.saveToLocalStorage();
                         if (configElement.onChange) {
-                            configElement.onChange(checkbox.value);
+                            configElement.onChange(checkbox.value, oldValue, true);
                         }
                     }
                 }
@@ -188,12 +198,13 @@ namespace Nabu {
                     }
                     valueBlock.appendChild(minus);
                     minus.onclick = () => {
+                        let oldValue = configElement.value;
                         if (configElement.value > configElement.prop.min) {
                             configElement.value = Math.max(configElement.prop.min, configElement.value - configElement.prop.step);
                             numValue.innerHTML = configElement.prop.toString(configElement.value);
                             this.configuration.saveToLocalStorage();
                             if (configElement.onChange) {
-                                configElement.onChange(configElement.value);
+                                configElement.onChange(configElement.value, oldValue, true);
                             }
                         }
                     }
@@ -213,12 +224,13 @@ namespace Nabu {
                     }
                     valueBlock.appendChild(plus);
                     plus.onclick = () => {
+                        let oldValue = configElement.value;
                         if (configElement.value < configElement.prop.max) {
                             configElement.value = Math.min(configElement.prop.max, configElement.value + configElement.prop.step);
                             numValue.innerHTML = configElement.prop.toString(configElement.value);
                             this.configuration.saveToLocalStorage();
                             if (configElement.onChange) {
-                                configElement.onChange(configElement.value);
+                                configElement.onChange(configElement.value, oldValue, true);
                             }
                         }
                     }
@@ -237,7 +249,9 @@ namespace Nabu {
                             let newValue = ConfigurationElement.InputToInt(ev.code);
                             if (newValue > - 1) {
                                 configElement.value = newValue;
-                                configElement.onChange(newValue, oldValue);
+                                if (configElement.onChange) {
+                                    configElement.onChange(newValue, oldValue, true);
+                                }
                             }
                             exit();
                         };
@@ -253,7 +267,9 @@ namespace Nabu {
                                         let newValue = ConfigurationElement.InputToInt("GamepadBtn" + b);
                                         if (newValue > - 1) {
                                             configElement.value = newValue;
-                                            configElement.onChange(newValue, oldValue);
+                                            if (configElement.onChange) {
+                                                configElement.onChange(newValue, oldValue, true);
+                                            }
                                         }
                                         exit();
                                     }

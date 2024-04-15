@@ -222,6 +222,23 @@ var Nabu;
             }
             return undefined;
         }
+        setValue(property, value, doForceInit, skipSaveToLocalStorage) {
+            let element = this.getElement(property);
+            if (element) {
+                if (element.value != value) {
+                    element.value = value;
+                    if (doForceInit) {
+                        element.forceInit();
+                    }
+                    if (!skipSaveToLocalStorage) {
+                        this.saveToLocalStorage();
+                    }
+                    if (this.onValueChange) {
+                        this.onValueChange(element);
+                    }
+                }
+            }
+        }
         saveToLocalStorage() {
             let data = this.serialize();
             localStorage.setItem(this.configName, JSON.stringify(data));
@@ -3142,12 +3159,19 @@ var Nabu;
         }
         setConfiguration(configuration) {
             this.configuration = configuration;
+            this.configuration.onValueChange = () => {
+                this.updatePage();
+            };
+            this.updatePage();
+        }
+        updatePage() {
+            this._container.innerHTML = "";
             let lastCategory;
             let lastInputProperty;
             let lastValueBlock;
-            let categoryNames = configuration.overrideConfigurationElementCategoryName ? configuration.overrideConfigurationElementCategoryName : Nabu.ConfigurationElementCategoryName;
-            for (let i = 0; i < configuration.configurationElements.length; i++) {
-                let configElement = configuration.configurationElements[i];
+            let categoryNames = this.configuration.overrideConfigurationElementCategoryName ? this.configuration.overrideConfigurationElementCategoryName : Nabu.ConfigurationElementCategoryName;
+            for (let i = 0; i < this.configuration.configurationElements.length; i++) {
+                let configElement = this.configuration.configurationElements[i];
                 if (configElement.category != lastCategory) {
                     let h2 = document.createElement("h2");
                     h2.classList.add("category");
@@ -3190,10 +3214,11 @@ var Nabu;
                     valueBlock.appendChild(checkbox);
                     checkbox.value = configElement.value;
                     checkbox.onChange = () => {
+                        let oldValue = configElement.value;
                         configElement.value = checkbox.value;
                         this.configuration.saveToLocalStorage();
                         if (configElement.onChange) {
-                            configElement.onChange(checkbox.value);
+                            configElement.onChange(checkbox.value, oldValue, true);
                         }
                     };
                 }
@@ -3208,12 +3233,13 @@ var Nabu;
                     }
                     valueBlock.appendChild(minus);
                     minus.onclick = () => {
+                        let oldValue = configElement.value;
                         if (configElement.value > configElement.prop.min) {
                             configElement.value = Math.max(configElement.prop.min, configElement.value - configElement.prop.step);
                             numValue.innerHTML = configElement.prop.toString(configElement.value);
                             this.configuration.saveToLocalStorage();
                             if (configElement.onChange) {
-                                configElement.onChange(configElement.value);
+                                configElement.onChange(configElement.value, oldValue, true);
                             }
                         }
                     };
@@ -3231,12 +3257,13 @@ var Nabu;
                     }
                     valueBlock.appendChild(plus);
                     plus.onclick = () => {
+                        let oldValue = configElement.value;
                         if (configElement.value < configElement.prop.max) {
                             configElement.value = Math.min(configElement.prop.max, configElement.value + configElement.prop.step);
                             numValue.innerHTML = configElement.prop.toString(configElement.value);
                             this.configuration.saveToLocalStorage();
                             if (configElement.onChange) {
-                                configElement.onChange(configElement.value);
+                                configElement.onChange(configElement.value, oldValue, true);
                             }
                         }
                     };
@@ -3253,7 +3280,9 @@ var Nabu;
                             let newValue = Nabu.ConfigurationElement.InputToInt(ev.code);
                             if (newValue > -1) {
                                 configElement.value = newValue;
-                                configElement.onChange(newValue, oldValue);
+                                if (configElement.onChange) {
+                                    configElement.onChange(newValue, oldValue, true);
+                                }
                             }
                             exit();
                         };
@@ -3268,7 +3297,9 @@ var Nabu;
                                         let newValue = Nabu.ConfigurationElement.InputToInt("GamepadBtn" + b);
                                         if (newValue > -1) {
                                             configElement.value = newValue;
-                                            configElement.onChange(newValue, oldValue);
+                                            if (configElement.onChange) {
+                                                configElement.onChange(newValue, oldValue, true);
+                                            }
                                         }
                                         exit();
                                     }
