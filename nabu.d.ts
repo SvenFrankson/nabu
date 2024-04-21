@@ -83,12 +83,15 @@ declare namespace Nabu {
         j: number;
         k: number;
     }
+    function IJK(i: number, j: number, k: number): IJK;
+    function GetLineIJKsFromTo(from: Nabu.IJK, to: Nabu.IJK): Nabu.IJK[];
 }
 declare namespace Nabu {
     class InputManager {
         canvas: HTMLCanvasElement;
         configuration: Configuration;
         static DeadZoneAxis(axisValue: number, threshold?: number): number;
+        temporaryNoPointerLock: boolean;
         isPointerLocked: boolean;
         isPointerDown: boolean;
         padButtonsMap: Map<number, number[]>;

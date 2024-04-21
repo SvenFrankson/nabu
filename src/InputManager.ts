@@ -9,6 +9,7 @@ namespace Nabu {
             return 0;
         }
 
+        public temporaryNoPointerLock: boolean = false;
         public isPointerLocked: boolean = false;
         public isPointerDown: boolean = false;
 
@@ -29,7 +30,7 @@ namespace Nabu {
         public initialize(): void {
             this.canvas.addEventListener("pointerdown", (ev: PointerEvent) => {
                 this.isPointerDown = true;
-                if (this.configuration.getValue("canLockPointer") === 1) {
+                if (!this.temporaryNoPointerLock && this.configuration.getValue("canLockPointer") === 1) {
                     this.canvas.requestPointerLock();
                     this.isPointerLocked = true;
                 }
