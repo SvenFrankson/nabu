@@ -449,7 +449,7 @@ var Nabu;
         initialize() {
             this.canvas.addEventListener("pointerdown", (ev) => {
                 this.isPointerDown = true;
-                if (!this.temporaryNoPointerLock && this.configuration.getValue("canLockPointer") === 1) {
+                if (!this.temporaryNoPointerLock && (this.configuration && this.configuration.getValue("canLockPointer") === 1)) {
                     this.canvas.requestPointerLock();
                     this.isPointerLocked = true;
                 }

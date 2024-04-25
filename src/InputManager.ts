@@ -25,12 +25,12 @@ namespace Nabu {
         public mappedKeyUpListeners: Map<number, (() => any)[]> = new Map<number, (() => any)[]>();
         public deactivateAllKeyInputs: boolean = false;
 
-        constructor(public canvas: HTMLCanvasElement, public configuration: Configuration) {}
+        constructor(public canvas: HTMLCanvasElement, public configuration?: Configuration) {}
 
         public initialize(): void {
             this.canvas.addEventListener("pointerdown", (ev: PointerEvent) => {
                 this.isPointerDown = true;
-                if (!this.temporaryNoPointerLock && this.configuration.getValue("canLockPointer") === 1) {
+                if (!this.temporaryNoPointerLock && (this.configuration && this.configuration.getValue("canLockPointer") === 1)) {
                     this.canvas.requestPointerLock();
                     this.isPointerLocked = true;
                 }

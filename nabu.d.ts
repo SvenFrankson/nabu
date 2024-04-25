@@ -89,7 +89,7 @@ declare namespace Nabu {
 declare namespace Nabu {
     class InputManager {
         canvas: HTMLCanvasElement;
-        configuration: Configuration;
+        configuration?: Configuration;
         static DeadZoneAxis(axisValue: number, threshold?: number): number;
         temporaryNoPointerLock: boolean;
         isPointerLocked: boolean;
@@ -103,7 +103,7 @@ declare namespace Nabu {
         keyUpListeners: ((k: number) => any)[];
         mappedKeyUpListeners: Map<number, (() => any)[]>;
         deactivateAllKeyInputs: boolean;
-        constructor(canvas: HTMLCanvasElement, configuration: Configuration);
+        constructor(canvas: HTMLCanvasElement, configuration?: Configuration);
         initialize(): void;
         initializeInputs(configuration: Configuration): void;
         update(): void;
