@@ -3803,6 +3803,9 @@ var Nabu;
             for (let i = 0; i < this.pages.length; i++) {
                 this.pages[i].hide(1);
             }
+            return new Promise(resolve => {
+                setTimeout(resolve, 1000);
+            });
         }
         onUpdate() {
         }

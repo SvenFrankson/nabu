@@ -60,6 +60,9 @@ namespace Nabu {
             for (let i = 0; i < this.pages.length; i++) {
                 this.pages[i].hide(1);
             }
+            return new Promise<void>(resolve => {
+                setTimeout(resolve, 1000);
+            });
         }
 
         protected _currentHRef: string;
