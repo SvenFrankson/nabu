@@ -43,7 +43,7 @@ namespace Nabu {
 
         public initialize(): void {
             this.findAllPages();
-
+            this._update();
             setInterval(this._update, 30);
         }
 
