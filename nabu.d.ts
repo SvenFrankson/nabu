@@ -63,9 +63,13 @@ declare namespace Nabu {
         static easeOutSquare(x: number): number;
         static easeInCubic(x: number): number;
         static easeOutCubic(x: number): number;
+        static easeInSine(x: number): number;
+        static easeOutSine(x: number): number;
         static easeInOutSine(x: number): number;
         static easeOutElastic(x: number): number;
         static easeInOutBack(x: number): number;
+        static invEaseInOutSine(x: number): number;
+        static easePendulum(x: number): number;
         static smooth010Sec(fps: number): number;
         static smooth025Sec(fps: number): number;
         static smooth05Sec(fps: number): number;

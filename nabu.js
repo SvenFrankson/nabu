@@ -263,7 +263,7 @@ var Nabu;
     }
     Nabu.Configuration = Configuration;
 })(Nabu || (Nabu = {}));
-// Code by Andrey Sitnik and Ivan Solovev https://github.com/ai/easings.net
+// Part of this code by Andrey Sitnik and Ivan Solovev https://github.com/ai/easings.net
 var Nabu;
 (function (Nabu) {
     class Easing {
@@ -278,6 +278,12 @@ var Nabu;
         }
         static easeOutCubic(x) {
             return 1 - Math.pow(1 - x, 3);
+        }
+        static easeInSine(x) {
+            return 1 - Math.cos((x * Math.PI) / 2);
+        }
+        static easeOutSine(x) {
+            return Math.sin((x * Math.PI) / 2);
         }
         static easeInOutSine(x) {
             return -(Math.cos(Math.PI * x) - 1) / 2;
@@ -296,6 +302,15 @@ var Nabu;
             return x < 0.5
                 ? (Math.pow(2 * x, 2) * ((c2 + 1) * 2 * x - c2)) / 2
                 : (Math.pow(2 * x - 2, 2) * ((c2 + 1) * (x * 2 - 2) + c2) + 2) / 2;
+        }
+        static invEaseInOutSine(x) {
+            return 1 - (Math.sin(x * Math.PI - Math.PI * 0.5) / 2 + 0.5);
+        }
+        static easePendulum(x) {
+            let amplitude = Easing.invEaseInOutSine(x);
+            amplitude = amplitude * amplitude;
+            let v = Math.sin(8 * x * x * x * Math.PI - Math.PI / 2) * amplitude + 1;
+            return v;
         }
         static smooth010Sec(fps) {
             if (fps < 13) {
@@ -3790,6 +3805,7 @@ var Nabu;
         }
         initialize() {
             this.findAllPages();
+            this._update();
             setInterval(this._update, 30);
         }
         async show(page, dontCloseOthers) {

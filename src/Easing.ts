@@ -1,4 +1,4 @@
-// Code by Andrey Sitnik and Ivan Solovev https://github.com/ai/easings.net
+// Part of this code by Andrey Sitnik and Ivan Solovev https://github.com/ai/easings.net
 
 namespace Nabu {
 
@@ -18,6 +18,14 @@ namespace Nabu {
 
         public static easeOutCubic(x: number): number {
             return 1 - Math.pow(1 - x, 3);
+        }
+
+        public static easeInSine(x: number): number {
+            return 1 - Math.cos((x * Math.PI) / 2);
+        }
+
+        public static easeOutSine(x: number): number {
+            return Math.sin((x * Math.PI) / 2);
         }
 
         public static easeInOutSine(x: number): number {
@@ -41,6 +49,19 @@ namespace Nabu {
             return x < 0.5
             ? (Math.pow(2 * x, 2) * ((c2 + 1) * 2 * x - c2)) / 2
             : (Math.pow(2 * x - 2, 2) * ((c2 + 1) * (x * 2 - 2) + c2) + 2) / 2;
+        }
+
+        public static invEaseInOutSine(x: number): number {
+            return 1 - (Math.sin(x * Math.PI - Math.PI * 0.5) / 2 + 0.5);
+        }
+
+        public static easePendulum(x: number): number {
+            let amplitude = Easing.invEaseInOutSine(x);
+            amplitude = amplitude * amplitude;
+
+            let v = Math.sin(8 * x * x * x * Math.PI - Math.PI / 2) * amplitude + 1;
+
+            return v;
         }
 
         public static smooth010Sec(fps: number): number {
