@@ -69,8 +69,10 @@ namespace Nabu {
         private _update = () => {
             let href = window.location.href;
             if (href != this._currentHRef) {
+                console.log("origin = " + location.origin);
+                let previousHRef = this._currentHRef;
                 this._currentHRef = href;
-                this._onHRefChange();
+                this._onHRefChange(previousHRef);
             }
             this.onUpdate();
         };
@@ -79,15 +81,28 @@ namespace Nabu {
 
         }
 
-        private _onHRefChange = async () => {
+        private _onHRefChange = async (previousHRef: string) => {
             let split = this._currentHRef.split("/");
             let page = split[split.length - 1];
             let splitPage = page.split("#");
             page = "#" + splitPage[splitPage.length - 1];
-            this.onHRefChange(page);
+            
+            let previousPage: string;
+            if (previousHRef) {
+                let previousSplit = previousHRef.split("/");
+                if (previousSplit.length > 0) {
+                    previousPage = previousSplit[split.length - 1];
+                    let previousSplitPage = previousPage.split("#");
+                    if (previousSplitPage.length > 0) {
+                        previousPage = "#" + previousSplitPage[previousSplitPage.length - 1];
+                    }
+                }
+            }
+            
+            this.onHRefChange(page, previousPage);
         };
 
-        protected onHRefChange(page: string): void {
+        protected onHRefChange(page: string, previousPage?: string): void {
             
         }
     }

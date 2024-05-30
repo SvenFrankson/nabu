@@ -645,6 +645,6 @@ declare namespace Nabu {
         private _update;
         protected onUpdate(): void;
         private _onHRefChange;
-        protected onHRefChange(page: string): void;
+        protected onHRefChange(page: string, previousPage?: string): void;
     }
 }

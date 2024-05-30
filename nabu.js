@@ -3761,17 +3761,30 @@ var Nabu;
             this._update = () => {
                 let href = window.location.href;
                 if (href != this._currentHRef) {
+                    console.log("origin = " + location.origin);
+                    let previousHRef = this._currentHRef;
                     this._currentHRef = href;
-                    this._onHRefChange();
+                    this._onHRefChange(previousHRef);
                 }
                 this.onUpdate();
             };
-            this._onHRefChange = async () => {
+            this._onHRefChange = async (previousHRef) => {
                 let split = this._currentHRef.split("/");
                 let page = split[split.length - 1];
                 let splitPage = page.split("#");
                 page = "#" + splitPage[splitPage.length - 1];
-                this.onHRefChange(page);
+                let previousPage;
+                if (previousHRef) {
+                    let previousSplit = previousHRef.split("/");
+                    if (previousSplit.length > 0) {
+                        previousPage = previousSplit[split.length - 1];
+                        let previousSplitPage = previousPage.split("#");
+                        if (previousSplitPage.length > 0) {
+                            previousPage = "#" + previousSplitPage[previousSplitPage.length - 1];
+                        }
+                    }
+                }
+                this.onHRefChange(page, previousPage);
             };
         }
         async wait(duration) {
@@ -3825,7 +3838,7 @@ var Nabu;
         }
         onUpdate() {
         }
-        onHRefChange(page) {
+        onHRefChange(page, previousPage) {
         }
     }
     Nabu.Router = Router;
