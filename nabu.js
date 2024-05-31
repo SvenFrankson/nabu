@@ -3761,7 +3761,6 @@ var Nabu;
             this._update = () => {
                 let href = window.location.href;
                 if (href != this._currentHRef) {
-                    console.log("origin = " + location.origin);
                     let previousHRef = this._currentHRef;
                     this._currentHRef = href;
                     this._onHRefChange(previousHRef);
