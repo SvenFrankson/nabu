@@ -623,6 +623,11 @@ declare namespace Nabu {
         set onLoad(callback: () => void);
         connectedCallback(): void;
         attributeChangedCallback(name: string, oldValue: string, newValue: string): void;
+        private _t0;
+        private _duration;
+        private _outOfScreenLeft;
+        private _onNextAutoStoppedUpdateDone;
+        autoStoppedUpdate: () => void;
         show(duration?: number): Promise<void>;
         hide(duration?: number): Promise<void>;
         resize(): void;

@@ -65,47 +65,90 @@ namespace Nabu {
             }
         }
 
+        private _t0: number = 0;
+        private _duration: number = 0;
+        private _outOfScreenLeft: number = 0;
+        private _onNextAutoStoppedUpdateDone: () => void;
+        public autoStoppedUpdate = () => {
+            let t = performance.now() / 1000 - this._t0;
+            if (this._shown) {
+                if (t >= this._duration) {
+                    for (let i = 0; i < this.panels.length; i++) {
+                        let panel = this.panels[i];
+                        panel.left = panel.computedLeft;
+                        panel.style.opacity = "1";
+                    }
+                    if (this._onNextAutoStoppedUpdateDone) {
+                        this._onNextAutoStoppedUpdateDone();
+                    }
+                }
+                else {
+                    let f = t / this._duration;
+                    for (let i = 0; i < this.panels.length; i++) {
+                        let panel = this.panels[i];
+                        let targetLeft = this._outOfScreenLeft * this.animLineDir;
+                        if (Math.floor(panel.y / this.animLineHeight) % 2 != Math.floor(this.yCount / this.animLineHeight) % 2) {
+                            targetLeft = - this._outOfScreenLeft * this.animLineDir;
+                        }
+                        panel.left = (1 - f) * targetLeft + panel.computedLeft;
+                        panel.style.opacity = f.toFixed(3);
+                    }
+                    requestAnimationFrame(this.autoStoppedUpdate);
+                }
+            }
+            else {
+                let t = performance.now() / 1000 - this._t0;
+                if (t >= this._duration) {
+                    for (let i = 0; i < this.panels.length; i++) {
+                        let panel = this.panels[i];
+                        let targetLeft = this._outOfScreenLeft * this.animLineDir;
+                        if (Math.floor(panel.y / this.animLineHeight) % 2 != Math.floor(this.yCount / this.animLineHeight) % 2) {
+                            targetLeft = - this._outOfScreenLeft * this.animLineDir;
+                        }
+                        panel.left = targetLeft + panel.computedLeft;
+                        panel.style.display = "none";
+                        panel.style.opacity = "0";
+                    }
+                    if (this._onNextAutoStoppedUpdateDone) {
+                        this._onNextAutoStoppedUpdateDone();
+                    }
+                }
+                else {
+                    let f = t / this._duration;
+                    for (let i = 0; i < this.panels.length; i++) {
+                        let panel = this.panels[i];
+                        let targetLeft = this._outOfScreenLeft * this.animLineDir;
+                        if (Math.floor(panel.y / this.animLineHeight) % 2 != Math.floor(this.yCount / this.animLineHeight) % 2) {
+                            targetLeft = - this._outOfScreenLeft * this.animLineDir;
+                        }
+                        panel.left = f * targetLeft + panel.computedLeft;
+                        panel.style.opacity = (1 - f).toFixed(3);
+                    }
+                    requestAnimationFrame(this.autoStoppedUpdate);
+                }
+            }
+        }
+
         public async show(duration: number = 1): Promise<void> {
             return new Promise<void>((resolve) => {
                 if (!this._shown) {
-                    clearInterval(this._animateShowInterval);
-
                     this._shown = true;
-                    let outOfScreenLeft = 1.0 * window.innerWidth;
+                    this._outOfScreenLeft = 1.0 * window.innerWidth;
                     for (let i = 0; i < this.panels.length; i++) {
                         let panel = this.panels[i];
-                        let targetLeft = outOfScreenLeft * this.animLineDir;
+                        let targetLeft = this._outOfScreenLeft * this.animLineDir;
                         if (Math.floor(panel.y / this.animLineHeight) % 2 != Math.floor(this.yCount / this.animLineHeight) % 2) {
-                            targetLeft = -outOfScreenLeft * this.animLineDir;
+                            targetLeft = - this._outOfScreenLeft * this.animLineDir;
                         }
                         panel.left = targetLeft + panel.computedLeft;
                         panel.style.display = "block";
                         panel.style.opacity = "0";
                     }
-                    let t0 = performance.now() / 1000;
-                    this._animateShowInterval = setInterval(() => {
-                        let t = performance.now() / 1000 - t0;
-                        if (t >= duration) {
-                            clearInterval(this._animateShowInterval);
-                            for (let i = 0; i < this.panels.length; i++) {
-                                let panel = this.panels[i];
-                                panel.left = panel.computedLeft;
-                                panel.style.opacity = "1";
-                            }
-                            resolve();
-                        } else {
-                            let f = t / duration;
-                            for (let i = 0; i < this.panels.length; i++) {
-                                let panel = this.panels[i];
-                                let targetLeft = outOfScreenLeft * this.animLineDir;
-                                if (Math.floor(panel.y / this.animLineHeight) % 2 != Math.floor(this.yCount / this.animLineHeight) % 2) {
-                                    targetLeft = -outOfScreenLeft * this.animLineDir;
-                                }
-                                panel.left = (1 - f) * targetLeft + panel.computedLeft;
-                                panel.style.opacity = f.toFixed(3);
-                            }
-                        }
-                    }, 15);
+
+                    this._t0 = performance.now() / 1000;
+                    this._duration = duration;
+                    this._onNextAutoStoppedUpdateDone = resolve;
+                    this.autoStoppedUpdate();
                 }
             });
         }
@@ -120,52 +163,27 @@ namespace Nabu {
                     panel.style.display = "none";
                     panel.style.opacity = "0";
                 }
-            } else {
+            }
+            else {
                 return new Promise<void>((resolve) => {
                     if (this._shown) {
-                        clearInterval(this._animateShowInterval);
-
                         this._shown = false;
-                        let outOfScreenLeft = 1.0 * window.innerWidth;
+                        this._outOfScreenLeft = 1.0 * window.innerWidth;
                         for (let i = 0; i < this.panels.length; i++) {
                             let panel = this.panels[i];
-                            let targetLeft = outOfScreenLeft * this.animLineDir;
+                            let targetLeft = this._outOfScreenLeft * this.animLineDir;
                             if (Math.floor(panel.y / this.animLineHeight) % 2 != Math.floor(this.yCount / this.animLineHeight) % 2) {
-                                targetLeft = -outOfScreenLeft * this.animLineDir;
+                                targetLeft = -this._outOfScreenLeft * this.animLineDir;
                             }
                             panel.left = targetLeft + panel.computedLeft;
                             panel.style.display = "block";
                             panel.style.opacity = "1";
                         }
-                        let t0 = performance.now() / 1000;
-                        this._animateShowInterval = setInterval(() => {
-                            let t = performance.now() / 1000 - t0;
-                            if (t >= duration) {
-                                clearInterval(this._animateShowInterval);
-                                for (let i = 0; i < this.panels.length; i++) {
-                                    let panel = this.panels[i];
-                                    let targetLeft = outOfScreenLeft * this.animLineDir;
-                                    if (Math.floor(panel.y / this.animLineHeight) % 2 != Math.floor(this.yCount / this.animLineHeight) % 2) {
-                                        targetLeft = -outOfScreenLeft * this.animLineDir;
-                                    }
-                                    panel.left = targetLeft + panel.computedLeft;
-                                    panel.style.display = "none";
-                                    panel.style.opacity = "0";
-                                }
-                                resolve();
-                            } else {
-                                let f = t / duration;
-                                for (let i = 0; i < this.panels.length; i++) {
-                                    let panel = this.panels[i];
-                                    let targetLeft = outOfScreenLeft * this.animLineDir;
-                                    if (Math.floor(panel.y / this.animLineHeight) % 2 != Math.floor(this.yCount / this.animLineHeight) % 2) {
-                                        targetLeft = -outOfScreenLeft * this.animLineDir;
-                                    }
-                                    panel.left = f * targetLeft + panel.computedLeft;
-                                    panel.style.opacity = (1 - f).toFixed(3);
-                                }
-                            }
-                        }, 15);
+
+                        this._t0 = performance.now() / 1000;
+                        this._duration = duration;
+                        this._onNextAutoStoppedUpdateDone = resolve;
+                        this.autoStoppedUpdate();
                     }
                 });
             }
