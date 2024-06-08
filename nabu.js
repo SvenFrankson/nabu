@@ -3833,16 +3833,16 @@ var Nabu;
             this._update();
             setInterval(this._update, 30);
         }
-        async show(page, dontCloseOthers) {
+        async show(page, dontCloseOthers, duration = 1) {
             this.findAllPages();
             if (!dontCloseOthers) {
-                this.hideAll();
+                this.hideAll(duration);
             }
-            await page.show(1);
+            await page.show(duration);
         }
-        async hideAll() {
+        async hideAll(duration = 1) {
             for (let i = 0; i < this.pages.length; i++) {
-                this.pages[i].hide(1);
+                this.pages[i].hide(duration);
             }
             return new Promise(resolve => {
                 setTimeout(resolve, 1000);

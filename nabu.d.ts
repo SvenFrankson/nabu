@@ -644,8 +644,8 @@ declare namespace Nabu {
         findAllPages(): void;
         protected onFindAllPages(): void;
         initialize(): void;
-        show(page: IPage, dontCloseOthers?: boolean): Promise<void>;
-        hideAll(): Promise<void>;
+        show(page: IPage, dontCloseOthers?: boolean, duration?: number): Promise<void>;
+        hideAll(duration?: number): Promise<void>;
         protected _currentHRef: string;
         private _update;
         protected onUpdate(): void;

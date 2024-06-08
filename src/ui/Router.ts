@@ -47,18 +47,18 @@ namespace Nabu {
             setInterval(this._update, 30);
         }
 
-        public async show(page: IPage, dontCloseOthers?: boolean): Promise<void> {
+        public async show(page: IPage, dontCloseOthers?: boolean, duration: number = 1): Promise<void> {
             this.findAllPages();
 
             if (!dontCloseOthers) {
-                this.hideAll();
+                this.hideAll(duration);
             }
-            await page.show(1);
+            await page.show(duration);
         }
 
-        public async hideAll(): Promise<void> {
+        public async hideAll(duration: number = 1): Promise<void> {
             for (let i = 0; i < this.pages.length; i++) {
-                this.pages[i].hide(1);
+                this.pages[i].hide(duration);
             }
             return new Promise<void>(resolve => {
                 setTimeout(resolve, 1000);
