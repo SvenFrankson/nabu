@@ -1,12 +1,14 @@
 namespace Nabu {
     
-    export interface IPage {
+    export interface IPage extends HTMLElement {
         show(duration?: number): Promise<void>;
         hide(duration?: number): Promise<void>;
+        readonly loaded: boolean;
     }
 
     export class Router {
         public pages: IPage[] = [];
+        public started: boolean = false;
 
         public async wait(duration: number): Promise<void> {
             return new Promise<void>((resolve) => {
@@ -43,6 +45,10 @@ namespace Nabu {
 
         public initialize(): void {
             this.findAllPages();
+        }
+
+        public start(): void {
+            this.started = true;
             this._update();
             setInterval(this._update, 30);
         }
@@ -67,6 +73,9 @@ namespace Nabu {
 
         protected _currentHRef: string;
         private _update = () => {
+            if (!this.started) {
+                return;
+            }
             let href = window.location.href;
             if (href != this._currentHRef) {
                 let previousHRef = this._currentHRef;
@@ -103,6 +112,23 @@ namespace Nabu {
 
         protected onHRefChange(page: string, previousPage?: string): void {
             
+        }
+
+        private _onAllPagesLoaded: () => void;
+        public async waitForAllPagesLoaded(): Promise<void> {
+            return new Promise<void>(resolve => {
+                let wait = () => {
+                    for (let i = 0; i < this.pages.length; i++) {
+                        if (!this.pages[i].loaded) {
+                            console.log("waiting for " + this.pages[i].tagName + " to load.");
+                            requestAnimationFrame(wait);
+                            return;
+                        }
+                    }
+                    resolve();
+                }
+                wait();
+            })
         }
     }
 }

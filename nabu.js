@@ -2995,6 +2995,9 @@ var Nabu;
                 "file"
             ];
         }
+        get loaded() {
+            return this._loaded;
+        }
         get onLoad() {
             return this._onLoad;
         }
@@ -3156,6 +3159,9 @@ var Nabu;
         static get observedAttributes() {
             return [];
         }
+        get loaded() {
+            return this._loaded;
+        }
         get onLoad() {
             return this._onLoad;
         }
@@ -3184,6 +3190,7 @@ var Nabu;
             this._backButton.classList.add("back-button");
             this._backButton.innerText = "Back";
             a.appendChild(this._backButton);
+            this._loaded = true;
         }
         attributeChangedCallback(name, oldValue, newValue) {
         }
@@ -3528,6 +3535,9 @@ var Nabu;
         static get observedAttributes() {
             return ["file", "anim-line-height", "anim-line-dir"];
         }
+        get loaded() {
+            return this._loaded;
+        }
         get onLoad() {
             return this._onLoad;
         }
@@ -3771,7 +3781,11 @@ var Nabu;
     class Router {
         constructor() {
             this.pages = [];
+            this.started = false;
             this._update = () => {
+                if (!this.started) {
+                    return;
+                }
                 let href = window.location.href;
                 if (href != this._currentHRef) {
                     let previousHRef = this._currentHRef;
@@ -3830,6 +3844,9 @@ var Nabu;
         }
         initialize() {
             this.findAllPages();
+        }
+        start() {
+            this.started = true;
             this._update();
             setInterval(this._update, 30);
         }
@@ -3851,6 +3868,21 @@ var Nabu;
         onUpdate() {
         }
         onHRefChange(page, previousPage) {
+        }
+        async waitForAllPagesLoaded() {
+            return new Promise(resolve => {
+                let wait = () => {
+                    for (let i = 0; i < this.pages.length; i++) {
+                        if (!this.pages[i].loaded) {
+                            console.log("waiting for " + this.pages[i].tagName + " to load.");
+                            requestAnimationFrame(wait);
+                            return;
+                        }
+                    }
+                    resolve();
+                };
+                wait();
+            });
         }
     }
     Nabu.Router = Router;

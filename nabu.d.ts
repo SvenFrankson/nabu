@@ -548,6 +548,7 @@ declare namespace Nabu {
     class DefaultPage extends HTMLElement implements IPage {
         static get observedAttributes(): string[];
         private _loaded;
+        get loaded(): boolean;
         private _shown;
         private _onLoad;
         get onLoad(): () => void;
@@ -575,6 +576,7 @@ declare namespace Nabu {
     class OptionPage extends HTMLElement implements IPage {
         static get observedAttributes(): any[];
         private _loaded;
+        get loaded(): boolean;
         private _shown;
         configuration: Configuration;
         private _title;
@@ -611,6 +613,7 @@ declare namespace Nabu {
     class PanelPage extends HTMLElement implements IPage {
         static get observedAttributes(): string[];
         private _loaded;
+        get loaded(): boolean;
         private _shown;
         private _animateShowInterval;
         panels: PanelElement[];
@@ -634,16 +637,19 @@ declare namespace Nabu {
     }
 }
 declare namespace Nabu {
-    interface IPage {
+    interface IPage extends HTMLElement {
         show(duration?: number): Promise<void>;
         hide(duration?: number): Promise<void>;
+        readonly loaded: boolean;
     }
     class Router {
         pages: IPage[];
+        started: boolean;
         wait(duration: number): Promise<void>;
         findAllPages(): void;
         protected onFindAllPages(): void;
         initialize(): void;
+        start(): void;
         show(page: IPage, dontCloseOthers?: boolean, duration?: number): Promise<void>;
         hideAll(duration?: number): Promise<void>;
         protected _currentHRef: string;
@@ -651,5 +657,7 @@ declare namespace Nabu {
         protected onUpdate(): void;
         private _onHRefChange;
         protected onHRefChange(page: string, previousPage?: string): void;
+        private _onAllPagesLoaded;
+        waitForAllPagesLoaded(): Promise<void>;
     }
 }

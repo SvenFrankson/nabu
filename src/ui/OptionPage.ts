@@ -6,6 +6,9 @@ namespace Nabu {
         }
 
         private _loaded: boolean = false;
+        public get loaded(): boolean {
+            return this._loaded;
+        }
         private _shown: boolean = false;
 
         public configuration: Configuration;
@@ -49,6 +52,8 @@ namespace Nabu {
             this._backButton.classList.add("back-button");
             this._backButton.innerText = "Back";
             a.appendChild(this._backButton);
+
+            this._loaded = true;
         }
 
         public attributeChangedCallback(name: string, oldValue: string, newValue: string) {

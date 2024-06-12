@@ -8,6 +8,9 @@ namespace Nabu {
         }
 
         private _loaded: boolean = false;
+        public get loaded(): boolean {
+            return this._loaded;
+        }
         private _shown: boolean = false;
 
         private _onLoad: () => void;
