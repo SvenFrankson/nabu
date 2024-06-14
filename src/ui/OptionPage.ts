@@ -12,10 +12,10 @@ namespace Nabu {
         private _shown: boolean = false;
 
         public configuration: Configuration;
-        private _title: HTMLHeadingElement;
+        public titleElement: HTMLHeadingElement;
         private _containerFrame: HTMLDivElement;
         private _container: HTMLDivElement;
-        private _backButton: HTMLButtonElement;
+        public backButton: HTMLButtonElement;
 
         private _onLoad: () => void;
         public get onLoad(): () => void {
@@ -32,9 +32,9 @@ namespace Nabu {
             this.style.display = "none";
             this.style.opacity = "0";
 
-            this._title = document.createElement("h1");
-            this._title.innerHTML = "OPTIONS";
-            this.appendChild(this._title);
+            this.titleElement = document.createElement("h1");
+            this.titleElement.innerHTML = "OPTIONS";
+            this.appendChild(this.titleElement);
 
             this._containerFrame = document.createElement("div");
             this._containerFrame.classList.add("container-frame");
@@ -48,10 +48,10 @@ namespace Nabu {
             a.href = "#home";
             this.appendChild(a);
 
-            this._backButton = document.createElement("button");
-            this._backButton.classList.add("back-button");
-            this._backButton.innerText = "Back";
-            a.appendChild(this._backButton);
+            this.backButton = document.createElement("button");
+            this.backButton.classList.add("back-button");
+            this.backButton.innerHTML = "Back";
+            a.appendChild(this.backButton);
 
             this._loaded = true;
         }

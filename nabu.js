@@ -3012,6 +3012,8 @@ var Nabu;
             if (file) {
                 this.attributeChangedCallback("file", "", file);
             }
+            this._shown = false;
+            this.hide(0);
         }
         attributeChangedCallback(name, oldValue, newValue) {
             if (name === "file") {
@@ -3021,8 +3023,6 @@ var Nabu;
                         this.innerHTML = xhttp.responseText;
                         this.style.position = "fixed";
                         this.style.zIndex = "10";
-                        this._shown = false;
-                        this.hide(0);
                         this._loaded = true;
                         if (this._onLoad) {
                             this._onLoad();
@@ -3174,9 +3174,9 @@ var Nabu;
         connectedCallback() {
             this.style.display = "none";
             this.style.opacity = "0";
-            this._title = document.createElement("h1");
-            this._title.innerHTML = "OPTIONS";
-            this.appendChild(this._title);
+            this.titleElement = document.createElement("h1");
+            this.titleElement.innerHTML = "OPTIONS";
+            this.appendChild(this.titleElement);
             this._containerFrame = document.createElement("div");
             this._containerFrame.classList.add("container-frame");
             this.appendChild(this._containerFrame);
@@ -3186,10 +3186,10 @@ var Nabu;
             let a = document.createElement("a");
             a.href = "#home";
             this.appendChild(a);
-            this._backButton = document.createElement("button");
-            this._backButton.classList.add("back-button");
-            this._backButton.innerText = "Back";
-            a.appendChild(this._backButton);
+            this.backButton = document.createElement("button");
+            this.backButton.classList.add("back-button");
+            this.backButton.innerHTML = "Back";
+            a.appendChild(this.backButton);
             this._loaded = true;
         }
         attributeChangedCallback(name, oldValue, newValue) {
@@ -3668,6 +3668,7 @@ var Nabu;
             let min = 0;
             let ok = false;
             let emptyLinesBottom = 0;
+            let emptyColumnsRight = 0;
             while (!ok) {
                 kill++;
                 if (kill > 10) {
@@ -3743,6 +3744,24 @@ var Nabu;
                             emptyLinesBottom++;
                         }
                     }
+                    empty = true;
+                    emptyColumnsRight = 0;
+                    for (let x = this.xCount - 1; x > 0 && empty; x--) {
+                        for (let y = 0; y < this.yCount && empty; y++) {
+                            let fullLinePanel = this.panels.find(panel => {
+                                return (y >= panel.y && y < panel.y + panel.h) && panel.fullLine;
+                            });
+                            if (!fullLinePanel) {
+                                if (!grid[y][x]) {
+                                    console.log("occupied in " + y + " " + x);
+                                    empty = false;
+                                }
+                            }
+                        }
+                        if (empty) {
+                            emptyColumnsRight++;
+                        }
+                    }
                 }
             }
             let tileW = containerW / this.xCount;
@@ -3756,7 +3775,10 @@ var Nabu;
                 panel.style.width = (panel.w * tileW - 2 * m).toFixed(0) + "px";
                 panel.style.height = (panel.h * tileH - 2 * m).toFixed(0) + "px";
                 panel.style.position = "absolute";
-                panel.computedLeft = panel.x * tileW + m;
+                panel.computedLeft = panel.x * tileW;
+                if (!panel.fullLine) {
+                    panel.computedLeft += m + emptyColumnsRight * 0.5 * tileW;
+                }
                 panel.computedTop = panel.y * tileH + m + emptyLinesBottom * 0.5 * tileH;
                 if (panel.style.display != "none") {
                     panel.style.left = panel.computedLeft.toFixed(0) + "px";
@@ -3850,7 +3872,7 @@ var Nabu;
             this._update();
             setInterval(this._update, 30);
         }
-        async show(page, dontCloseOthers, duration = 1) {
+        async show(page, dontCloseOthers, duration = 0) {
             this.findAllPages();
             if (!dontCloseOthers) {
                 this.hideAll(duration);

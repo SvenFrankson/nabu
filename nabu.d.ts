@@ -579,10 +579,10 @@ declare namespace Nabu {
         get loaded(): boolean;
         private _shown;
         configuration: Configuration;
-        private _title;
+        titleElement: HTMLHeadingElement;
         private _containerFrame;
         private _container;
-        private _backButton;
+        backButton: HTMLButtonElement;
         private _onLoad;
         get onLoad(): () => void;
         set onLoad(callback: () => void);
@@ -657,7 +657,6 @@ declare namespace Nabu {
         protected onUpdate(): void;
         private _onHRefChange;
         protected onHRefChange(page: string, previousPage?: string): void;
-        private _onAllPagesLoaded;
         waitForAllPagesLoaded(): Promise<void>;
     }
 }

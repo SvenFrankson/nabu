@@ -29,6 +29,8 @@ namespace Nabu {
             if (file) {
                 this.attributeChangedCallback("file", "", file);
             }
+            this._shown = false;
+            this.hide(0);
         }
 
         public attributeChangedCallback(name: string, oldValue: string, newValue: string) {
@@ -39,8 +41,6 @@ namespace Nabu {
                         this.innerHTML = xhttp.responseText;
                         this.style.position = "fixed";
                         this.style.zIndex = "10";
-                        this._shown = false;
-                        this.hide(0);
                         this._loaded = true;
                         if (this._onLoad) {
                             this._onLoad();

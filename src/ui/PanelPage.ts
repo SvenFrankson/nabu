@@ -220,6 +220,7 @@ namespace Nabu {
             let min = 0;
             let ok = false;
             let emptyLinesBottom = 0;
+            let emptyColumnsRight = 0;
             while (!ok) {
                 kill++;
                 if (kill > 10) {
@@ -297,6 +298,25 @@ namespace Nabu {
                             emptyLinesBottom++;
                         }
                     }
+
+                    empty = true;
+                    emptyColumnsRight = 0;
+                    for (let x = this.xCount - 1; x > 0 && empty; x--) {
+                        for (let y = 0; y < this.yCount && empty; y++) {
+                            let fullLinePanel = this.panels.find(panel => { 
+                                return (y >= panel.y && y < panel.y + panel.h) && panel.fullLine
+                            });
+                            if (!fullLinePanel) {
+                                if (!grid[y][x]) {
+                                    console.log("occupied in " + y + " " + x);
+                                    empty = false;
+                                }
+                            }
+                        }
+                        if (empty) {
+                            emptyColumnsRight++;
+                        }
+                    }
                 }
             }
 
@@ -312,7 +332,10 @@ namespace Nabu {
                 panel.style.width = (panel.w * tileW - 2 * m).toFixed(0) + "px";
                 panel.style.height = (panel.h * tileH - 2 * m).toFixed(0) + "px";
                 panel.style.position = "absolute";
-                panel.computedLeft = panel.x * tileW + m;
+                panel.computedLeft = panel.x * tileW;
+                if (!panel.fullLine) {
+                    panel.computedLeft += m + emptyColumnsRight * 0.5 * tileW;
+                }
                 panel.computedTop = panel.y * tileH + m + emptyLinesBottom * 0.5 * tileH;
                 if (panel.style.display != "none") {
                     panel.style.left = panel.computedLeft.toFixed(0) + "px";

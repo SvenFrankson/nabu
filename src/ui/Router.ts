@@ -53,7 +53,7 @@ namespace Nabu {
             setInterval(this._update, 30);
         }
 
-        public async show(page: IPage, dontCloseOthers?: boolean, duration: number = 1): Promise<void> {
+        public async show(page: IPage, dontCloseOthers?: boolean, duration: number = 0): Promise<void> {
             this.findAllPages();
 
             if (!dontCloseOthers) {
@@ -114,7 +114,6 @@ namespace Nabu {
             
         }
 
-        private _onAllPagesLoaded: () => void;
         public async waitForAllPagesLoaded(): Promise<void> {
             return new Promise<void>(resolve => {
                 let wait = () => {
