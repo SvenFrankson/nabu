@@ -308,7 +308,6 @@ namespace Nabu {
                             });
                             if (!fullLinePanel) {
                                 if (!grid[y][x]) {
-                                    console.log("occupied in " + y + " " + x);
                                     empty = false;
                                 }
                             }

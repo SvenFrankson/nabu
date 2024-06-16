@@ -153,14 +153,16 @@ namespace Nabu {
         public configurationElements: ConfigurationElement[] = [];
         public overrideConfigurationElementCategoryName: string[];
 
-        constructor(public configName: string) {
+        constructor(public configName: string, public version: number = 0) {
 
         }
 
         public initialize(): void {
             this._buildElementsArray();
             let data = JSON.parse(localStorage.getItem(this.configName));
-            this.deserialize(data);
+            if (data && data.v === this.version) {
+                this.deserialize(data);
+            }
         }
 
         protected abstract _buildElementsArray(): void;
@@ -202,7 +204,7 @@ namespace Nabu {
         }
 
         public serialize(): any {
-            let data = {};
+            let data = { v: this.version };
 
             this.configurationElements.forEach(configurationElement => {
                 data[configurationElement.property] = configurationElement.value;

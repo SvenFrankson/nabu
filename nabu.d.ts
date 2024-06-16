@@ -43,9 +43,10 @@ declare namespace Nabu {
     }
     abstract class Configuration {
         configName: string;
+        version: number;
         configurationElements: ConfigurationElement[];
         overrideConfigurationElementCategoryName: string[];
-        constructor(configName: string);
+        constructor(configName: string, version?: number);
         initialize(): void;
         protected abstract _buildElementsArray(): void;
         getElement(property: string): ConfigurationElement;

@@ -203,14 +203,17 @@ var Nabu;
     ];
     Nabu.ConfigurationElement = ConfigurationElement;
     class Configuration {
-        constructor(configName) {
+        constructor(configName, version = 0) {
             this.configName = configName;
+            this.version = version;
             this.configurationElements = [];
         }
         initialize() {
             this._buildElementsArray();
             let data = JSON.parse(localStorage.getItem(this.configName));
-            this.deserialize(data);
+            if (data && data.v === this.version) {
+                this.deserialize(data);
+            }
         }
         getElement(property) {
             return this.configurationElements.find(e => { return e.property === property; });
@@ -244,7 +247,7 @@ var Nabu;
             localStorage.setItem(this.configName, JSON.stringify(data));
         }
         serialize() {
-            let data = {};
+            let data = { v: this.version };
             this.configurationElements.forEach(configurationElement => {
                 data[configurationElement.property] = configurationElement.value;
             });
@@ -3753,7 +3756,6 @@ var Nabu;
                             });
                             if (!fullLinePanel) {
                                 if (!grid[y][x]) {
-                                    console.log("occupied in " + y + " " + x);
                                     empty = false;
                                 }
                             }
