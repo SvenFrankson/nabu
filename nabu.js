@@ -3886,7 +3886,7 @@ var Nabu;
                 this.pages[i].hide(duration);
             }
             return new Promise(resolve => {
-                setTimeout(resolve, 1000);
+                setTimeout(resolve, duration * 1000);
             });
         }
         onUpdate() {

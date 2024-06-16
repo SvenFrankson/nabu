@@ -67,7 +67,7 @@ namespace Nabu {
                 this.pages[i].hide(duration);
             }
             return new Promise<void>(resolve => {
-                setTimeout(resolve, 1000);
+                setTimeout(resolve, duration * 1000);
             });
         }
 
