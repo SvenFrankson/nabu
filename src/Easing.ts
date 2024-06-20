@@ -105,5 +105,15 @@ namespace Nabu {
             }
             return 1 - 1 / (1.35 * fps);
         }
+
+        public static smoothNSec(fps: number, n: number): number {
+            if (n === 0) {
+                return 0;
+            }
+            if (fps < 1) {
+                return 0;
+            }
+            return 1 - 1 / (n * 0.45 * fps);
+        }
     }
 }
