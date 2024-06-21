@@ -92,7 +92,7 @@ namespace Nabu {
                             let keys: number[] = this.padButtonsMap.get(b);
                             if (keys) {
                                 keys.forEach(key => {
-                                    if (key) {
+                                    if (isFinite(key)) {
                                         this.doKeyInputDown(key);
                                     }
                                 })
@@ -104,7 +104,7 @@ namespace Nabu {
                             let keys: number[] = this.padButtonsMap.get(b);
                             if (keys) {
                                 keys.forEach(key => {
-                                    if (key) {
+                                    if (isFinite(key)) {
                                         this.doKeyInputUp(key);
                                     }
                                 })
