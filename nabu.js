@@ -351,6 +351,15 @@ var Nabu;
             }
             return 1 - 1 / (1.35 * fps);
         }
+        static smoothNSec(fps, n) {
+            if (n === 0) {
+                return 0;
+            }
+            if (fps < 1) {
+                return 0;
+            }
+            return 1 - 1 / (n * 0.45 * fps);
+        }
     }
     Nabu.Easing = Easing;
 })(Nabu || (Nabu = {}));
@@ -373,6 +382,10 @@ var Nabu;
         return { i: i, j: j, k: k };
     }
     Nabu.IJK = IJK;
+    function IJKToString(ijk) {
+        return "{ " + ijk.i + ", " + ijk.j + ", " + ijk.k + " }";
+    }
+    Nabu.IJKToString = IJKToString;
     function GetLineIJKsFromTo(from, to) {
         let iDist = Math.abs(from.i - to.i);
         let jDist = Math.abs(from.j - to.j);
@@ -526,7 +539,7 @@ var Nabu;
                             let keys = this.padButtonsMap.get(b);
                             if (keys) {
                                 keys.forEach(key => {
-                                    if (key) {
+                                    if (isFinite(key)) {
                                         this.doKeyInputDown(key);
                                     }
                                 });
@@ -539,7 +552,7 @@ var Nabu;
                             let keys = this.padButtonsMap.get(b);
                             if (keys) {
                                 keys.forEach(key => {
-                                    if (key) {
+                                    if (isFinite(key)) {
                                         this.doKeyInputUp(key);
                                     }
                                 });

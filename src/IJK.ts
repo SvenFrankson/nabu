@@ -10,6 +10,10 @@ namespace Nabu {
         return { i: i, j: j, k: k };
     }
 
+    export function IJKToString(ijk: IJK): string {
+        return "{ " + ijk.i + ", " + ijk.j + ", " + ijk.k + " }";
+    }
+
     export function GetLineIJKsFromTo(from: Nabu.IJK, to: Nabu.IJK): Nabu.IJK[] {
         let iDist = Math.abs(from.i - to.i);
         let jDist = Math.abs(from.j - to.j);

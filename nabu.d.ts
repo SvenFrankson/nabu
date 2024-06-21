@@ -77,6 +77,7 @@ declare namespace Nabu {
         static smooth1Sec(fps: number): number;
         static smooth2Sec(fps: number): number;
         static smooth3Sec(fps: number): number;
+        static smoothNSec(fps: number, n: number): number;
     }
 }
 declare namespace Nabu {
@@ -89,6 +90,7 @@ declare namespace Nabu {
         k: number;
     }
     function IJK(i: number, j: number, k: number): IJK;
+    function IJKToString(ijk: IJK): string;
     function GetLineIJKsFromTo(from: Nabu.IJK, to: Nabu.IJK): Nabu.IJK[];
 }
 declare namespace Nabu {
