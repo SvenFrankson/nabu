@@ -8,6 +8,16 @@ namespace Nabu {
     export function MinMax(n: number, min: number, max: number): number {
         return Math.min(Math.max(n, min), max);
     }
+
+    export function In0_2PIRange(angle: number): number {
+        while (angle < 0) {
+            angle += 2 * Math.PI;
+        }
+        while (angle >= 2 * Math.PI) {
+            angle -= 2 * Math.PI;
+        }
+        return angle;
+    }
     
     export function Pow2(n: number): number {
         return Pow2Values[n];

@@ -732,6 +732,16 @@ var Nabu;
         return Math.min(Math.max(n, min), max);
     }
     Nabu.MinMax = MinMax;
+    function In0_2PIRange(angle) {
+        while (angle < 0) {
+            angle += 2 * Math.PI;
+        }
+        while (angle >= 2 * Math.PI) {
+            angle -= 2 * Math.PI;
+        }
+        return angle;
+    }
+    Nabu.In0_2PIRange = In0_2PIRange;
     function Pow2(n) {
         return Pow2Values[n];
     }
@@ -3199,13 +3209,10 @@ var Nabu;
             this._container = document.createElement("div");
             this._container.classList.add("container");
             this._containerFrame.appendChild(this._container);
-            let a = document.createElement("a");
-            a.href = "#home";
-            this.appendChild(a);
             this.backButton = document.createElement("button");
             this.backButton.classList.add("back-button");
             this.backButton.innerHTML = "Back";
-            a.appendChild(this.backButton);
+            this.appendChild(this.backButton);
             this._loaded = true;
         }
         attributeChangedCallback(name, oldValue, newValue) {

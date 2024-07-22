@@ -44,14 +44,10 @@ namespace Nabu {
             this._container.classList.add("container");
             this._containerFrame.appendChild(this._container);
 
-            let a = document.createElement("a");
-            a.href = "#home";
-            this.appendChild(a);
-
             this.backButton = document.createElement("button");
             this.backButton.classList.add("back-button");
             this.backButton.innerHTML = "Back";
-            a.appendChild(this.backButton);
+            this.appendChild(this.backButton);
 
             this._loaded = true;
         }

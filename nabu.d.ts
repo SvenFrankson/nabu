@@ -131,6 +131,7 @@ declare namespace Nabu {
 }
 declare namespace Nabu {
     function MinMax(n: number, min: number, max: number): number;
+    function In0_2PIRange(angle: number): number;
     function Pow2(n: number): number;
     function FloorPow2Exponent(n: number): number;
     function CeilPow2Exponent(n: number): number;
