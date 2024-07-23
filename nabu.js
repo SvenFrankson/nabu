@@ -3188,6 +3188,9 @@ var Nabu;
         get loaded() {
             return this._loaded;
         }
+        get shown() {
+            return this._shown;
+        }
         get onLoad() {
             return this._onLoad;
         }

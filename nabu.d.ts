@@ -582,6 +582,7 @@ declare namespace Nabu {
         private _loaded;
         get loaded(): boolean;
         private _shown;
+        get shown(): boolean;
         configuration: Configuration;
         titleElement: HTMLHeadingElement;
         private _containerFrame;
