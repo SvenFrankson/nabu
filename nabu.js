@@ -3703,8 +3703,8 @@ var Nabu;
                 ok = true;
                 min++;
                 let bestValue = 0;
-                for (let xC = min; xC <= 10; xC++) {
-                    for (let yC = min; yC <= 10; yC++) {
+                for (let xC = min; xC <= 20; xC++) {
+                    for (let yC = min; yC <= 20; yC++) {
                         let count = xC * yC;
                         if (count >= requestedTileCount) {
                             let w = containerW / xC;
@@ -3815,7 +3815,7 @@ var Nabu;
                 }
                 let label2 = panel.querySelector(".label-2");
                 if (label2) {
-                    label2.style.fontSize = (tileW / 7).toFixed(0) + "px";
+                    label2.style.fontSize = (tileW / 5).toFixed(0) + "px";
                 }
             }
         }
