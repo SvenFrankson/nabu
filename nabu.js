@@ -3809,14 +3809,6 @@ var Nabu;
                     panel.style.left = panel.computedLeft.toFixed(0) + "px";
                 }
                 panel.style.top = panel.computedTop.toFixed(0) + "px";
-                let label = panel.querySelector(".label");
-                if (label) {
-                    label.style.fontSize = (tileW / 4).toFixed(0) + "px";
-                }
-                let label2 = panel.querySelector(".label-2");
-                if (label2) {
-                    label2.style.fontSize = (tileW / 5).toFixed(0) + "px";
-                }
             }
         }
     }
