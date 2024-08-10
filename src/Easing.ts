@@ -107,6 +107,9 @@ namespace Nabu {
         }
 
         public static smoothNSec(fps: number, n: number): number {
+            if (!isFinite(fps)) {
+                return 0;
+            }
             if (n === 0) {
                 return 0;
             }

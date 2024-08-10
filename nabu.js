@@ -352,6 +352,9 @@ var Nabu;
             return 1 - 1 / (1.35 * fps);
         }
         static smoothNSec(fps, n) {
+            if (!isFinite(fps)) {
+                return 0;
+            }
             if (n === 0) {
                 return 0;
             }
