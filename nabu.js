@@ -476,6 +476,13 @@ var Nabu;
             this.keyUpListeners = [];
             this.mappedKeyUpListeners = new Map();
             this.deactivateAllKeyInputs = false;
+            try {
+                navigator.getGamepads();
+                this.isGamepadAllowed = true;
+            }
+            catch {
+                this.isGamepadAllowed = false;
+            }
         }
         static DeadZoneAxis(axisValue, threshold = 0.1) {
             if (Math.abs(axisValue) > threshold) {
@@ -533,35 +540,37 @@ var Nabu;
             }
         }
         update() {
-            let gamepads = navigator.getGamepads();
-            let gamepad = gamepads[0];
-            if (gamepad) {
-                let hasButtonsDown = this.padButtonsDown.length > 0;
-                for (let b = 0; b < gamepad.buttons.length; b++) {
-                    let v = gamepad.buttons[b].pressed;
-                    if (v) {
-                        if (!this.padButtonsDown.contains(b)) {
-                            this.padButtonsDown.push(b);
-                            let keys = this.padButtonsMap.get(b);
-                            if (keys) {
-                                keys.forEach(key => {
-                                    if (isFinite(key)) {
-                                        this.doKeyInputDown(key);
-                                    }
-                                });
+            if (this.isGamepadAllowed) {
+                let gamepads = navigator.getGamepads();
+                let gamepad = gamepads[0];
+                if (gamepad) {
+                    let hasButtonsDown = this.padButtonsDown.length > 0;
+                    for (let b = 0; b < gamepad.buttons.length; b++) {
+                        let v = gamepad.buttons[b].pressed;
+                        if (v) {
+                            if (!this.padButtonsDown.contains(b)) {
+                                this.padButtonsDown.push(b);
+                                let keys = this.padButtonsMap.get(b);
+                                if (keys) {
+                                    keys.forEach(key => {
+                                        if (isFinite(key)) {
+                                            this.doKeyInputDown(key);
+                                        }
+                                    });
+                                }
                             }
                         }
-                    }
-                    else if (hasButtonsDown) {
-                        if (this.padButtonsDown.contains(b)) {
-                            this.padButtonsDown.remove(b);
-                            let keys = this.padButtonsMap.get(b);
-                            if (keys) {
-                                keys.forEach(key => {
-                                    if (isFinite(key)) {
-                                        this.doKeyInputUp(key);
-                                    }
-                                });
+                        else if (hasButtonsDown) {
+                            if (this.padButtonsDown.contains(b)) {
+                                this.padButtonsDown.remove(b);
+                                let keys = this.padButtonsMap.get(b);
+                                if (keys) {
+                                    keys.forEach(key => {
+                                        if (isFinite(key)) {
+                                            this.doKeyInputUp(key);
+                                        }
+                                    });
+                                }
                             }
                         }
                     }
@@ -3207,6 +3216,13 @@ var Nabu;
             }
         }
         connectedCallback() {
+            try {
+                navigator.getGamepads();
+                this.isGamepadAllowed = true;
+            }
+            catch {
+                this.isGamepadAllowed = false;
+            }
             this.style.display = "none";
             this.style.opacity = "0";
             this.titleElement = document.createElement("h1");
@@ -3413,26 +3429,29 @@ var Nabu;
                             }
                             exit();
                         };
-                        let waitForGamepad = setInterval(() => {
-                            let gamepads = navigator.getGamepads();
-                            let gamepad = gamepads[0];
-                            if (gamepad) {
-                                for (let b = 0; b < gamepad.buttons.length; b++) {
-                                    let v = gamepad.buttons[b].pressed;
-                                    if (v) {
-                                        let oldValue = configElement.value;
-                                        let newValue = Nabu.ConfigurationElement.InputToInt("GamepadBtn" + b);
-                                        if (newValue > -1) {
-                                            configElement.value = newValue;
-                                            if (configElement.onChange) {
-                                                configElement.onChange(newValue, oldValue, true);
+                        let waitForGamepad;
+                        if (this.isGamepadAllowed) {
+                            waitForGamepad = setInterval(() => {
+                                let gamepads = navigator.getGamepads();
+                                let gamepad = gamepads[0];
+                                if (gamepad) {
+                                    for (let b = 0; b < gamepad.buttons.length; b++) {
+                                        let v = gamepad.buttons[b].pressed;
+                                        if (v) {
+                                            let oldValue = configElement.value;
+                                            let newValue = Nabu.ConfigurationElement.InputToInt("GamepadBtn" + b);
+                                            if (newValue > -1) {
+                                                configElement.value = newValue;
+                                                if (configElement.onChange) {
+                                                    configElement.onChange(newValue, oldValue, true);
+                                                }
                                             }
+                                            exit();
                                         }
-                                        exit();
                                     }
                                 }
-                            }
-                        }, 15);
+                            }, 15);
+                        }
                         let exit = () => {
                             numValue.innerHTML = (Nabu.ConfigurationElement.Inputs[configElement.value]).replace("GamepadBtn", "Pad ").replace("Key", "Key ");
                             window.removeEventListener("keyup", keyup);

@@ -13,6 +13,7 @@ namespace Nabu {
         public get shown(): boolean {
             return this._shown;
         }
+        private isGamepadAllowed: boolean; 
 
         public configuration: Configuration;
         public titleElement: HTMLHeadingElement;
@@ -32,6 +33,14 @@ namespace Nabu {
         }
 
         public connectedCallback(): void {
+            try {
+                navigator.getGamepads();
+                this.isGamepadAllowed = true;
+            }
+            catch {
+                this.isGamepadAllowed = false;
+            }
+
             this.style.display = "none";
             this.style.opacity = "0";
 
@@ -260,26 +269,29 @@ namespace Nabu {
                             exit();
                         };
 
-                        let waitForGamepad = setInterval(() => {
-                            let gamepads = navigator.getGamepads();
-                            let gamepad = gamepads[0];
-                            if (gamepad) {
-                                for (let b = 0; b < gamepad.buttons.length; b++) {
-                                    let v = gamepad.buttons[b].pressed;
-                                    if (v) {
-                                        let oldValue = configElement.value;
-                                        let newValue = ConfigurationElement.InputToInt("GamepadBtn" + b);
-                                        if (newValue > - 1) {
-                                            configElement.value = newValue;
-                                            if (configElement.onChange) {
-                                                configElement.onChange(newValue, oldValue, true);
+                        let waitForGamepad: number;
+                        if (this.isGamepadAllowed) {
+                            waitForGamepad = setInterval(() => {
+                                let gamepads = navigator.getGamepads();
+                                let gamepad = gamepads[0];
+                                if (gamepad) {
+                                    for (let b = 0; b < gamepad.buttons.length; b++) {
+                                        let v = gamepad.buttons[b].pressed;
+                                        if (v) {
+                                            let oldValue = configElement.value;
+                                            let newValue = ConfigurationElement.InputToInt("GamepadBtn" + b);
+                                            if (newValue > - 1) {
+                                                configElement.value = newValue;
+                                                if (configElement.onChange) {
+                                                    configElement.onChange(newValue, oldValue, true);
+                                                }
                                             }
+                                            exit();
                                         }
-                                        exit();
                                     }
                                 }
-                            }
-                        }, 15);
+                            }, 15);
+                        }
 
                         let exit = () => {
                             numValue.innerHTML = (ConfigurationElement.Inputs[configElement.value]).replace("GamepadBtn", "Pad ").replace("Key", "Key ");

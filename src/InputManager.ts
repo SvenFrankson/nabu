@@ -24,8 +24,17 @@ namespace Nabu {
         public keyUpListeners: ((k: number) => any)[] = [];
         public mappedKeyUpListeners: Map<number, (() => any)[]> = new Map<number, (() => any)[]>();
         public deactivateAllKeyInputs: boolean = false;
+        private isGamepadAllowed: boolean; 
 
-        constructor(public canvas: HTMLCanvasElement, public configuration?: Configuration) {}
+        constructor(public canvas: HTMLCanvasElement, public configuration?: Configuration) {
+            try {
+                navigator.getGamepads();
+                this.isGamepadAllowed = true;
+            }
+            catch {
+                this.isGamepadAllowed = false;
+            }
+        }
 
         public initialize(): void {
             this.canvas.addEventListener("pointerdown", (ev: PointerEvent) => {
@@ -80,34 +89,36 @@ namespace Nabu {
         }
 
         public update(): void {
-            let gamepads = navigator.getGamepads();
-            let gamepad = gamepads[0];
-            if (gamepad) {
-                let hasButtonsDown: boolean = this.padButtonsDown.length > 0;
-                for (let b = 0; b < gamepad.buttons.length; b++) {
-                    let v = gamepad.buttons[b].pressed;
-                    if (v) {
-                        if (!this.padButtonsDown.contains(b)) {
-                            this.padButtonsDown.push(b);
-                            let keys: number[] = this.padButtonsMap.get(b);
-                            if (keys) {
-                                keys.forEach(key => {
-                                    if (isFinite(key)) {
-                                        this.doKeyInputDown(key);
-                                    }
-                                })
+            if (this.isGamepadAllowed) {
+                let gamepads = navigator.getGamepads();
+                let gamepad = gamepads[0];
+                if (gamepad) {
+                    let hasButtonsDown: boolean = this.padButtonsDown.length > 0;
+                    for (let b = 0; b < gamepad.buttons.length; b++) {
+                        let v = gamepad.buttons[b].pressed;
+                        if (v) {
+                            if (!this.padButtonsDown.contains(b)) {
+                                this.padButtonsDown.push(b);
+                                let keys: number[] = this.padButtonsMap.get(b);
+                                if (keys) {
+                                    keys.forEach(key => {
+                                        if (isFinite(key)) {
+                                            this.doKeyInputDown(key);
+                                        }
+                                    })
+                                }
                             }
-                        }
-                    } else if (hasButtonsDown) {
-                        if (this.padButtonsDown.contains(b)) {
-                            this.padButtonsDown.remove(b);
-                            let keys: number[] = this.padButtonsMap.get(b);
-                            if (keys) {
-                                keys.forEach(key => {
-                                    if (isFinite(key)) {
-                                        this.doKeyInputUp(key);
-                                    }
-                                })
+                        } else if (hasButtonsDown) {
+                            if (this.padButtonsDown.contains(b)) {
+                                this.padButtonsDown.remove(b);
+                                let keys: number[] = this.padButtonsMap.get(b);
+                                if (keys) {
+                                    keys.forEach(key => {
+                                        if (isFinite(key)) {
+                                            this.doKeyInputUp(key);
+                                        }
+                                    })
+                                }
                             }
                         }
                     }
