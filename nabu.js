@@ -206,13 +206,16 @@ var Nabu;
         constructor(configName, version = 0) {
             this.configName = configName;
             this.version = version;
+            this.hasLocalStorage = false;
             this.configurationElements = [];
         }
         initialize() {
             this._buildElementsArray();
-            let data = JSON.parse(localStorage.getItem(this.configName));
-            if (data && data.v === this.version) {
-                this.deserialize(data);
+            if (this.hasLocalStorage) {
+                let data = JSON.parse(localStorage.getItem(this.configName));
+                if (data && data.v === this.version) {
+                    this.deserialize(data);
+                }
             }
         }
         getElement(property) {
@@ -233,7 +236,7 @@ var Nabu;
                     if (doForceInit) {
                         element.forceInit();
                     }
-                    if (!skipSaveToLocalStorage) {
+                    if (this.hasLocalStorage && !skipSaveToLocalStorage) {
                         this.saveToLocalStorage();
                     }
                     if (this.onValueChange) {

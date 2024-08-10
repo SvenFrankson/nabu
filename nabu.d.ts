@@ -44,6 +44,7 @@ declare namespace Nabu {
     abstract class Configuration {
         configName: string;
         version: number;
+        hasLocalStorage: boolean;
         configurationElements: ConfigurationElement[];
         overrideConfigurationElementCategoryName: string[];
         constructor(configName: string, version?: number);

@@ -150,6 +150,7 @@ namespace Nabu {
 
     export abstract class Configuration {
 
+        public hasLocalStorage: boolean = false;
         public configurationElements: ConfigurationElement[] = [];
         public overrideConfigurationElementCategoryName: string[];
 
@@ -159,9 +160,11 @@ namespace Nabu {
 
         public initialize(): void {
             this._buildElementsArray();
-            let data = JSON.parse(localStorage.getItem(this.configName));
-            if (data && data.v === this.version) {
-                this.deserialize(data);
+            if (this.hasLocalStorage) {
+                let data = JSON.parse(localStorage.getItem(this.configName));
+                if (data && data.v === this.version) {
+                    this.deserialize(data);
+                }
             }
         }
 
@@ -188,7 +191,7 @@ namespace Nabu {
                     if (doForceInit) {
                         element.forceInit();
                     }
-                    if (!skipSaveToLocalStorage) {
+                    if (this.hasLocalStorage && !skipSaveToLocalStorage) {
                         this.saveToLocalStorage();
                     }
                     if (this.onValueChange) {
