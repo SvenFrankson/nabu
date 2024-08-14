@@ -12,6 +12,9 @@ namespace Nabu {
             return this._loaded;
         }
         private _shown: boolean = false;
+        public get shown(): boolean {
+            return this._shown;
+        }
 
         private _onLoad: () => void;
         public get onLoad(): () => void {
@@ -39,8 +42,6 @@ namespace Nabu {
                     const xhttp = new XMLHttpRequest();
                     xhttp.onload = () => {
                         this.innerHTML = xhttp.responseText;
-                        this.style.position = "fixed";
-                        this.style.zIndex = "10";
                         this._loaded = true;
                         if (this._onLoad) {
                             this._onLoad();
@@ -56,7 +57,7 @@ namespace Nabu {
             return new Promise<void>((resolve) => {
                 if (!this._shown) {
                     this._shown = true;
-                    this.style.display = "block";
+                    this.style.display = "";
                     let opacity0 = parseFloat(this.style.opacity);
                     let opacity1 = 1;
                     let t0 = performance.now();
@@ -87,7 +88,7 @@ namespace Nabu {
                 return new Promise<void>((resolve) => {
                     if (this._shown) {
                         this._shown = false;
-                        this.style.display = "block";
+                        this.style.display = "";
                         let opacity0 = parseFloat(this.style.opacity);
                         let opacity1 = 0;
                         let t0 = performance.now();

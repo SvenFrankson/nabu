@@ -3039,6 +3039,9 @@ var Nabu;
         get loaded() {
             return this._loaded;
         }
+        get shown() {
+            return this._shown;
+        }
         get onLoad() {
             return this._onLoad;
         }
@@ -3062,8 +3065,6 @@ var Nabu;
                     const xhttp = new XMLHttpRequest();
                     xhttp.onload = () => {
                         this.innerHTML = xhttp.responseText;
-                        this.style.position = "fixed";
-                        this.style.zIndex = "10";
                         this._loaded = true;
                         if (this._onLoad) {
                             this._onLoad();
@@ -3078,7 +3079,7 @@ var Nabu;
             return new Promise((resolve) => {
                 if (!this._shown) {
                     this._shown = true;
-                    this.style.display = "block";
+                    this.style.display = "";
                     let opacity0 = parseFloat(this.style.opacity);
                     let opacity1 = 1;
                     let t0 = performance.now();
@@ -3109,7 +3110,7 @@ var Nabu;
                 return new Promise((resolve) => {
                     if (this._shown) {
                         this._shown = false;
-                        this.style.display = "block";
+                        this.style.display = "";
                         let opacity0 = parseFloat(this.style.opacity);
                         let opacity1 = 0;
                         let t0 = performance.now();

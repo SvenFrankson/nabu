@@ -556,6 +556,7 @@ declare namespace Nabu {
         private _loaded;
         get loaded(): boolean;
         private _shown;
+        get shown(): boolean;
         private _onLoad;
         get onLoad(): () => void;
         set onLoad(callback: () => void);
