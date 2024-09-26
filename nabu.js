@@ -478,10 +478,10 @@ var Nabu;
             this.deactivateAllKeyInputs = false;
             try {
                 navigator.getGamepads();
-                this.isGamepadAllowed = true;
+                this._isGamepadAllowed = true;
             }
             catch {
-                this.isGamepadAllowed = false;
+                this._isGamepadAllowed = false;
             }
         }
         static DeadZoneAxis(axisValue, threshold = 0.1) {
@@ -489,6 +489,9 @@ var Nabu;
                 return (axisValue - threshold * Math.sign(axisValue)) / (1 - threshold);
             }
             return 0;
+        }
+        get isGamepadAllowed() {
+            return this._isGamepadAllowed;
         }
         initialize() {
             this.canvas.addEventListener("pointerdown", (ev) => {

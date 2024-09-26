@@ -111,7 +111,8 @@ declare namespace Nabu {
         keyUpListeners: ((k: number) => any)[];
         mappedKeyUpListeners: Map<number, (() => any)[]>;
         deactivateAllKeyInputs: boolean;
-        private isGamepadAllowed;
+        private _isGamepadAllowed;
+        get isGamepadAllowed(): boolean;
         constructor(canvas: HTMLCanvasElement, configuration?: Configuration);
         initialize(): void;
         initializeInputs(configuration: Configuration): void;

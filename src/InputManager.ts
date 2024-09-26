@@ -24,15 +24,18 @@ namespace Nabu {
         public keyUpListeners: ((k: number) => any)[] = [];
         public mappedKeyUpListeners: Map<number, (() => any)[]> = new Map<number, (() => any)[]>();
         public deactivateAllKeyInputs: boolean = false;
-        private isGamepadAllowed: boolean; 
+        private _isGamepadAllowed: boolean;
+        public get isGamepadAllowed(): boolean {
+            return this._isGamepadAllowed;
+        }
 
         constructor(public canvas: HTMLCanvasElement, public configuration?: Configuration) {
             try {
                 navigator.getGamepads();
-                this.isGamepadAllowed = true;
+                this._isGamepadAllowed = true;
             }
             catch {
-                this.isGamepadAllowed = false;
+                this._isGamepadAllowed = false;
             }
         }
 
