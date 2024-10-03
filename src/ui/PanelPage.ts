@@ -216,21 +216,21 @@ namespace Nabu {
             let containerW = rect.width;
             let containerH = rect.height;
 
-            let kill = 0;
             let min = 0;
+            let max = 30;
             let ok = false;
             let emptyLinesBottom = 0;
             let emptyColumnsRight = 0;
             while (!ok) {
-                kill++;
-                if (kill > 10) {
-                    return;
-                }
                 ok = true;
                 min++;
+                if (min > max) {
+                    console.log("panelpage fail")
+                    return;
+                }
                 let bestValue: number = 0;
-                for (let xC = min; xC <= 20; xC++) {
-                    for (let yC = min; yC <= 20; yC++) {
+                for (let xC = min; xC <= max; xC++) {
+                    for (let yC = min; yC <= max; yC++) {
                         let count = xC * yC;
                         if (count >= requestedTileCount) {
                             let w = containerW / xC;
@@ -321,7 +321,7 @@ namespace Nabu {
 
             let tileW = containerW / this.xCount;
             let tileH = containerH / this.yCount;
-            let m = Math.min(tileW, tileH) / 15;
+            let m = 12;
 
             for (let i = 0; i < this.panels.length; i++) {
                 let panel = this.panels[i];
