@@ -561,6 +561,7 @@ declare namespace Nabu {
         private _onLoad;
         get onLoad(): () => void;
         set onLoad(callback: () => void);
+        waitLoaded(): Promise<void>;
         connectedCallback(): void;
         attributeChangedCallback(name: string, oldValue: string, newValue: string): void;
         show(duration?: number): Promise<void>;
@@ -596,6 +597,7 @@ declare namespace Nabu {
         private _onLoad;
         get onLoad(): () => void;
         set onLoad(callback: () => void);
+        waitLoaded(): Promise<void>;
         connectedCallback(): void;
         attributeChangedCallback(name: string, oldValue: string, newValue: string): void;
         show(duration?: number): Promise<void>;
@@ -634,6 +636,7 @@ declare namespace Nabu {
         private _onLoad;
         get onLoad(): () => void;
         set onLoad(callback: () => void);
+        waitLoaded(): Promise<void>;
         connectedCallback(): void;
         attributeChangedCallback(name: string, oldValue: string, newValue: string): void;
         private _t0;
@@ -651,6 +654,7 @@ declare namespace Nabu {
         show(duration?: number): Promise<void>;
         hide(duration?: number): Promise<void>;
         readonly loaded: boolean;
+        waitLoaded(): Promise<void>;
     }
     class Router {
         pages: IPage[];

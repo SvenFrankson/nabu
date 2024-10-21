@@ -27,6 +27,20 @@ namespace Nabu {
             }
         }
 
+        public async waitLoaded(): Promise<void> {
+            return new Promise<void>(resolve => {
+                let wait = () => {
+                    if (this._loaded) {
+                        resolve();
+                    }
+                    else {
+                        requestAnimationFrame(wait);
+                    }
+                }
+                wait();
+            })
+        }
+
         public connectedCallback(): void {
             let file = this.getAttribute("file");
             if (file) {

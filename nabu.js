@@ -3054,6 +3054,19 @@ var Nabu;
                 this._onLoad();
             }
         }
+        async waitLoaded() {
+            return new Promise(resolve => {
+                let wait = () => {
+                    if (this._loaded) {
+                        resolve();
+                    }
+                    else {
+                        requestAnimationFrame(wait);
+                    }
+                };
+                wait();
+            });
+        }
         connectedCallback() {
             let file = this.getAttribute("file");
             if (file) {
@@ -3218,6 +3231,19 @@ var Nabu;
             if (this._loaded) {
                 this._onLoad();
             }
+        }
+        async waitLoaded() {
+            return new Promise(resolve => {
+                let wait = () => {
+                    if (this._loaded) {
+                        resolve();
+                    }
+                    else {
+                        requestAnimationFrame(wait);
+                    }
+                };
+                wait();
+            });
         }
         connectedCallback() {
             try {
@@ -3601,6 +3627,19 @@ var Nabu;
             if (this._loaded) {
                 this._onLoad();
             }
+        }
+        async waitLoaded() {
+            return new Promise(resolve => {
+                let wait = () => {
+                    if (this._loaded) {
+                        resolve();
+                    }
+                    else {
+                        requestAnimationFrame(wait);
+                    }
+                };
+                wait();
+            });
         }
         connectedCallback() {
             let file = this.getAttribute("file");

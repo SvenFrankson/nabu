@@ -4,6 +4,7 @@ namespace Nabu {
         show(duration?: number): Promise<void>;
         hide(duration?: number): Promise<void>;
         readonly loaded: boolean;
+        waitLoaded(): Promise<void>;
     }
 
     export class Router {
