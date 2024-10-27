@@ -10,6 +10,9 @@ namespace Nabu {
             return this._loaded;
         }
         private _shown: boolean = false;
+        public get shown(): boolean {
+            return this._shown;
+        }
         private _animateShowInterval: number;
 
         public panels: PanelElement[] = [];

@@ -1141,6 +1141,9 @@ var Nabu;
         constructor() {
             this._elements = [];
         }
+        get array() {
+            return this._elements;
+        }
         get length() {
             return this._elements.length;
         }
@@ -3033,6 +3036,11 @@ var Nabu;
             super(...arguments);
             this._loaded = false;
             this._shown = false;
+            this._timout = -1;
+            this._showing = false;
+            this.onshow = () => { };
+            this._hiding = false;
+            this.onhide = () => { };
         }
         static get observedAttributes() {
             return [
@@ -3081,6 +3089,16 @@ var Nabu;
                     const xhttp = new XMLHttpRequest();
                     xhttp.onload = () => {
                         this.innerHTML = xhttp.responseText;
+                        this.pointerBlocker = document.createElement("div");
+                        this.pointerBlocker.style.position = "absolute";
+                        this.pointerBlocker.style.left = "0";
+                        this.pointerBlocker.style.top = "0";
+                        this.pointerBlocker.style.width = "100%";
+                        this.pointerBlocker.style.height = "100%";
+                        this.pointerBlocker.style.zIndex = "10";
+                        this.pointerBlocker.style.backgroundColor = "magenta";
+                        this.pointerBlocker.style.opacity = "0";
+                        this.appendChild(this.pointerBlocker);
                         this._loaded = true;
                         if (this._onLoad) {
                             this._onLoad();
@@ -3091,63 +3109,88 @@ var Nabu;
                 }
             }
         }
+        showFast() {
+            clearTimeout(this._timout);
+            this._shown = true;
+            this.style.display = "";
+            this.style.opacity = "1";
+            this.onshow();
+        }
+        hideFast(duration = 1) {
+            clearTimeout(this._timout);
+            this._shown = false;
+            this.style.opacity = "0";
+            this.onhide();
+            this._timout = setTimeout(() => {
+                this.style.display = "none";
+            }, duration * 1000);
+        }
         async show(duration = 1) {
             return new Promise((resolve) => {
-                if (!this._shown) {
-                    this._shown = true;
-                    this.style.display = "";
-                    let opacity0 = parseFloat(this.style.opacity);
-                    let opacity1 = 1;
-                    let t0 = performance.now();
-                    let step = () => {
-                        let t = performance.now();
-                        let dt = (t - t0) / 1000;
-                        if (dt >= duration) {
-                            this.style.opacity = "1";
-                            resolve();
+                this._showing = true;
+                this._hiding = false;
+                this._shown = true;
+                this.style.display = "";
+                this.onshow();
+                let opacity0 = parseFloat(this.style.opacity);
+                let opacity1 = 1;
+                let t0 = performance.now();
+                let step = () => {
+                    if (this._hiding) {
+                        return;
+                    }
+                    let t = performance.now();
+                    let dt = (t - t0) / 1000;
+                    if (dt >= duration) {
+                        this.style.opacity = "1";
+                        if (this.pointerBlocker) {
+                            this.pointerBlocker.style.display = "none";
                         }
-                        else {
-                            let f = dt / duration;
-                            this.style.opacity = ((1 - f) * opacity0 + f * opacity1).toFixed(2);
-                            requestAnimationFrame(step);
-                        }
-                    };
-                    step();
-                }
+                        this._showing = false;
+                        resolve();
+                    }
+                    else {
+                        let f = dt / duration;
+                        this.style.opacity = ((1 - f) * opacity0 + f * opacity1).toFixed(2);
+                        requestAnimationFrame(step);
+                    }
+                };
+                step();
             });
         }
         async hide(duration = 1) {
-            if (duration === 0) {
-                this._shown = false;
-                this.style.display = "none";
-                this.style.opacity = "0";
-            }
-            else {
-                return new Promise((resolve) => {
-                    if (this._shown) {
-                        this._shown = false;
-                        this.style.display = "";
-                        let opacity0 = parseFloat(this.style.opacity);
-                        let opacity1 = 0;
-                        let t0 = performance.now();
-                        let step = () => {
-                            let t = performance.now();
-                            let dt = (t - t0) / 1000;
-                            if (dt >= duration) {
-                                this.style.display = "none";
-                                this.style.opacity = "0";
-                                resolve();
-                            }
-                            else {
-                                let f = dt / duration;
-                                this.style.opacity = ((1 - f) * opacity0 + f * opacity1).toFixed(2);
-                                requestAnimationFrame(step);
-                            }
-                        };
-                        step();
+            return new Promise((resolve) => {
+                this._showing = false;
+                this._hiding = true;
+                this.style.display = "";
+                if (this.pointerBlocker) {
+                    this.pointerBlocker.style.display = "";
+                }
+                let opacity0 = parseFloat(this.style.opacity);
+                let opacity1 = 0;
+                let t0 = performance.now();
+                let step = () => {
+                    if (this._showing) {
+                        return;
                     }
-                });
-            }
+                    let t = performance.now();
+                    let dt = (t - t0) / 1000;
+                    if (dt >= duration) {
+                        this.style.display = "none";
+                        this.style.opacity = "0";
+                        this._shown = false;
+                        this._hiding = false;
+                        this.onhide();
+                        resolve();
+                    }
+                    else {
+                        let f = dt / duration;
+                        this.style.opacity = ((1 - f) * opacity0 + f * opacity1).toFixed(2);
+                        requestAnimationFrame(step);
+                    }
+                };
+                step();
+            });
         }
     }
     Nabu.DefaultPage = DefaultPage;
@@ -3619,6 +3662,9 @@ var Nabu;
         get loaded() {
             return this._loaded;
         }
+        get shown() {
+            return this._shown;
+        }
         get onLoad() {
             return this._onLoad;
         }
@@ -3949,7 +3995,7 @@ var Nabu;
         }
         onFindAllPages() {
         }
-        initialize() {
+        async initialize() {
             this.findAllPages();
         }
         start() {
@@ -3958,7 +4004,7 @@ var Nabu;
             setInterval(this._update, 30);
         }
         async show(page, dontCloseOthers, duration = 0) {
-            this.findAllPages();
+            //this.findAllPages();
             if (!dontCloseOthers) {
                 this.hideAll(duration);
             }
@@ -3968,9 +4014,6 @@ var Nabu;
             for (let i = 0; i < this.pages.length; i++) {
                 this.pages[i].hide(duration);
             }
-            return new Promise(resolve => {
-                setTimeout(resolve, duration * 1000);
-            });
         }
         onUpdate() {
         }

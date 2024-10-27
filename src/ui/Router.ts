@@ -1,6 +1,7 @@
 namespace Nabu {
     
     export interface IPage extends HTMLElement {
+        shown: boolean;
         show(duration?: number): Promise<void>;
         hide(duration?: number): Promise<void>;
         readonly loaded: boolean;
@@ -44,7 +45,7 @@ namespace Nabu {
 
         }
 
-        public initialize(): void {
+        public async initialize(): Promise<void> {
             this.findAllPages();
         }
 
@@ -55,7 +56,7 @@ namespace Nabu {
         }
 
         public async show(page: IPage, dontCloseOthers?: boolean, duration: number = 0): Promise<void> {
-            this.findAllPages();
+            //this.findAllPages();
 
             if (!dontCloseOthers) {
                 this.hideAll(duration);
@@ -67,9 +68,6 @@ namespace Nabu {
             for (let i = 0; i < this.pages.length; i++) {
                 this.pages[i].hide(duration);
             }
-            return new Promise<void>(resolve => {
-                setTimeout(resolve, duration * 1000);
-            });
         }
 
         protected _currentHRef: string;

@@ -7,6 +7,8 @@ namespace Nabu {
             ];
         }
 
+        public pointerBlocker: HTMLDivElement;
+
         private _loaded: boolean = false;
         public get loaded(): boolean {
             return this._loaded;
@@ -56,6 +58,18 @@ namespace Nabu {
                     const xhttp = new XMLHttpRequest();
                     xhttp.onload = () => {
                         this.innerHTML = xhttp.responseText;
+
+                        this.pointerBlocker = document.createElement("div");
+                        this.pointerBlocker.style.position = "absolute";
+                        this.pointerBlocker.style.left = "0";
+                        this.pointerBlocker.style.top = "0";
+                        this.pointerBlocker.style.width = "100%";
+                        this.pointerBlocker.style.height = "100%";
+                        this.pointerBlocker.style.zIndex = "10";
+                        this.pointerBlocker.style.backgroundColor = "magenta";
+                        this.pointerBlocker.style.opacity = "0";
+                        this.appendChild(this.pointerBlocker);
+                        
                         this._loaded = true;
                         if (this._onLoad) {
                             this._onLoad();
@@ -67,64 +81,102 @@ namespace Nabu {
             }
         }
 
+        private _timout: number = -1;
+
+        public showFast(): void {
+            clearTimeout(this._timout);
+            this._shown = true;
+            this.style.display = "";
+            this.style.opacity = "1";
+            this.onshow();
+        }
+
+        public hideFast(duration: number = 1): void {
+            clearTimeout(this._timout);
+            this._shown = false;
+            this.style.opacity = "0";
+            this.onhide();
+            this._timout = setTimeout(() => {
+                this.style.display = "none";
+            }, duration * 1000);
+        }
+
+        private _showing: boolean = false;
         public async show(duration: number = 1): Promise<void> {
             return new Promise<void>((resolve) => {
-                if (!this._shown) {
-                    this._shown = true;
-                    this.style.display = "";
-                    let opacity0 = parseFloat(this.style.opacity);
-                    let opacity1 = 1;
-                    let t0 = performance.now();
-                    let step = () => {
-                        let t = performance.now();
-                        let dt = (t - t0) / 1000;
-                        if (dt >= duration) {
-                            this.style.opacity = "1";
-                            resolve();
-                        }
-                        else {
-                            let f = dt / duration;
-                            this.style.opacity = ((1 - f) * opacity0 + f * opacity1).toFixed(2);
-                            requestAnimationFrame(step);
-                        }
+                this._showing = true;
+                this._hiding = false;
+                this._shown = true;
+                this.style.display = "";
+                this.onshow();
+
+                let opacity0 = parseFloat(this.style.opacity);
+                let opacity1 = 1;
+                let t0 = performance.now();
+                let step = () => {
+                    if (this._hiding) {
+                        return;
                     }
-                    step();
+                    let t = performance.now();
+                    let dt = (t - t0) / 1000;
+                    if (dt >= duration) {
+                        this.style.opacity = "1";
+                        if (this.pointerBlocker) {
+                            this.pointerBlocker.style.display = "none";
+                        }
+                        this._showing = false;
+                        resolve();
+                    }
+                    else {
+                        let f = dt / duration;
+                        this.style.opacity = ((1 - f) * opacity0 + f * opacity1).toFixed(2);
+                        requestAnimationFrame(step);
+                    }
                 }
+                step();
             });
         }
 
+        public onshow = () => {};
+
+        private _hiding: boolean = false;
         public async hide(duration: number = 1): Promise<void> {
-            if (duration === 0) {
-                this._shown = false;
-                this.style.display = "none";
-                this.style.opacity = "0";
-            } else {
-                return new Promise<void>((resolve) => {
-                    if (this._shown) {
-                        this._shown = false;
-                        this.style.display = "";
-                        let opacity0 = parseFloat(this.style.opacity);
-                        let opacity1 = 0;
-                        let t0 = performance.now();
-                        let step = () => {
-                            let t = performance.now();
-                            let dt = (t - t0) / 1000;
-                            if (dt >= duration) {
-                                this.style.display = "none";
-                                this.style.opacity = "0";
-                                resolve();
-                            }
-                            else {
-                                let f = dt / duration;
-                                this.style.opacity = ((1 - f) * opacity0 + f * opacity1).toFixed(2);
-                                requestAnimationFrame(step);
-                            }
-                        }
-                        step();
+            return new Promise<void>((resolve) => {
+                this._showing = false;
+                this._hiding = true;
+                this.style.display = "";
+                if (this.pointerBlocker) {
+                    this.pointerBlocker.style.display = "";
+                }
+
+                let opacity0 = parseFloat(this.style.opacity);
+                let opacity1 = 0;
+                let t0 = performance.now();
+                let step = () => {
+                    if (this._showing) {
+                        return;
                     }
-                });
-            }
+                    let t = performance.now();
+                    let dt = (t - t0) / 1000;
+                    if (dt >= duration) {
+                        this.style.display = "none";
+                        this.style.opacity = "0";
+                        this._shown = false;
+                        this._hiding = false;
+                        this.onhide();
+                        resolve();
+                    }
+                    else {
+                        let f = dt / duration;
+                        this.style.opacity = ((1 - f) * opacity0 + f * opacity1).toFixed(2);
+                        requestAnimationFrame(step);
+                    }
+                }
+                step();
+            });
         }
+
+        public onhide = () => {};
     }
 
     customElements.define("default-page", DefaultPage);

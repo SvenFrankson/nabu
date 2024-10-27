@@ -185,6 +185,7 @@ declare namespace Nabu {
 declare namespace Nabu {
     class UniqueList<T> {
         private _elements;
+        get array(): T[];
         get length(): number;
         get(i: number): T;
         getLast(): T;
@@ -554,6 +555,7 @@ declare namespace Nabu {
 declare namespace Nabu {
     class DefaultPage extends HTMLElement implements IPage {
         static get observedAttributes(): string[];
+        pointerBlocker: HTMLDivElement;
         private _loaded;
         get loaded(): boolean;
         private _shown;
@@ -564,8 +566,15 @@ declare namespace Nabu {
         waitLoaded(): Promise<void>;
         connectedCallback(): void;
         attributeChangedCallback(name: string, oldValue: string, newValue: string): void;
+        private _timout;
+        showFast(): void;
+        hideFast(duration?: number): void;
+        private _showing;
         show(duration?: number): Promise<void>;
+        onshow: () => void;
+        private _hiding;
         hide(duration?: number): Promise<void>;
+        onhide: () => void;
     }
 }
 declare namespace Nabu {
@@ -627,6 +636,7 @@ declare namespace Nabu {
         private _loaded;
         get loaded(): boolean;
         private _shown;
+        get shown(): boolean;
         private _animateShowInterval;
         panels: PanelElement[];
         xCount: number;
@@ -651,6 +661,7 @@ declare namespace Nabu {
 }
 declare namespace Nabu {
     interface IPage extends HTMLElement {
+        shown: boolean;
         show(duration?: number): Promise<void>;
         hide(duration?: number): Promise<void>;
         readonly loaded: boolean;
@@ -662,7 +673,7 @@ declare namespace Nabu {
         wait(duration: number): Promise<void>;
         findAllPages(): void;
         protected onFindAllPages(): void;
-        initialize(): void;
+        initialize(): Promise<void>;
         start(): void;
         show(page: IPage, dontCloseOthers?: boolean, duration?: number): Promise<void>;
         hideAll(duration?: number): Promise<void>;
