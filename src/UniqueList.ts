@@ -3,6 +3,9 @@ namespace Nabu {
     export class UniqueList<T> {
 
         private _elements: T[] = [];
+        public get array(): T[] {
+            return this._elements;
+        }
 
         public get length(): number {
             return this._elements.length;
