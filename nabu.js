@@ -3159,6 +3159,9 @@ var Nabu;
             });
         }
         async hide(duration = 1) {
+            if (!this._shown) {
+                return;
+            }
             return new Promise((resolve) => {
                 this._showing = false;
                 this._hiding = true;

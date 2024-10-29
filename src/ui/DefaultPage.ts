@@ -141,6 +141,9 @@ namespace Nabu {
 
         private _hiding: boolean = false;
         public async hide(duration: number = 1): Promise<void> {
+            if (!this._shown) {
+                return;
+            }
             return new Promise<void>((resolve) => {
                 this._showing = false;
                 this._hiding = true;
