@@ -39,9 +39,14 @@ namespace Nabu {
                 }
             });
             this.onFindAllPages();
+            this.onFindAllPagesAsync();
         }
 
         protected onFindAllPages(): void {
+
+        }
+
+        protected async onFindAllPagesAsync(): Promise<void> {
 
         }
 

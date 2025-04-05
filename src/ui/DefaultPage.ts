@@ -9,6 +9,7 @@ namespace Nabu {
 
         public pointerBlocker: HTMLDivElement;
 
+        private _loading: boolean = false;
         private _loaded: boolean = false;
         public get loaded(): boolean {
             return this._loaded;
@@ -53,7 +54,7 @@ namespace Nabu {
         }
 
         public attributeChangedCallback(name: string, oldValue: string, newValue: string) {
-            if (name === "file") {
+            if (name === "file" && !this._loading) {
                 if (this.isConnected) {
                     const xhttp = new XMLHttpRequest();
                     xhttp.onload = () => {
@@ -71,12 +72,14 @@ namespace Nabu {
                         this.appendChild(this.pointerBlocker);
                         
                         this._loaded = true;
+                        this._loading = false;
                         if (this._onLoad) {
                             this._onLoad();
                         }
                     };
                     xhttp.open("GET", newValue);
                     xhttp.send();
+                    this._loading = true;
                 }
             }
         }

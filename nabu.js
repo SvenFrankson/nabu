@@ -3034,6 +3034,7 @@ var Nabu;
     class DefaultPage extends HTMLElement {
         constructor() {
             super(...arguments);
+            this._loading = false;
             this._loaded = false;
             this._shown = false;
             this._timout = -1;
@@ -3084,7 +3085,7 @@ var Nabu;
             this.hide(0);
         }
         attributeChangedCallback(name, oldValue, newValue) {
-            if (name === "file") {
+            if (name === "file" && !this._loading) {
                 if (this.isConnected) {
                     const xhttp = new XMLHttpRequest();
                     xhttp.onload = () => {
@@ -3100,12 +3101,14 @@ var Nabu;
                         this.pointerBlocker.style.opacity = "0";
                         this.appendChild(this.pointerBlocker);
                         this._loaded = true;
+                        this._loading = false;
                         if (this._onLoad) {
                             this._onLoad();
                         }
                     };
                     xhttp.open("GET", newValue);
                     xhttp.send();
+                    this._loading = true;
                 }
             }
         }
@@ -3995,8 +3998,11 @@ var Nabu;
                 }
             });
             this.onFindAllPages();
+            this.onFindAllPagesAsync();
         }
         onFindAllPages() {
+        }
+        async onFindAllPagesAsync() {
         }
         async initialize() {
             this.findAllPages();

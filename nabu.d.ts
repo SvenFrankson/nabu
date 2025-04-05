@@ -556,6 +556,7 @@ declare namespace Nabu {
     class DefaultPage extends HTMLElement implements IPage {
         static get observedAttributes(): string[];
         pointerBlocker: HTMLDivElement;
+        private _loading;
         private _loaded;
         get loaded(): boolean;
         private _shown;
@@ -673,6 +674,7 @@ declare namespace Nabu {
         wait(duration: number): Promise<void>;
         findAllPages(): void;
         protected onFindAllPages(): void;
+        protected onFindAllPagesAsync(): Promise<void>;
         initialize(): Promise<void>;
         start(): void;
         show(page: IPage, dontCloseOthers?: boolean, duration?: number): Promise<void>;
