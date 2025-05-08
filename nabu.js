@@ -750,6 +750,13 @@ var Nabu;
         return Math.min(Math.max(n, min), max);
     }
     Nabu.MinMax = MinMax;
+    function RoundTowardZero(n) {
+        if (n < 0) {
+            return Math.ceil(n);
+        }
+        return Math.floor(n);
+    }
+    Nabu.RoundTowardZero = RoundTowardZero;
     function In0_2PIRange(angle) {
         while (angle < 0) {
             angle += 2 * Math.PI;
