@@ -3,6 +3,9 @@ declare namespace Nabu {
     function NextFrame(): Promise<void>;
 }
 declare namespace Nabu {
+    function ContainsBadwords(input: string): boolean;
+}
+declare namespace Nabu {
     function Compress(data: Uint8Array): Uint8Array;
     function Decompress(data: Uint8Array): Uint8Array;
 }
