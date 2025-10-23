@@ -950,6 +950,7 @@ var Nabu;
         constructor(canvas, configuration) {
             this.canvas = canvas;
             this.configuration = configuration;
+            this.canLockPointer = true;
             this.temporaryNoPointerLock = false;
             this.isPointerLocked = false;
             this.isPointerDown = false;
@@ -982,8 +983,8 @@ var Nabu;
         initialize() {
             this.canvas.addEventListener("pointerdown", (ev) => {
                 this.isPointerDown = true;
-                if (!this.temporaryNoPointerLock && (this.configuration && this.configuration.getValue("canLockPointer") === 1)) {
-                    this.canvas.requestPointerLock();
+                if (!this.temporaryNoPointerLock && this.canLockPointer && (this.configuration && this.configuration.getValue("canLockPointer") === 1)) {
+                    this.safeRequestPointerLock();
                     this.isPointerLocked = true;
                 }
             });
@@ -1164,6 +1165,16 @@ var Nabu;
         this.main.isTouch = true;
     }
     */
+        safeRequestPointerLock() {
+            if (this.canLockPointer) {
+                this.canvas.requestPointerLock();
+            }
+        }
+        safeExitPointerLock() {
+            if (this.canLockPointer) {
+                document.exitPointerLock();
+            }
+        }
         addKeyDownListener(callback) {
             this.keyDownListeners.push(callback);
         }
@@ -2985,6 +2996,11 @@ var Nabu;
         get(i, j) {
             return this.data[i + j * TerrainMapGenerator.MAP_SIZE];
         }
+        getClamped(i, j) {
+            i = Nabu.MinMax(i, 0, (TerrainMapGenerator.MAP_SIZE - 1));
+            j = Nabu.MinMax(j, 0, (TerrainMapGenerator.MAP_SIZE - 1));
+            return this.data[i + j * TerrainMapGenerator.MAP_SIZE];
+        }
     }
     Nabu.TerrainMap = TerrainMap;
     class TerrainMapGenerator {
@@ -3020,6 +3036,16 @@ var Nabu;
             }
             map.lastUsageTime = performance.now();
             return map;
+        }
+        getMapIfLoaded(IMap, JMap) {
+            let map = this.detailedMaps.find((map) => {
+                return map.iMap === IMap && map.jMap === JMap;
+            });
+            if (map) {
+                map.lastUsageTime = performance.now();
+                return map;
+            }
+            return;
         }
         updateDetailedCache() {
             while (this.detailedMaps.length > this.maxCachedMaps) {

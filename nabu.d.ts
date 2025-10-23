@@ -102,6 +102,7 @@ declare namespace Nabu {
         canvas: HTMLCanvasElement;
         configuration?: Configuration;
         static DeadZoneAxis(axisValue: number, threshold?: number): number;
+        canLockPointer: boolean;
         temporaryNoPointerLock: boolean;
         isPointerLocked: boolean;
         isPointerDown: boolean;
@@ -124,6 +125,8 @@ declare namespace Nabu {
         private doKeyInputUp;
         mapInput(input: string, key: number): void;
         unMapInput(input: string, key: number): void;
+        safeRequestPointerLock(): void;
+        safeExitPointerLock(): void;
         addKeyDownListener(callback: (k: number) => any): void;
         addMappedKeyDownListener(k: number, callback: () => any): void;
         removeKeyDownListener(callback: (k: number) => any): void;
@@ -505,6 +508,7 @@ declare namespace Nabu {
         lastUsageTime: number;
         constructor(_terrainMapGenerator: TerrainMapGenerator, iMap: number, jMap: number);
         get(i: number, j: number): number;
+        getClamped(i: number, j: number): number;
     }
     class TerrainMapGenerator {
         seededMap: SeededMap;
@@ -520,6 +524,7 @@ declare namespace Nabu {
         periods: number[];
         constructor(seededMap: SeededMap, periods: number | number[]);
         getMap(IMap: number, JMap: number): Promise<TerrainMap>;
+        getMapIfLoaded(IMap: number, JMap: number): TerrainMap;
         updateDetailedCache(): void;
         getMediumMap(IMap: number, JMap: number): Promise<TerrainMap>;
         updateMediumedCache(): void;

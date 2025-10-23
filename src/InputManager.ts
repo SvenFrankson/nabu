@@ -9,6 +9,7 @@ namespace Nabu {
             return 0;
         }
 
+        public canLockPointer: boolean = true;
         public temporaryNoPointerLock: boolean = false;
         public isPointerLocked: boolean = false;
         public isPointerDown: boolean = false;
@@ -42,8 +43,8 @@ namespace Nabu {
         public initialize(): void {
             this.canvas.addEventListener("pointerdown", (ev: PointerEvent) => {
                 this.isPointerDown = true;
-                if (!this.temporaryNoPointerLock && (this.configuration && this.configuration.getValue("canLockPointer") === 1)) {
-                    this.canvas.requestPointerLock();
+                if (!this.temporaryNoPointerLock && this.canLockPointer && (this.configuration && this.configuration.getValue("canLockPointer") === 1)) {
+                    this.safeRequestPointerLock();
                     this.isPointerLocked = true;
                 }
             });
@@ -229,6 +230,18 @@ namespace Nabu {
         this.main.isTouch = true;
     }
     */
+
+    public safeRequestPointerLock(): void {
+        if (this.canLockPointer) {
+            this.canvas.requestPointerLock();
+        }
+    }
+
+    public safeExitPointerLock(): void {
+        if (this.canLockPointer) {
+            document.exitPointerLock();
+        }
+    }
 
         public addKeyDownListener(callback: (k: number) => any): void {
             this.keyDownListeners.push(callback);
