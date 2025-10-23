@@ -12,6 +12,12 @@ namespace Nabu {
         public get(i: number, j: number) {
             return this.data[i + j * TerrainMapGenerator.MAP_SIZE];
         }
+
+        public getClamped(i: number, j: number) {
+            i = Nabu.MinMax(i, 0, (TerrainMapGenerator.MAP_SIZE - 1));
+            j = Nabu.MinMax(j, 0, (TerrainMapGenerator.MAP_SIZE - 1));
+            return this.data[i + j * TerrainMapGenerator.MAP_SIZE];
+        }
     }
 
     export class TerrainMapGenerator {
@@ -55,6 +61,17 @@ namespace Nabu {
             }
             map.lastUsageTime = performance.now();
             return map;
+        }
+
+        public getMapIfLoaded(IMap: number, JMap: number): TerrainMap {
+            let map = this.detailedMaps.find((map) => {
+                return map.iMap === IMap && map.jMap === JMap;
+            });
+            if (map) {
+                map.lastUsageTime = performance.now();
+                return map;
+            }
+            return;
         }
 
         public updateDetailedCache(): void {
