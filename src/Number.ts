@@ -141,6 +141,27 @@ namespace Nabu {
         return d;
     }
 
+    export function AbsoluteAngularDistance(from: number, to: number): number {
+        while (from < 0) {
+            from += 2 * Math.PI;
+        }
+        while (to < 0) {
+            to += 2 * Math.PI;
+        }
+        while(from >= 2 * Math.PI) {
+            from -= 2 * Math.PI;
+        }
+        while(to >= 2 * Math.PI) {
+            to -= 2 * Math.PI;
+        }
+
+        let d = Math.abs(from - to);
+        if (d > Math.PI) {
+            d = 2 * Math.PI - d;
+        }
+        return d;
+    }
+
     function TERP(t: number, a: number, b: number, c: number, d: number): number {
         return 0.5 * (c - a + (2.0*a - 5.0*b + 4.0*c - d + (3.0*(b - c) + d - a)*t)*t)*t + b;
     }
