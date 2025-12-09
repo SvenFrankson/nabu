@@ -121,8 +121,8 @@ declare namespace Nabu {
         initialize(): void;
         initializeInputs(configuration: Configuration): void;
         update(): void;
-        private doKeyInputDown;
-        private doKeyInputUp;
+        doKeyInputDown(keyInput: number): void;
+        doKeyInputUp(keyInput: number): void;
         mapInput(input: string, key: number): void;
         unMapInput(input: string, key: number): void;
         safeRequestPointerLock(): void;
@@ -150,6 +150,7 @@ declare namespace Nabu {
     function StepAngle(from: number, to: number, step: number): number;
     function LerpAngle(from: number, to: number, t: number): number;
     function AngularDistance(from: number, to: number): number;
+    function AbsoluteAngularDistance(from: number, to: number): number;
     function BicubicInterpolate(x: number, y: number, v00: number, v10: number, v20: number, v30: number, v01: number, v11: number, v21: number, v31: number, v02: number, v12: number, v22: number, v32: number, v03: number, v13: number, v23: number, v33: number): number;
 }
 declare namespace Nabu {

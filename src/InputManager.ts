@@ -130,7 +130,7 @@ namespace Nabu {
             }
         }
 
-        private doKeyInputDown(keyInput: number): void {
+        public doKeyInputDown(keyInput: number): void {
             if (this.deactivateAllKeyInputs) {
                 return;
             }
@@ -146,7 +146,7 @@ namespace Nabu {
             }
         }
 
-        private doKeyInputUp(keyInput: number): void {
+        public doKeyInputUp(keyInput: number): void {
             if (this.deactivateAllKeyInputs) {
                 return;
             }
